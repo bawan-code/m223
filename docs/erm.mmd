@@ -1,0 +1,84 @@
+erDiagram
+    USER {
+        int id PK
+        string name
+        string email UK "normalisiert, eindeutig"
+        string password_digest
+        string role "enum: benutzer | moderator | administrator"
+        string unconfirmed_email "neue E-Mail bis zur Bestaetigung"
+        string email_confirmation_token
+        datetime locked_at "Konto gesperrt durch Admin"
+        datetime created_at
+        datetime updated_at
+    }
+
+    CATEGORY {
+        int id PK
+        string name UK
+    }
+
+    RETAIL_CHAIN {
+        int id PK
+        string name UK "Migros, Coop, Aldi, Lidl ..."
+    }
+
+    PRODUCT {
+        int id PK
+        int category_id FK
+        int retail_chain_id FK
+        int created_by_id FK "User, der erfasst hat"
+        string name
+        string brand
+        string name_normalized "UK mit brand_normalized + retail_chain_id"
+        string brand_normalized
+        text description
+        int ratings_count "Aggregat"
+        int ratings_sum "Aggregat, Durchschnitt = sum / count"
+        datetime locked_at "gesperrt durch Moderator"
+        int lock_version "optimistisches Locking"
+        datetime created_at
+        datetime updated_at
+    }
+
+    RATING {
+        int id PK
+        int user_id FK "UK mit product_id"
+        int product_id FK
+        int stars "1..5"
+        text comment "optional"
+        string status "enum: aktiv | gesperrt"
+        datetime created_at
+        datetime updated_at
+    }
+
+    REPORT {
+        int id PK
+        int rating_id FK "UK mit reporter_id"
+        int reporter_id FK "meldender User"
+        int moderator_id FK "uebernehmender Moderator, null bis Uebernahme"
+        string reason
+        string status "enum: offen | in_bearbeitung | freigegeben | gesperrt"
+        datetime claimed_at "pessimistische Sperre"
+        datetime decided_at
+        datetime created_at
+    }
+
+    VERSION {
+        int id PK
+        string item_type "Product | Rating | Report"
+        int item_id
+        string event "create | update | destroy"
+        string whodunnit "User-ID"
+        text object "Zustand vor der Aenderung"
+        datetime created_at
+    }
+
+    USER ||--o{ PRODUCT : "erfasst"
+    USER ||--o{ RATING : "bewertet"
+    PRODUCT ||--o{ RATING : "erhaelt"
+    CATEGORY ||--o{ PRODUCT : "ordnet ein"
+    RETAIL_CHAIN ||--o{ PRODUCT : "verkauft"
+    RATING ||--o{ REPORT : "wird gemeldet"
+    USER ||--o{ REPORT : "meldet"
+    USER |o--o{ REPORT : "moderiert"
+    USER ||--o{ VERSION : "verursacht"
