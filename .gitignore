@@ -35,7 +35,7 @@
 /coverage/
 
 # Kursunterlagen (separates Repository)
-ict-modul-223-teilnehmerunterlagen/*
+ict-modul-223-teilnehmerunterlagen/
 
 # Claude
 CLAUDE.md
