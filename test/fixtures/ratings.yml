@@ -1,0 +1,20 @@
+anna_hummus:
+  user: anna
+  product: hummus
+  stars: 5
+  comment: Cremig, gut gewürzt, kaufe ich wieder.
+  status: aktiv
+
+ben_hummus:
+  user: ben
+  product: hummus
+  stars: 2
+  comment: Zu sauer für meinen Geschmack.
+  status: aktiv
+
+anna_pesto:
+  user: anna
+  product: pesto
+  stars: 1
+  comment: Wer das kauft, ist selber schuld.
+  status: aktiv

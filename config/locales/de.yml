@@ -10,3 +10,72 @@ de:
     sign_up: "Registrieren"
     sign_out: "Abmelden"
     profile: "Profil"
+
+  activerecord:
+    models:
+      user: { one: "Benutzer", other: "Benutzer" }
+      category: { one: "Kategorie", other: "Kategorien" }
+      retail_chain: { one: "Handelskette", other: "Handelsketten" }
+      product: { one: "Produkt", other: "Produkte" }
+      rating: { one: "Bewertung", other: "Bewertungen" }
+      report: { one: "Meldung", other: "Meldungen" }
+    attributes:
+      user:
+        name: "Name"
+        email_address: "E-Mail"
+        unconfirmed_email: "Neue E-Mail"
+        password: "Passwort"
+        password_confirmation: "Passwort wiederholen"
+        role: "Rolle"
+        roles:
+          benutzer: "Benutzer"
+          moderator: "Moderator"
+          administrator: "Administrator"
+      category:
+        name: "Name"
+      retail_chain:
+        name: "Name"
+      product:
+        name: "Bezeichnung"
+        brand: "Marke"
+        name_normalized: "Bezeichnung"
+        description: "Beschreibung"
+        category: "Kategorie"
+        retail_chain: "Handelskette"
+      rating:
+        stars: "Sterne"
+        comment: "Kommentar"
+        product: "Produkt"
+        user_id: "Bewertung"
+      report:
+        reason: "Grund"
+        reasons:
+          beleidigend: "Beleidigend"
+          spam: "Spam / Werbung"
+          kein_bezug: "Kein Bezug zum Produkt"
+          anderes: "Anderes"
+        statuses:
+          offen: "Offen"
+          in_bearbeitung: "In Bearbeitung"
+          freigegeben: "Freigegeben"
+          gesperrt: "Gesperrt"
+        rating: "Bewertung"
+        reporter_id: "Meldung"
+    errors:
+      models:
+        product:
+          attributes:
+            name_normalized:
+              already_exists: "gibt es bei dieser Kette und Marke bereits"
+        rating:
+          attributes:
+            user_id:
+              already_rated: "für dieses Produkt gibt es von dir bereits"
+            product:
+              locked: "ist gesperrt und kann nicht bewertet werden"
+        report:
+          attributes:
+            reporter_id:
+              already_reported: "hast du für diese Bewertung bereits abgeschickt"
+            rating:
+              own_rating: "kannst du nicht melden, sie stammt von dir"

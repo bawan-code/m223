@@ -1,0 +1,32 @@
+# Aggregate müssen zu den Ratings in ratings.yml passen.
+hummus:
+  name: Hummus Classic
+  brand: M-Classic
+  name_normalized: hummus classic
+  brand_normalized: m-classic
+  category: aufstriche
+  retail_chain: migros
+  created_by: anna
+  ratings_count: 2
+  ratings_sum: 7
+
+pesto:
+  name: Pesto Verde
+  brand: M-Classic
+  name_normalized: pesto verde
+  brand_normalized: m-classic
+  category: saucen
+  retail_chain: migros
+  created_by: ben
+  ratings_count: 1
+  ratings_sum: 1
+
+locked_product:
+  name: Chili Sauce
+  brand: Prix Garantie
+  name_normalized: chili sauce
+  brand_normalized: prix garantie
+  category: saucen
+  retail_chain: coop
+  created_by: ben
+  locked_at: <%= 1.day.ago.to_fs(:db) %>

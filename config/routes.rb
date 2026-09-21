@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   # Platzhalter bis zur Produktsuche (Aufgabe 6: root "products#index")
   root "pages#home"
 

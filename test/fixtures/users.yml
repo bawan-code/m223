@@ -1,0 +1,39 @@
+# Passwort für alle Fixture-Benutzer: probiert-test-2026
+<% password_digest = BCrypt::Password.create("probiert-test-2026", cost: 4) %>
+
+anna:
+  name: Anna Keller
+  email_address: anna@example.test
+  password_digest: <%= password_digest %>
+  role: benutzer
+
+ben:
+  name: Ben Meier
+  email_address: ben@example.test
+  password_digest: <%= password_digest %>
+  role: benutzer
+
+moni:
+  name: Moni Steiner
+  email_address: moni@example.test
+  password_digest: <%= password_digest %>
+  role: moderator
+
+max:
+  name: Max Brunner
+  email_address: max@example.test
+  password_digest: <%= password_digest %>
+  role: moderator
+
+admin:
+  name: Admin
+  email_address: admin@example.test
+  password_digest: <%= password_digest %>
+  role: administrator
+
+locked:
+  name: Gesperrter Benutzer
+  email_address: locked@example.test
+  password_digest: <%= password_digest %>
+  role: benutzer
+  locked_at: <%= 1.day.ago.to_fs(:db) %>

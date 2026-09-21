@@ -37,7 +37,7 @@ Zwei kleine Abweichungen vom ERM, die aus dem Generator folgen und in
 
 ---
 
-## Aufgabe 0: Projekt aufsetzen (Voraussetzung, Tag 3 Start)
+## Aufgabe 0: Projekt aufsetzen (Voraussetzung, Tag 3 Start) ✅ erledigt
 
 Im Repo-Root `/home/bawan/Projekt/m223` (Git existiert bereits, App wird
 direkt hier hinein generiert, nicht in einen Unterordner):
@@ -66,7 +66,7 @@ echo '[tools]\nruby = "4.0.6"' > mise.toml
 
 ---
 
-## Aufgabe 1: Datenbank und Modelle (Tag 3)
+## Aufgabe 1: Datenbank und Modelle (Tag 3) ✅ erledigt
 
 Ziel: Alle Entitäten aus ERM 4.5 mit Validierungen, Assoziationen, Indizes und
 Demo-Seeds. Noch keine Controller ausser dem generierten Auth.

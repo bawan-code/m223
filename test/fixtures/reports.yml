@@ -1,0 +1,13 @@
+open:
+  rating: ben_hummus
+  reporter: anna
+  reason: spam
+  status: offen
+
+claimed_by_max:
+  rating: anna_pesto
+  reporter: ben
+  moderator: max
+  reason: beleidigend
+  status: in_bearbeitung
+  claimed_at: <%= 1.hour.ago.to_fs(:db) %>

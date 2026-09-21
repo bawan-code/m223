@@ -64,4 +64,19 @@ bin/rubocop                                      # Code-Style
 
 ## Demo-Konten
 
-*Folgen mit Aufgabe 1 (Seeds).*
+`bin/rails db:seed` legt folgende Konten an (Passwort jeweils `probiert-demo-2026`):
+
+| E-Mail | Rolle |
+| --- | --- |
+| anna@example.test | Benutzer |
+| ben@example.test | Benutzer |
+| clara@example.test | Benutzer |
+| moni@example.test | Moderator |
+| max@example.test | Moderator |
+| admin@example.test | Administrator |
+
+Für den Performance-Test (Q4) lassen sich zusätzlich 5'000 Produkte erzeugen:
+
+```sh
+SEED_PRODUCTS=5000 bin/rails db:seed
+```

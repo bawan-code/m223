@@ -1,0 +1,56 @@
+require "test_helper"
+
+class RatingTest < ActiveSupport::TestCase
+  test "Sterne müssen zwischen 1 und 5 liegen" do
+    rating = Rating.new(user: users(:moni), product: products(:hummus))
+
+    [ 0, 6, nil ].each do |stars|
+      rating.stars = stars
+      assert_not rating.valid?, "#{stars.inspect} sollte ungültig sein"
+      assert rating.errors.added?(:stars, :inclusion, value: stars)
+    end
+
+    rating.stars = 3
+    assert_predicate rating, :valid?
+  end
+
+  test "Kommentar ist optional und wird getrimmt" do
+    rating = Rating.new(comment: "   ")
+
+    assert_nil rating.comment
+  end
+
+  test "pro Benutzer und Produkt höchstens eine Bewertung" do
+    second = Rating.new(user: users(:anna), product: products(:hummus), stars: 3)
+
+    assert_not second.valid?
+    assert second.errors.of_kind?(:user_id, :taken)
+    assert_includes second.errors.full_messages, "Bewertung für dieses Produkt gibt es von dir bereits"
+  end
+
+  test "der Unique-Index verhindert eine zweite Bewertung auch ohne Validierung" do
+    assert_raises ActiveRecord::RecordNotUnique do
+      Rating.insert!({ user_id: users(:anna).id, product_id: products(:hummus).id, stars: 3 })
+    end
+  end
+
+  test "gesperrte Produkte können nicht bewertet werden" do
+    rating = Rating.new(user: users(:anna), product: products(:locked_product), stars: 4)
+
+    assert_not rating.valid?
+    assert rating.errors.added?(:product, :locked)
+  end
+
+  test "bestehende Bewertung eines gesperrten Produkts bleibt änderbar" do
+    ratings(:anna_hummus).product.update!(locked_at: Time.current)
+
+    assert ratings(:anna_hummus).update(stars: 4)
+  end
+
+  test "active enthält nur aktive Bewertungen" do
+    ratings(:ben_hummus).update!(status: :gesperrt)
+
+    assert_not_includes Rating.active, ratings(:ben_hummus)
+    assert_includes Rating.active, ratings(:anna_hummus)
+  end
+end
