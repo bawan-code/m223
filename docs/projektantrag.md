@@ -531,29 +531,7 @@ Schaltfläche «Produkt neu erfassen».
 
 #### Screen 2: Registrieren und Anmelden (`@Registrieren`, `@Anmelden`)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]     [ Anmelden ] |
-+------------------------------------------------------------------------------------+
-|                                                                                    |
-|   +------------------------------+          +------------------------------+       |
-|   | Konto erstellen              |          | Anmelden                     |       |
-|   |                              |          |                              |       |
-|   | Name     [________________]  |          | E-Mail   [________________]  |       |
-|   | E-Mail   [________________]  |          | Passwort [________________]  |       |
-|   | Passwort [________________]  |          |                              |       |
-|   |  mind. 12 Zeichen            |          | ! E-Mail oder Passwort ist   |       |
-|   | Wiederh. [________________]  |          |   falsch.                    |       |
-|   |                              |          |                              |       |
-|   | ! Diese E-Mail ist bereits   |          |        [ Anmelden ]          |       |
-|   |   vergeben. -> Anmelden      |          |                              |       |
-|   |                              |          | Noch kein Konto?             |       |
-|   |     [ Konto erstellen ]      |          | -> Registrieren              |       |
-|   |                              |          +------------------------------+       |
-|   | Schon ein Konto? -> Anmelden |                                                 |
-|   +------------------------------+                                                 |
-+------------------------------------------------------------------------------------+
-```
+![registrieren/abmelden](images/register_siginin.svg)
 
 Beide Formulare sind eigene Seiten; hier nebeneinander skizziert, weil sie
 denselben Aufbau haben. Fehlermeldungen (`!`) erscheinen oberhalb der
@@ -565,37 +543,7 @@ E-Mail und falschem Passwort dieselbe Meldung.
 Der wichtigste Screen: Zusammenfassung links, eigene Bewertung rechts, die
 Bewertungen anderer darunter.
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]        Anna ▾    |
-+------------------------------------------------------------------------------------+
-| < Zurück zur Suche                                                                 |
-|                                                                                    |
-| Hummus Classic                                          [ Bearbeiten ] [ Sperren ] |
-| M-Classic · Migros · Aufstriche                              (nur Moderator/Admin) |
-|                                                                                    |
-| +-------------------------------------+   +--------------------------------------+ |
-| |  ★★★★☆  4.2                          |   | Deine Bewertung                      | |
-| |  37 Bewertungen                     |   |                                      | |
-| |                                     |   |   ☆ ☆ ☆ ☆ ☆                          | |
-| |  5 ★ ████████████░░░░░░  18         |   |                                      | |
-| |  4 ★ ████████░░░░░░░░░░  11         |   |   Kommentar (optional)               | |
-| |  3 ★ ████░░░░░░░░░░░░░░   5         |   |   [______________________________]   | |
-| |  2 ★ ██░░░░░░░░░░░░░░░░   2         |   |   [______________________________]   | |
-| |  1 ★ █░░░░░░░░░░░░░░░░░   1         |   |                                      | |
-| |                                     |   |   [ Bewertung speichern ]            | |
-| +-------------------------------------+   +--------------------------------------+ |
-|                                                                                    |
-| Bewertungen (37)                                                                   |
-| +--------------------------------------------------------------------------------+ |
-| | ★★★★★  Ben · vor 2 Tagen                                              [ melden ] | |
-| | Cremig, gut gewürzt, kaufe ich wieder.                                         | |
-| +--------------------------------------------------------------------------------+ |
-| | ★★☆☆☆  Clara · vor 1 Woche                                            [ melden ] | |
-| | Zu sauer für meinen Geschmack.                                                 | |
-| +--------------------------------------------------------------------------------+ |
-+------------------------------------------------------------------------------------+
-```
+![produktdetails](images/produktdetail.svg)
 
 Varianten des rechten Kastens «Deine Bewertung»:
 
@@ -612,27 +560,7 @@ Varianten des rechten Kastens «Deine Bewertung»:
 
 #### Screen 4: Eigene Bewertung bearbeiten (`@Eigene Bewertung bearbeiten`)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]        Anna ▾    |
-+------------------------------------------------------------------------------------+
-| < Hummus Classic                                                                   |
-|                                                                                    |
-|   +----------------------------------------------------------+                     |
-|   | Bewertung bearbeiten                                     |                     |
-|   |                                                          |                     |
-|   | ! Du hast dieses Produkt bereits bewertet.               |                     |
-|   |   Passe deine bestehende Bewertung an.                   |                     |
-|   |                                                          |                     |
-|   |   ★ ★ ★ ★ ☆                                              |                     |
-|   |   Kommentar                                              |                     |
-|   |   [ Cremig, gut gewürzt.______________________________ ] |                     |
-|   |   [____________________________________________________] |                     |
-|   |                                                          |                     |
-|   |   [ Speichern ]   [ Abbrechen ]          Bewertung löschen                     |
-|   +----------------------------------------------------------+                     |
-+------------------------------------------------------------------------------------+
-```
+![bewertung_bearbeiten](images/bearbeiten.svg)
 
 Der gelbe Hinweis oben erscheint nur, wenn der Benutzer über den Konflikt
 «Bereits bewertet» hierher geleitet wurde; die neuen Eingaben aus dem
@@ -640,83 +568,18 @@ abgelehnten Formular sind dann bereits eingetragen.
 
 #### Screen 5: Produkt erfassen (`@Produkt erfassen`)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]        Anna ▾    |
-+------------------------------------------------------------------------------------+
-| < Zurück zur Suche                                                                 |
-|                                                                                    |
-|   +----------------------------------------------------------+                     |
-|   | Produkt erfassen                                         |                     |
-|   |                                                          |                     |
-|   | Bezeichnung  [ Hummus Classic__________________________ ] |                     |
-|   | Marke        [ M-Classic_______________________________ ] |                     |
-|   | Kategorie    [ Aufstriche                          v ]   |                     |
-|   | Handelskette [ Migros                              v ]   |                     |
-|   |                                                          |                     |
-|   | ! Dieses Produkt gibt es schon:                          |                     |
-|   |   -> Hummus Classic (M-Classic, Migros)                  |                     |
-|   |   Du kannst es direkt bewerten.                          |                     |
-|   |                                                          |                     |
-|   |   [ Produkt speichern ]   [ Abbrechen ]                  |                     |
-|   +----------------------------------------------------------+                     |
-+------------------------------------------------------------------------------------+
-```
+![erfassen](images/erfassen.svg)
 
 Die Duplikat-Meldung verlinkt auf das bestehende Produkt; die Eingaben bleiben
 im Formular, falls es sich doch um ein anderes Produkt handelt.
 
 #### Screen 6: Bewertung melden (`@Bewertung melden`)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]        Anna ▾    |
-+------------------------------------------------------------------------------------+
-| < Hummus Classic                                                                   |
-|                                                                                    |
-|   +----------------------------------------------------------+                     |
-|   | Bewertung melden                                         |                     |
-|   |                                                          |                     |
-|   |   +--------------------------------------------------+   |                     |
-|   |   | ★★☆☆☆  Clara · vor 1 Woche                        |   |                     |
-|   |   | Zu sauer für meinen Geschmack.                   |   |                     |
-|   |   +--------------------------------------------------+   |                     |
-|   |                                                          |                     |
-|   |   Grund                                                  |                     |
-|   |    ( ) Beleidigend                                       |                     |
-|   |    (x) Spam / Werbung                                    |                     |
-|   |    ( ) Kein Bezug zum Produkt                            |                     |
-|   |    ( ) Anderes                                           |                     |
-|   |                                                          |                     |
-|   |   [ Melden ]   [ Abbrechen ]                             |                     |
-|   +----------------------------------------------------------+                     |
-+------------------------------------------------------------------------------------+
-```
+![melden](images/melden.svg)
 
 #### Screen 7: Meldungen – Moderation (`@Meldungen`)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]   Moni (Mod) ▾   |
-+------------------------------------------------------------------------------------+
-| Moderation                                                                         |
-|                                                                                    |
-| Offene Meldungen (3)                                                               |
-| +--------------------------------------------------------------------------------+ |
-| | Produkt          | Bewertung             | Grund       | Gemeldet   | Status    | |
-| |------------------|-----------------------|-------------|------------|-----------| |
-| | Hummus Classic   | ★★☆☆☆ «Zu sauer ...»  | Spam        | vor 1 h    | [Übernehmen] |
-| | Pesto Verde      | ★☆☆☆☆ «Wer das ...»   | Beleidigend | vor 3 h    | [Übernehmen] |
-| | Bio Joghurt      | ★★★☆☆ «Naja ...»      | Anderes     | vor 1 Tag  | in Bearb. | |
-| |                  |                       |             |            |  von Max  | |
-| +--------------------------------------------------------------------------------+ |
-|                                                                                    |
-| Von mir übernommen (1)                                                             |
-| +--------------------------------------------------------------------------------+ |
-| | Chili Sauce      | ★☆☆☆☆ «Kauft das ...» | Spam        | vor 2 h    | [ Öffnen ] | |
-| +--------------------------------------------------------------------------------+ |
-+------------------------------------------------------------------------------------+
-```
+![moderation](images/moderation.svg)
 
 Von anderen übernommene Meldungen sind ausgegraut und haben keine Schaltfläche.
 Wer «Übernehmen» drückt, nachdem ein anderer Moderator schneller war, bleibt auf
@@ -724,54 +587,11 @@ dieser Liste und sieht oben «Diese Meldung wurde inzwischen von Max übernommen
 
 #### Screen 8: Meldung bearbeiten (`@Meldung bearbeiten`)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]   Moni (Mod) ▾   |
-+------------------------------------------------------------------------------------+
-| < Meldungen                                                                        |
-|                                                                                    |
-| Meldung #42 · übernommen von dir                                                   |
-|                                                                                    |
-| +-------------------------------------+   +--------------------------------------+ |
-| | Gemeldete Bewertung                 |   | Entscheidung                         | |
-| |                                     |   |                                      | |
-| | ★★☆☆☆  Clara · 14.09.2026           |   | Produkt:      Hummus Classic         | |
-| | Zu sauer für meinen Geschmack.      |   | Gemeldet von: Ben                    | |
-| |                                     |   | Grund:        Spam                   | |
-| |                                     |   |                                      | |
-| |                                     |   | [ Bewertung freigeben ]              | |
-| |                                     |   | [ Bewertung sperren ]                | |
-| |                                     |   |                                      | |
-| |                                     |   | Übernahme zurückgeben                | |
-| +-------------------------------------+   +--------------------------------------+ |
-+------------------------------------------------------------------------------------+
-```
+![meldung_bearbeiten](images/meldung_bearbeiten.svg)
 
 #### Screen 9: Produkt bearbeiten – Moderator (`@Produkt bearbeiten`)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ Suche_____________________________ ] [ Suchen ]   Moni (Mod) ▾   |
-+------------------------------------------------------------------------------------+
-| < Hummus Classic                                                                   |
-|                                                                                    |
-| +-------------------------------------------------+   +--------------------------+ |
-| | Produkt bearbeiten                              |   | Produkt sperren          | |
-| |                                                 |   |                          | |
-| | ! Jemand hat dieses Produkt inzwischen          |   | Gesperrte Produkte sind  | |
-| |   geändert. Prüfe die aktuellen Werte und       |   | nicht sichtbar und       | |
-| |   speichere erneut.                             |   | können nicht bewertet    | |
-| |   Aktuell: «Hummus Classic 200 g»               |   | werden.                  | |
-| |                                                 |   |                          | |
-| | Bezeichnung  [ Hummus Classic________________ ] |   | [ Sperren ]              | |
-| | Marke        [ M-Classic_____________________ ] |   +--------------------------+ |
-| | Kategorie    [ Aufstriche                v ]    |                                |
-| | Handelskette [ Migros                    v ]    |                                |
-| |                                                 |                                |
-| | [ Speichern ]   [ Abbrechen ]                   |                                |
-| +-------------------------------------------------+                                |
-+------------------------------------------------------------------------------------+
-```
+![produkt_bearbeiten](images/produkt_bearbeiten.svg)
 
 Der Konflikthinweis erscheint nur bei einer Versionskollision
 (`lock_version`); die eigenen Eingaben bleiben im Formular, die aktuellen Werte
