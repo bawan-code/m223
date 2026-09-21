@@ -19,7 +19,7 @@ gem "stimulus-rails"
 gem "bcrypt", "~> 3.1.7"
 
 # JSON 3 ist mit der Cookie-Verarbeitung dieser Rails-Version nicht kompatibel
-gem "json", "~> 2.0"
+gem "json", "~> 3.0"
 
 # Autorisierung über Policies [https://github.com/varvet/pundit]
 gem "pundit"
