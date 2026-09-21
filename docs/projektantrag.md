@@ -168,14 +168,21 @@ erDiagram
     USER {
         int id PK
         string name
-        string email UK "normalisiert, eindeutig"
+        string email_address UK "normalisiert, eindeutig"
         string password_digest
         string role "enum: benutzer | moderator | administrator"
         string unconfirmed_email "neue E-Mail bis zur Bestätigung"
-        string email_confirmation_token
         datetime locked_at "Konto gesperrt durch Admin"
         datetime created_at
         datetime updated_at
+    }
+
+    SESSION {
+        int id PK
+        int user_id FK
+        string ip_address
+        string user_agent
+        datetime created_at
     }
 
     CATEGORY {
@@ -236,9 +243,11 @@ erDiagram
         string event "create | update | destroy"
         string whodunnit "User-ID"
         text object "Zustand vor der Änderung"
+        text object_changes "geänderte Felder"
         datetime created_at
     }
 
+    USER ||--o{ SESSION : "meldet sich an"
     USER ||--o{ PRODUCT : "erfasst"
     USER ||--o{ RATING : "bewertet"
     PRODUCT ||--o{ RATING : "erhält"
@@ -254,7 +263,8 @@ erDiagram
 
 | Entität | Zweck | Beziehungen |
 | --- | --- | --- |
-| User | Registrierte Person mit Rolle (Benutzer, Moderator, Administrator). `unconfirmed_email` und `email_confirmation_token` dienen der E-Mail-Änderung mit Bestätigungslink. | erfasst 0..n Produkte, gibt 0..n Bewertungen ab, meldet 0..n Bewertungen, übernimmt als Moderator 0..n Meldungen |
+| User | Registrierte Person mit Rolle (Benutzer, Moderator, Administrator). `unconfirmed_email` hält die neue Adresse bis zur Bestätigung; der Bestätigungslink enthält einen signierten, ablaufenden Token (`generates_token_for`), daher braucht es keine Token-Spalte. `locked_at` für die Kontosperrung durch Administratoren. | hat 0..n Sessions, erfasst 0..n Produkte, gibt 0..n Bewertungen ab, meldet 0..n Bewertungen, übernimmt als Moderator 0..n Meldungen |
+| Session | Datenbank-Sitzung pro Anmeldung (Rails-Authentifizierungsgenerator). Das Cookie enthält nur die Session-ID; Abmelden oder Kontosperrung löscht die Sitzung serverseitig. | gehört zu genau einem User |
 | Category | Stammdaten: Produktkategorie (z.B. Aufstriche, Saucen). | hat 0..n Produkte |
 | RetailChain | Stammdaten: Handelskette (Migros, Coop, Aldi, Lidl …). | hat 0..n Produkte |
 | Product | Katalogeintrag, von der Gemeinschaft erfasst. Eindeutig über (`name_normalized`, `brand_normalized`, `retail_chain_id`). Führt die Aggregate `ratings_count` und `ratings_sum`; `lock_version` für optimistisches Locking beim Bearbeiten, `locked_at` für die Sperrung durch Moderatoren. | gehört zu genau einer Kategorie und einer Handelskette, wurde von genau einem User erfasst, hat 0..n Bewertungen |
@@ -513,28 +523,7 @@ Eingabefeld, `( )`/`(x)` eine Auswahl, `★☆` die Sternebewertung.
 
 #### Screen 1: Produktsuche (`@Produktsuche`, gleichzeitig Startseite)
 
-```text
-+------------------------------------------------------------------------------------+
-| Probiert        [ hummus_________________________ ] [ Suchen ]        [ Anmelden ] |
-+------------------------------------------------------------------------------------+
-| Filter                  |  3 Produkte für «hummus»                                  |
-|                         |                                                           |
-| Kategorie               |  +-----------------------------------------------------+  |
-|  (x) Alle               |  | Hummus Classic                    ★★★★☆ 4.2          |  |
-|  ( ) Aufstriche         |  | M-Classic · Migros · Aufstriche   37 Bewertungen     |  |
-|  ( ) Saucen             |  +-----------------------------------------------------+  |
-|  ( ) Milchprodukte      |  | Hummus Natur                      ★★★☆☆ 3.4          |  |
-|  ( ) ...                |  | Qualité & Prix · Coop · Aufstriche 12 Bewertungen    |  |
-|                         |  +-----------------------------------------------------+  |
-| Handelskette            |  | Hummus                            ★★★★★ 4.7          |  |
-|  (x) Alle               |  | Bio · Aldi · Aufstriche            5 Bewertungen     |  |
-|  ( ) Migros             |  +-----------------------------------------------------+  |
-|  ( ) Coop               |                                                           |
-|  ( ) Aldi               |  Nicht gefunden?  [ Produkt neu erfassen ]                |
-|  ( ) Lidl               |                                                           |
-| [ Filter anwenden ]     |                                                           |
-+------------------------------------------------------------------------------------+
-```
+![produktsuche](images/produktsuche.svg)
 
 Jede Karte ist als Ganzes klickbar und führt zur Produktdetailseite. Bei null
 Treffern erscheint statt der Liste «Kein Produkt gefunden» mit derselben
