@@ -1,0 +1,137 @@
+/*
+ * Basis-Styles für Probiert. Bewusst schlicht: Desktop-Browser, ein
+ * Spaltenraster, Kopfzeile gemäss Fat-Marker-Sketches (docs/projektantrag.md 4.7).
+ */
+
+:root {
+  --color-bg: #f7f6f2;
+  --color-surface: #ffffff;
+  --color-text: #222222;
+  --color-muted: #6b6b6b;
+  --color-border: #d9d6cf;
+  --color-primary: #2f6f4e;
+  --color-primary-contrast: #ffffff;
+  --color-star: #d99a00;
+  --color-success-bg: #e3f3e8;
+  --color-success-fg: #1f5d38;
+  --color-alert-bg: #fbe6e3;
+  --color-alert-fg: #8a2a1c;
+  --color-notice-bg: #fff6d6;
+  --color-notice-fg: #6b4e00;
+  --radius: 6px;
+  --space: 1rem;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+a { color: var(--color-primary); }
+
+/* Kopfzeile */
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--space) * 2);
+  padding: 0.75rem calc(var(--space) * 2);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.site-search {
+  flex: 1;
+  display: flex;
+  gap: 0.5rem;
+  max-width: 40rem;
+}
+
+.site-search input[type="search"] { flex: 1; }
+
+.site-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+}
+
+/* Inhalt */
+.container {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: calc(var(--space) * 1.5) calc(var(--space) * 2);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  margin-bottom: var(--space);
+}
+
+/* Formulare */
+label { display: block; font-weight: 600; margin-top: 0.75rem; }
+
+input[type="text"], input[type="email"], input[type="password"],
+input[type="search"], input[type="number"], select, textarea {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.form-narrow { max-width: 28rem; }
+
+.hint { color: var(--color-muted); font-size: 0.9rem; }
+
+button, input[type="submit"], .button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button-secondary {
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+
+.actions { display: flex; gap: 0.5rem; margin-top: var(--space); }
+
+/* Rückmeldungen */
+.flash { padding: 0.75rem 1rem; border-radius: var(--radius); margin-bottom: var(--space); }
+.flash-notice { background: var(--color-notice-bg); color: var(--color-notice-fg); }
+.flash-success { background: var(--color-success-bg); color: var(--color-success-fg); }
+.flash-alert { background: var(--color-alert-bg); color: var(--color-alert-fg); }
+
+.errors { background: var(--color-alert-bg); color: var(--color-alert-fg); padding: 0.75rem 1rem; border-radius: var(--radius); }
+.errors ul { margin: 0.25rem 0 0; padding-left: 1.25rem; }
+
+/* Tabellen */
+table { width: 100%; border-collapse: collapse; background: var(--color-surface); }
+th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--color-border); }
+th { font-weight: 600; }
+
+.muted { color: var(--color-muted); }
+.stars { color: var(--color-star); letter-spacing: 0.05em; }

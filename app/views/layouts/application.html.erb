@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <title><%= [content_for(:title), t("app.name")].compact.join(" · ") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="application-name" content="<%= t("app.name") %>">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <%= link_to t("app.name"), root_path, class: "brand" %>
+
+      <%= form_with url: root_path, method: :get, class: "site-search" do |f| %>
+        <%= f.search_field :q, value: params[:q], placeholder: t("nav.search"), "aria-label": t("nav.search") %>
+        <%= f.submit "Suchen" %>
+      <% end %>
+
+      <nav class="site-nav">
+        <%# Benutzermenü folgt mit der Authentifizierung (Aufgabe 2) %>
+        <%= yield :user_menu %>
+      </nav>
+    </header>
+
+    <main class="container">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

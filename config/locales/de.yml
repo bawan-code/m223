@@ -1,0 +1,12 @@
+# Projektspezifische Übersetzungen. Die Rails-Standardtexte (Validierungen,
+# Datumsformate) kommen aus dem Gem rails-i18n.
+de:
+  app:
+    name: "Probiert"
+    tagline: "Supermarktprodukte kettenübergreifend bewerten"
+  nav:
+    search: "Produkte suchen"
+    sign_in: "Anmelden"
+    sign_up: "Registrieren"
+    sign_out: "Abmelden"
+    profile: "Profil"
