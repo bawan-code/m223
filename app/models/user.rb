@@ -23,6 +23,11 @@ class User < ApplicationRecord
   # allow_nil: beim Laden eines bestehenden Users ist password nil; beim Setzen muss es lang genug sein
   validates :password, length: { minimum: PASSWORD_MIN_LENGTH }, allow_nil: true
 
+  # Anzeigename der Rolle aus den Übersetzungen
+  def role_name
+    self.class.human_attribute_name("roles.#{role}")
+  end
+
   def moderator_or_admin?
     moderator? || administrator?
   end

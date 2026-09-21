@@ -26,8 +26,16 @@
       <% end %>
 
       <nav class="site-nav">
-        <%# Benutzermenü folgt mit der Authentifizierung (Aufgabe 2) %>
-        <%= yield :user_menu %>
+        <% if current_user %>
+          <%= link_to profile_path, class: "user-name" do %>
+            <%= current_user.name %>
+            <span class="muted">(<%= current_user.role_name %>)</span>
+          <% end %>
+          <%= button_to t("nav.sign_out"), session_path, method: :delete, class: "button button-secondary" %>
+        <% else %>
+          <%= link_to t("nav.sign_in"), new_session_path, class: "button button-secondary" %>
+          <%= link_to t("nav.sign_up"), signup_path, class: "button" %>
+        <% end %>
       </nav>
     </header>
 

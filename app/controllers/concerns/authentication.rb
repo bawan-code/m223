@@ -3,7 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
-    helper_method :authenticated?
+    helper_method :authenticated?, :current_user
   end
 
   class_methods do
@@ -17,6 +17,11 @@ module Authentication
       resume_session
     end
 
+    # Auch in öffentlichen Actions verfügbar (dort läuft require_authentication nicht)
+    def current_user
+      resume_session&.user
+    end
+
     def require_authentication
       resume_session || request_authentication
     end
@@ -26,12 +31,18 @@ module Authentication
     end
 
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      return unless cookies.signed[:session_id]
+
+      session = Session.includes(:user).find_by(id: cookies.signed[:session_id])
+      # Sitzungen gesperrter Konten werden beim Sperren gelöscht; zur Sicherheit hier nochmals prüfen
+      session if session && !session.user.locked?
     end
 
+    # Merkt sich, wohin der Benutzer nach der Anmeldung zurück soll: bei GET die
+    # Seite selbst, bei schreibenden Aktionen die Seite, von der er kam.
     def request_authentication
-      session[:return_to_after_authenticating] = request.url
-      redirect_to new_session_path
+      session[:return_to_after_authenticating] = request.get? ? request.url : request.referer
+      redirect_to new_session_path, alert: t("auth.required")
     end
 
     def after_authentication_url

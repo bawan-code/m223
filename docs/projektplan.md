@@ -140,7 +140,7 @@ wirft `ActiveRecord::RecordNotUnique` bei `insert_all`, Validierung greift bei
 
 ---
 
-## Aufgabe 2: Benutzerauthentifizierung (Tag 3)
+## Aufgabe 2: Benutzerauthentifizierung (Tag 3) ✅ erledigt
 
 Ziel: F1 – Registrieren, Anmelden, Abmelden, Sitzungen; Sicherheitsaspekte.
 

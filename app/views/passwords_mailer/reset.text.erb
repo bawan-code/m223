@@ -1,4 +1,6 @@
-You can reset your password on
+Hallo <%= @user.name %>
+
+Du kannst dein Passwort für Probiert hier zurücksetzen:
 <%= edit_password_url(@user.password_reset_token) %>
 
-This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+Der Link ist <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %> gültig.

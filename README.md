@@ -9,6 +9,7 @@ Screens, Locking-Konzept) liegt unter [`docs/`](docs/):
 
 - [`docs/projektantrag.md`](docs/projektantrag.md) – Projektantrag und Dokumentation
 - [`docs/projektplan.md`](docs/projektplan.md) – Umsetzungsplan nach Aufgaben 1–8
+- [`docs/sicherheit.md`](docs/sicherheit.md) – Sicherheitsaspekte der Authentifizierung
 
 ## Technologie-Stack
 

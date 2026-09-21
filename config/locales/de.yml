@@ -10,6 +10,32 @@ de:
     sign_up: "Registrieren"
     sign_out: "Abmelden"
     profile: "Profil"
+  forms:
+    save: "Speichern"
+    cancel: "Abbrechen"
+    errors:
+      one: "Ein Fehler verhindert das Speichern:"
+      other: "%{count} Fehler verhindern das Speichern:"
+  auth:
+    required: "Bitte melde dich an, um fortzufahren."
+    invalid_credentials: "E-Mail oder Passwort ist falsch."
+    account_locked: "Dieses Konto wurde gesperrt. Wende dich an die Administration."
+    rate_limited: "Zu viele Versuche. Bitte warte ein paar Minuten."
+    signed_in: "Willkommen zurück, %{name}!"
+    signed_out: "Du bist abgemeldet."
+    registered: "Willkommen bei Probiert, %{name}! Dein Konto ist erstellt."
+    create_account: "Konto erstellen"
+    password_hint: "Mindestens %{count} Zeichen – am besten eine Passphrase aus mehreren Wörtern."
+    no_account: "Noch kein Konto?"
+    have_account: "Schon ein Konto?"
+    forgot_password: "Passwort vergessen?"
+    reset_hint: "Wir schicken dir einen Link, mit dem du ein neues Passwort setzen kannst."
+    send_reset: "Link anfordern"
+    reset_sent: "Falls ein Konto mit dieser Adresse existiert, haben wir einen Link zum Zurücksetzen geschickt."
+    reset_subject: "Passwort zurücksetzen – Probiert"
+    reset_link_invalid: "Der Link ist ungültig oder abgelaufen. Fordere einen neuen an."
+    password_reset: "Dein Passwort wurde geändert. Melde dich mit dem neuen Passwort an."
+    new_password: "Neues Passwort setzen"
 
   activerecord:
     models:

@@ -135,3 +135,6 @@ th { font-weight: 600; }
 
 .muted { color: var(--color-muted); }
 .stars { color: var(--color-star); letter-spacing: 0.05em; }
+
+.site-nav form { display: inline; }
+.user-name { white-space: nowrap; }
