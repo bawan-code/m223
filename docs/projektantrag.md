@@ -138,7 +138,7 @@ Priorität 1 = zwingend für die 1. MVP Iteration.
 | ------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Benutzer      | Registrierte Person, die einkauft und ihre Erfahrungen teilt.   | Produkte suchen und ansehen, Produkte erfassen, eigene Bewertungen erstellen, ändern und löschen, fremde Bewertungen melden.                                                       |
 | Moderator     | Pflegt die Datenqualität des Katalogs und bearbeitet Meldungen. | Alle Rechte des Benutzers, zusätzlich: Produktdaten aller Produkte korrigieren, Produkte sperren und entsperren, Meldungen übernehmen und entscheiden, fremde Bewertungen sperren. |
-| Administrator | Verwaltet Stammdaten und Benutzerkonten.                        | Alle Rechte des Moderators, zusätzlich: Rollen zuweisen, Konten sperren, Kategorien und Handelsketten verwalten.                                                                   |
+| Administrator | Verwaltet Stammdaten und Benutzerkonten.                        | Alle Rechte des Moderators, zusätzlich: Benutzerübersicht einsehen, Benutzerdetails (Name, E-Mail) bearbeiten, Rollen zuweisen, Konten sperren, entsperren und löschen, Kategorien und Handelsketten verwalten. Am **eigenen** Konto sind Rollenwechsel, Sperren und Löschen ausgeschlossen, damit die Applikation nicht ohne Administration zurückbleibt. |
 
 Nicht angemeldete Besucher können ausschliesslich lesen und werden bei jeder
 schreibenden Aktion zur Anmeldung geführt. Die drei Rollen sind fachlich nötig,

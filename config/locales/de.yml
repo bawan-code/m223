@@ -53,6 +53,46 @@ de:
     email_confirmed: "Deine E-Mail-Adresse lautet jetzt %{email}."
     confirmation_invalid: "Der Bestätigungslink ist ungültig, abgelaufen oder bereits verwendet. Fordere einen neuen an."
     email_taken: "Diese E-Mail-Adresse wurde inzwischen von jemand anderem registriert. Wähle eine andere."
+  admin:
+    users:
+      title: "Benutzerverwaltung"
+      intro: "Alle registrierten Konten. Rollen, Sperren und Löschungen wirken sofort."
+      status: "Status"
+      actions: "Aktionen"
+      active: "Aktiv"
+      you: "(du)"
+      locked_since: "Gesperrt seit %{time}"
+      edit: "Bearbeiten"
+      edit_title: "%{name} bearbeiten"
+      email_hint: "Die Adresse gilt sofort – der Benutzer erhält keinen Bestätigungslink."
+      own_role_hint: "Die eigene Rolle lässt sich nicht ändern."
+      updated: "%{name} wurde gespeichert."
+      lock: "Sperren"
+      locked: "%{name} wurde gesperrt und abgemeldet."
+      unlock: "Entsperren"
+      unlocked: "%{name} kann sich wieder anmelden."
+      destroy: "Löschen"
+      confirm_title: "Konto von %{name} löschen?"
+      confirm_warning: "Das lässt sich nicht rückgängig machen."
+      confirm_ratings:
+        zero: "Es sind keine Bewertungen vorhanden."
+        one: "1 Bewertung wird gelöscht, die Durchschnittswerte der Produkte werden nachgeführt."
+        other: "%{count} Bewertungen werden gelöscht, die Durchschnittswerte der Produkte werden nachgeführt."
+      confirm_products:
+        zero: "Es wurden keine Produkte erfasst."
+        one: "1 erfasstes Produkt bleibt im Katalog und verliert nur den Ersteller."
+        other: "%{count} erfasste Produkte bleiben im Katalog und verlieren nur den Ersteller."
+      destroy_final: "Konto endgültig löschen"
+      destroy_confirm: "Konto von %{name} mit allen Bewertungen endgültig löschen?"
+      destroyed: "Das Konto von %{name} wurde gelöscht. Die erfassten Produkte bleiben im Katalog."
+  errors:
+    back_home: "Zur Startseite"
+    forbidden:
+      title: "Kein Zugriff"
+      body: "Für diese Seite fehlt deinem Konto die Berechtigung."
+    not_found:
+      title: "Nicht gefunden"
+      body: "Diese Seite oder dieser Eintrag existiert nicht (mehr)."
 
   activerecord:
     models:

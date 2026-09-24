@@ -1,0 +1,13 @@
+<% content_for :title, t("errors.forbidden.title") %>
+
+<div class="card form-narrow">
+  <h1><%= t("errors.forbidden.title") %></h1>
+  <p><%= t("errors.forbidden.body") %></p>
+
+  <div class="actions">
+    <%= link_to t("errors.back_home"), root_path, class: "button" %>
+    <% unless current_user %>
+      <%= link_to t("nav.sign_in"), new_session_path, class: "button button-secondary" %>
+    <% end %>
+  </div>
+</div>

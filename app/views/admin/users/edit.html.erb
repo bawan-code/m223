@@ -1,0 +1,28 @@
+<% content_for :title, t("admin.users.edit_title", name: @user.name) %>
+
+<div class="card form-narrow">
+  <h1><%= t("admin.users.edit_title", name: @user.name) %></h1>
+
+  <%= render "shared/errors", record: @user %>
+
+  <%= form_with model: @user, url: admin_user_path(@user), method: :patch do |form| %>
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true, autofocus: true %>
+
+    <%= form.label :email_address %>
+    <%= form.email_field :email_address, required: true %>
+    <p class="hint"><%= t("admin.users.email_hint") %></p>
+
+    <% if @user == current_user %>
+      <p class="hint"><%= t("admin.users.own_role_hint") %></p>
+    <% else %>
+      <%= form.label :role %>
+      <%= form.select :role, User.roles.keys.map { |role| [ User.human_attribute_name("roles.#{role}"), role ] } %>
+    <% end %>
+
+    <div class="actions">
+      <%= form.submit t("forms.save") %>
+      <%= link_to t("forms.cancel"), admin_users_path, class: "button button-secondary" %>
+    </div>
+  <% end %>
+</div>

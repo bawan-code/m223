@@ -1,0 +1,10 @@
+<% content_for :title, t("errors.not_found.title") %>
+
+<div class="card form-narrow">
+  <h1><%= t("errors.not_found.title") %></h1>
+  <p><%= t("errors.not_found.body") %></p>
+
+  <div class="actions">
+    <%= link_to t("errors.back_home"), root_path, class: "button" %>
+  </div>
+</div>

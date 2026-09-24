@@ -13,6 +13,19 @@ Rails.application.routes.draw do
   # deshalb auch ohne Anmeldung erreichbar (wie beim Passwort-Reset)
   get "email_confirmations/:token", to: "email_confirmations#show", as: :email_confirmation
 
+  # Benutzerverwaltung, nur für Administratoren (UserPolicy)
+  namespace :admin do
+    resources :users, only: %i[ index edit update destroy ] do
+      member do
+        # Zwischenschritt vor dem Löschen: ein Klick in der Übersicht öffnet nur
+        # diese Seite, gelöscht wird erst durch das Formular darauf.
+        get :confirm_destroy
+        patch :lock
+        patch :unlock
+      end
+    end
+  end
+
   # Platzhalter bis zur Produktsuche (Aufgabe 6: root "products#index")
   root "pages#home"
 

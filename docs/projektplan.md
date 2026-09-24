@@ -4,7 +4,7 @@
 
 Der Projektantrag (`docs/projektantrag.md`) ist vollständig: Anforderungen F1–F12,
 Qualitätsattribute Q1–Q5, drei Rollen, Locking-Konzept (4.4), ERM (4.5), acht
-Breadboards (4.6) und neun Screens (4.7). Die Rails-App existiert noch nicht.
+Breadboards (4.6) und neun Screens (4.7).
 Die Kursunterlagen geben die Reihenfolge der Umsetzung vor
 (`ict-modul-223-teilnehmerunterlagen/README.md`, Tag 3–4, Aufgaben 1–8) und die
 Muster, die der Dozent erwartet:
@@ -21,6 +21,26 @@ Muster, die der Dozent erwartet:
 - Minitest mit Fixtures, `sign_in_as` in `test/test_helper.rb`, 422 bei
   ungültigen Formularen (Turbo), `render … status: :unprocessable_entity`.
 - Abgabe: `README.md` (Wie ausführen), `docs/` (Was und Warum), alle Tests grün.
+
+Bewertet wird nach `docs/bewertung.md` (15 Kriterien à 2 Punkte). Die Kriterien
+der Gruppe «Multi-User-Applikation» decken die Aufgaben 2–8 ab; «Projektqualität»
+und «Domänenmodell» hängen an den Querschnittsabschnitten und am Abschluss weiter
+unten. Die Wegleitung konkretisiert sie (`guides/projektarbeit/wegleitung.md`,
+Abschnitte «Dokumentation» und «Applikation / Code»).
+
+**Konventionen und Qualitätssicherung** (Bewertungskriterium «Konventionen
+beachtet») – gilt für jeden Commit, nicht nur am Schluss:
+
+- `bin/rails test` und `bin/rubocop` (rubocop-rails-omakase) müssen grün sein;
+  keine `skip`, keine auskommentierten Tests.
+- Die CI (`.github/workflows/ci.yml`) fährt zusätzlich `bin/brakeman` und
+  `bin/bundler-audit` – beides muss ohne neue Befunde durchlaufen.
+- Rails-Namenskonventionen durchgehend: Generatoren statt Handarbeit, Modelle
+  im Singular, Controller im Plural, Tests nach der geprüften Klasse benannt
+  (`RatingTest`, `RatingsControllerTest`, `RatingPolicyTest`).
+- Sprache: Klassen- und Methodennamen englisch (Rails-Konvention), alles
+  Sichtbare – UI, Enum-Werte, Fehlermeldungen, Kommentare, Doku, Commits –
+  deutsch. Die Zuordnung hält das Glossar im Projektantrag fest (Abschluss).
 
 Stack (fix): Ruby 4.0.6 (mise), Rails 8.1.3.1, SQLite3, Propshaft, Minitest,
 Pundit, PaperTrail. Sprache in UI, Docs und Commits: Deutsch.
@@ -229,7 +249,7 @@ Umgesetzt wie geplant, mit zwei Ergänzungen:
 
 ---
 
-## Aufgabe 4: Benutzerverwaltung (Tag 3)
+## Aufgabe 4: Benutzerverwaltung (Tag 3) ✅ erledigt
 
 Ziel: Admin-Bereich mit Benutzerübersicht, Bearbeiten der Benutzerdetails,
 Rollen, Kontosperrung; erste Policy. Deckt `exercises/benutzerverwaltung.md`
@@ -238,7 +258,9 @@ Punkt 1–4 ab.
 - `bin/rails g pundit:install`; `ApplicationController` includes
   `Pundit::Authorization`, `def pundit_user = Current.user`,
   `rescue_from Pundit::NotAuthorizedError` → `render "errors/forbidden",
-  status: :forbidden` (Q2 verlangt 403, keine Umleitung).
+  status: :forbidden` (Q2 verlangt 403, keine Umleitung). Hier entsteht auch
+  die 404-Behandlung – Details im Querschnitt «Fehlerbehandlung und User
+  Feedback» weiter unten.
 - `namespace :admin do resources :users, only: [:index, :edit, :update, :destroy];
   patch "users/:id/lock", "users/:id/unlock" end`, `Admin::BaseController`
   (`before_action { authorize [:admin, :user] }` bzw. `verify_authorized`),
@@ -281,6 +303,31 @@ Punkt 1–4 ab.
 selbst herabstufen; bereits vergebene E-Mail → 422 mit Meldung und erhaltenen
 Eingaben. `user_policy_test.rb` prüft zusätzlich `permitted_attributes`.
 Commit.
+
+Umgesetzt wie geplant, mit drei Präzisierungen:
+
+- Statt `authorize [:admin, :user]` im `Admin::BaseController` autorisiert jede
+  Action einzeln (`authorize User` bzw. `authorize @user`) – so wie es die
+  Kursübung zeigt. Der Basiscontroller erzwingt dafür
+  `after_action :verify_authorized`; das globale `verify_authorized` für die
+  ganze Applikation folgt in Aufgabe 5.
+- Die vergebene E-Mail meldet der `shared/_errors`-Block statt
+  `flash.now[:alert]` – gleiche Darstellung wie in allen anderen Formularen der
+  Applikation.
+- Die 404-Behandlung (`rescue_from ActiveRecord::RecordNotFound`) und die Seiten
+  `app/views/errors/{forbidden,not_found}.html.erb` sind hier entstanden; der
+  Nachweis dazu liegt in `docs/fehlerbehandlung.md` (ab jetzt gepflegt, die
+  Q3-Konflikte kommen in Aufgabe 6 dazu).
+- Das Löschen eines Kontos hat einen eigenen Bestätigungsschritt bekommen
+  (`confirm_destroy`): Die Übersicht verlinkt nur (GET) auf eine Seite, welche
+  die Folgen benennt; gelöscht wird erst durch das Formular dort. Die erste
+  Stufe wirkt serverseitig, `data-turbo-confirm` kommt als zweites Netz dazu.
+- Dabei aufgefallen und behoben: `config/importmap.rb` und
+  `app/javascript/application.js` fehlten seit Aufgabe 0, die Importmap war leer
+  («imports»: {}) und die Applikation lud **kein** JavaScript. Turbo war damit
+  nie aktiv, obwohl README und Plan es voraussetzen (422-Antworten bei
+  Formularfehlern, `data-turbo-confirm`). Beide Dateien sind wiederhergestellt,
+  Turbo wird geladen; Stimulus bleibt vorerst ungenutzt.
 
 ---
 
@@ -490,6 +537,50 @@ Ziel: Q2, Q3, Q5 nachweisen; alle Tests grün, < 60 s; Nachweis in `docs/`.
 
 ---
 
+## Querschnitt: Fehlerbehandlung und User Feedback
+
+Eigenes Bewertungskriterium, umgesetzt verteilt über die Aufgaben 4–6 – hier
+zusammengezogen, damit nichts durchfällt. Die Wegleitung verlangt: ungültige
+Eingaben, fehlende Berechtigungen und konkurrierende Änderungen werden
+serverseitig behandelt und verständlich erklärt, Eingaben bleiben soweit möglich
+erhalten, die nächste mögliche Handlung ist erkennbar, erfolgreiche Aktionen
+werden bestätigt, technische Fehlermeldungen erscheinen nie ungefiltert.
+
+- **Verboten (403)**: `rescue_from Pundit::NotAuthorizedError` →
+  `render "errors/forbidden", status: :forbidden` (Aufgabe 4). Keine Umleitung,
+  keine ausgeblendeten Buttons als Ersatz (Q2).
+- **Nicht gefunden (404)**: `rescue_from ActiveRecord::RecordNotFound` →
+  `render "errors/not_found", status: :not_found` mit Weg zurück zur
+  Produktsuche. Betrifft gelöschte Bewertungen, gesperrte Produkte für Gäste
+  (`policy_scope`) und geratene IDs.
+- **Statische Fehlerseiten auf Deutsch**: `public/404.html`, `422.html`,
+  `500.html`, `400.html`, `406-unsupported-browser.html` sind noch die
+  englischen Rails-Vorlagen («The page you were looking for doesn't exist») –
+  übersetzen und optisch an das Layout angleichen. Sie greifen in Produktion
+  und wenn der Request den Controller gar nicht erreicht.
+- **Formularfehler**: immer `render … status: :unprocessable_entity` mit
+  `shared/_errors`; Eingaben bleiben im Formular stehen. Nie `redirect_to` nach
+  einem Validierungsfehler – dabei gingen die Eingaben verloren.
+- **Konflikte** (Q3, Aufgabe 6): Doppelbewertung → Weiterleitung auf die
+  eigene Bewertung mit vorbefüllten Werten; Produkt-Duplikat → 422 mit Link auf
+  das bestehende Produkt; veraltete `lock_version` → 422 mit aktuellen Werten
+  neben den eigenen Eingaben; bereits übernommene Meldung → Hinweis, wer sie
+  bearbeitet.
+- **Erfolg bestätigen**: jede schreibende Aktion endet mit `flash[:notice]` in
+  Alltagssprache (Muster aus `config/locales/de.yml`, Abschnitt `auth`/
+  `profiles`).
+- **Keine technischen Details**: keine Exception-Klassen, SQL-Fragmente oder
+  Stacktraces im UI; `config.consider_all_requests_local = false` in Produktion
+  prüfen.
+
+**Nachweis:** `docs/fehlerbehandlung.md` mit einer Tabelle je Fehlerfall:
+Auslöser → Statuscode → Meldung im Klartext → bleiben die Eingaben erhalten? →
+nächste mögliche Handlung → absichernder Test. Die Spalten entsprechen genau den
+Anforderungen der Wegleitung, damit sich das Kriterium Zeile für Zeile belegen
+lässt. Verlinkt aus `README.md` und `docs/projektantrag.md`.
+
+---
+
 ## Abschluss (vor Tag 5, gehört zu keiner Aufgabe)
 
 - `README.md` gemäss Wegleitung: Kurzbeschreibung, Stack mit Versionen,
@@ -501,6 +592,51 @@ Ziel: Q2, Q3, Q5 nachweisen; alle Tests grün, < 60 s; Nachweis in `docs/`.
 - `docs/projektantrag.md` 4.5 an Generator anpassen (siehe Kontext), Bilder
   (`docs/images/ERM.png`) einbinden.
 
+### Glossar der Fachbegriffe
+
+Bewertungskriterium «domänenspezifische Fachbegriffe verwendet» und Vorgabe der
+Wegleitung «einheitliche Verwendung von Fachbegriffen». Die Doku ist deutsch,
+die Klassennamen sind englisch (Rails-Konvention) – ohne Glossar wirkt das wie
+eine Inkonsistenz, mit Glossar ist es eine dokumentierte Entscheidung.
+
+Tabelle in `docs/projektantrag.md` (neuer Abschnitt nach 4.5): Fachbegriff →
+Klasse/Spalte im Code → Definition in einem Satz. Mindestens:
+
+| Fachbegriff | Code | Definition |
+| --- | --- | --- |
+| Produkt | `Product` | Katalogeintrag einer Handelskette |
+| Bewertung | `Rating` | 1–5 Sterne mit optionalem Kommentar |
+| Meldung | `Report` | Hinweis auf eine unpassende Bewertung |
+| Handelskette | `RetailChain` | Migros, Coop, Aldi, Lidl … |
+| Kategorie | `Category` | Produktgruppe |
+| Benutzer / Moderator / Administrator | `User#role` | die drei Rollen aus 4.3 |
+| Gesperrt (Produkt / Bewertung / Konto) | `locked_at` / `status` / `locked_at` | drei verschiedene Sperren – im Glossar auseinanderhalten |
+
+Anschliessend die Doku gegenlesen: dieselbe Sache überall gleich benennen
+(nicht einmal «Rezension», einmal «Bewertung»).
+
+### Abgabe zusammenstellen
+
+Gemäss Wegleitung, Abschnitt «Abgabe» – auf Moodle als `mahmud-bawan.zip` mit:
+
+- `mahmud-bawan_dokumentation.pdf` – **PDF-Export der Markdown-Doku**. Eigener
+  Arbeitsschritt: Mermaid-Diagramme (ERM 4.5) müssen als Bild im PDF landen,
+  nicht als Code-Block; Titelblatt mit Modulname, Datum (TT.MM.JJJJ), Vor- und
+  Nachname, Schulklasse steht bereits oben in `projektantrag.md` – Datum auf
+  den Abgabetag setzen. Vor dem Export Rechtschreibung prüfen.
+- `mahmud-bawan_praesentation.pdf` – separat, hier nicht geplant.
+- `mahmud-bawan_code.zip` – Source Code inklusive `README.md`, `test/` und
+  `docs/` samt Bildern; `storage/*.sqlite3`, `log/` und `tmp/` vorher entfernen.
+
+Letzter Durchgang vor dem Packen:
+
+- Doku-Abgleich: ERM, Rollen-Matrix und Locking-Konzept gegen den Code prüfen –
+  die Wegleitung verlangt, dass die Applikation der Dokumentation entspricht.
+  Abweichungen begründen statt stillschweigend lassen (Muster: die Nachträge zu
+  Aufgabe 1).
+- `bin/rails test`, `bin/rubocop`, `bin/brakeman` grün; frischer Clone nach
+  `README.md` aufgesetzt und gestartet.
+
 ## Kritische Dateien
 
 `Gemfile`, `config/routes.rb`, `app/controllers/application_controller.rb`,
@@ -509,5 +645,6 @@ Ziel: Q2, Q3, Q5 nachweisen; alle Tests grün, < 60 s; Nachweis in `docs/`.
 `app/controllers/{products,ratings,reports}_controller.rb`,
 `app/controllers/moderation/reports_controller.rb`,
 `app/controllers/admin/users_controller.rb`, `db/seeds.rb`,
+`app/views/errors/{forbidden,not_found}.html.erb`, `public/{404,422,500}.html`,
 `test/test_helper.rb`, `test/fixtures/*.yml`, `docs/projektantrag.md`,
-`docs/testing.md`, `README.md`.
+`docs/testing.md`, `docs/fehlerbehandlung.md`, `README.md`.
