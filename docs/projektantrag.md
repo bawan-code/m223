@@ -648,3 +648,45 @@ werden daneben genannt.
 | Datenbank          | SQLite3               |
 | Versionsverwaltung | Git                   |
 | Editor             | VSCode                |
+
+## 6. Umsetzung und Prüfung
+
+### Erreichter Stand
+
+Die 1. MVP-Iteration ist vollständig umgesetzt: **F1–F8** funktionieren, die
+Qualitätsattribute **Q1–Q5** sind durch automatisierte Tests beziehungsweise
+eine Messung nachgewiesen. Die Testsuite umfasst 230 Tests, läuft grün und in
+3,5 Sekunden; Einzelnachweise in [`testing.md`](testing.md), die Behandlung
+aller Fehler- und Konfliktfälle in [`fehlerbehandlung.md`](fehlerbehandlung.md),
+die Sicherheitsaspekte der Authentifizierung in
+[`sicherheit.md`](sicherheit.md).
+
+Nicht umgesetzt und bewusst der 2. und 3. Iteration zugeordnet: **F9** (Entdecken-
+Seite), **F10** (Merkliste), **F11** (Produktfotos) und **F12** (Verwaltung von
+Kategorien und Handelsketten durch die Administration).
+
+### Begründete Abweichungen vom Antrag
+
+| Abweichung | Begründung |
+| --- | --- |
+| `users.email` heisst `email_address`, zusätzliche Entität `SESSION` | Konvention des Rails-8-Authentifizierungsgenerators, der laut Kursvorgabe zu verwenden ist |
+| Keine Spalte `email_confirmation_token`, stattdessen `generates_token_for` | Signierter, ablaufender Token ohne Spalte; wird durch die Bestätigung selbst ungültig |
+| `products.created_by_id` ist nullable | Der Katalog gehört der Gemeinschaft: ein gelöschtes Konto darf seine Produkte samt fremder Bewertungen nicht mitnehmen (4.4) |
+| `categories` und `retail_chains` haben `name_normalized` mit Unique-Index | Der Index auf `name` war schreibweise-abhängig, «Migros» und «MIGROS» konnten nebeneinander entstehen. SQLite kennt keinen Unicode-fähigen Vergleich ohne Gross-/Kleinschreibung |
+| Gesperrte Produkte liefern für Gäste und Benutzer **403** statt 404 | Einheitlich mit allen übrigen Berechtigungsprüfungen (Q2). Ein 404 würde die Existenz besser verbergen – der Katalog ist jedoch öffentlich, die Sperrung kein Geheimnis |
+| Die Trefferliste wird seitenweise ausgegeben (24 pro Seite) | Ohne Begrenzung verfehlte die Suche Q4 deutlich (95. Perzentil 2271 ms). Messung und Begründung in `testing.md` |
+| Drei Ablehnungen erscheinen als Klartext statt als 403-Seite | Gesperrtes Produkt, bereits gemeldete Bewertung, bereits übernommene Meldung sind Zustände, keine fehlenden Rechte. Screen 7 verlangt die Meldung ausdrücklich. Abgewiesen wird der Versuch trotzdem serverseitig |
+| Keine Browser-Dialoge für gefährliche Aktionen | Ein `window.confirm` ist nicht gestaltbar, nicht übersetzbar und fällt ohne JavaScript ersatzlos aus. Konto- und Bewertungslöschung haben stattdessen eine eigene Bestätigungsseite, die serverseitig wirkt |
+| Die Filterspalte klappt unterhalb von 1200 px zu | Sie belegte auf Tablets rund ein Viertel der Fläche; umgesetzt ohne JavaScript (Screen 1) |
+
+### Offene Punkte
+
+- Die statischen Fehlerseiten in `public/` (`404.html`, `422.html`, `500.html`)
+  sind noch die englischen Rails-Vorlagen. Sie greifen nur in Produktion, wenn
+  ein Request den Controller gar nicht erreicht; innerhalb der Applikation sind
+  alle Fehlerseiten deutsch.
+- Ein Glossar der Fachbegriffe (deutscher Begriff ↔ Klassenname) ist geplant,
+  damit die englischen Klassennamen als dokumentierte Entscheidung erkennbar
+  sind statt als Inkonsistenz.
+- Die Abgabe selbst – PDF-Export dieser Dokumentation und Foliensatz – steht
+  noch aus.

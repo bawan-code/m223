@@ -1,16 +1,29 @@
 class ProductsController < ApplicationController
+  # Ohne Begrenzung rendert die Liste bei 5'000 Produkten jede Karte einzeln –
+  # das kostete im Q4-Benchmark über zwei Sekunden, während die Abfrage selbst
+  # unter 100 ms bleibt. Die Seitengrösse hält die Antwortzeit unabhängig von
+  # der Katalogrösse.
+  PER_PAGE = 24
+
   allow_unauthenticated_access only: %i[ index show ]
   before_action :set_product, only: %i[ show edit update lock unlock ]
   before_action :load_stammdaten, only: %i[ new create edit update ]
 
   # F2: suchen und filtern (Screen 1)
   def index
-    @products = policy_scope(Product)
-                  .search(params[:q])
-                  .in_category(params[:category_id])
-                  .from_chain(params[:retail_chain_id])
-                  .includes(:category, :retail_chain)
-                  .sorted
+    matches = policy_scope(Product)
+                .search(params[:q])
+                .in_category(params[:category_id])
+                .from_chain(params[:retail_chain_id])
+
+    @total = matches.count
+    @page = [ params[:page].to_i, 1 ].max
+    @pages = [ (@total / PER_PAGE.to_f).ceil, 1 ].max
+    @products = matches.includes(:category, :retail_chain)
+                       .sorted
+                       .limit(PER_PAGE)
+                       .offset((@page - 1) * PER_PAGE)
+
     load_stammdaten
   end
 

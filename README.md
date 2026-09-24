@@ -11,6 +11,7 @@ Screens, Locking-Konzept) liegt unter [`docs/`](docs/):
 - [`docs/projektplan.md`](docs/projektplan.md) – Umsetzungsplan nach Aufgaben 1–8
 - [`docs/sicherheit.md`](docs/sicherheit.md) – Sicherheitsaspekte der Authentifizierung
 - [`docs/fehlerbehandlung.md`](docs/fehlerbehandlung.md) – Fehlerfälle, Meldungen und User Feedback
+- [`docs/testing.md`](docs/testing.md) – welche Anforderung welcher Test prüft, mit Ergebnissen
 
 ## Technologie-Stack
 

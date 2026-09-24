@@ -549,7 +549,7 @@ Umgesetzt wie geplant, mit drei Anmerkungen:
 
 ---
 
-## Aufgabe 8: Testing (Tag 4)
+## Aufgabe 8: Testing (Tag 4) ✅ erledigt
 
 Ziel: Q2, Q3, Q5 nachweisen; alle Tests grün, < 60 s; Nachweis in `docs/`.
 
@@ -592,6 +592,20 @@ Ziel: Q2, Q3, Q5 nachweisen; alle Tests grün, < 60 s; Nachweis in `docs/`.
   `docs/testing.md`.
 
 **Verifikation:** `bin/rails test` grün, Laufzeit < 60 s; keine `skip`.
+
+Ergebnis: 230 Tests, 949 Assertions, 0 Fehler, 0 `skip`, Laufzeit 3,5 s.
+Nachweis in `docs/testing.md`, Abschnitt «6. Umsetzung und Prüfung» im
+Projektantrag ergänzt. Zwei Befunde aus dieser Aufgabe:
+
+- **Q4 war zunächst verfehlt** (95. Perzentil 2271 ms statt höchstens 2000 ms).
+  Die Einzelmessung zeigte, dass nicht die Suche langsam war (46–79 ms),
+  sondern das Rendern aller 5020 Trefferkarten (732 ms). Behoben mit
+  `ProductsController::PER_PAGE = 24` und einer Blätterleiste – danach
+  223 ms im 95. Perzentil. Ein Test stellt sicher, dass nie mehr als `PER_PAGE`
+  Karten gerendert werden, unabhängig von der Kataloggrösse.
+- Der Aussagekraft-Check (`RatingPolicy#destroy? → true`) liess fünf statt der
+  drei vorhergesagten Tests scheitern: zwei Rollen-Tests prüfen `destroy?` als
+  Teil ihrer Zusicherung mit. Die Regel ist breiter abgesichert als angenommen.
 
 ---
 

@@ -8,6 +8,20 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     @locked = products(:locked_product)
   end
 
+  # Schnell viele Produkte anlegen, ohne 25 Validierungsläufe abzuwarten.
+  def create_test_products(count)
+    now = Time.current
+    rows = count.times.map do |i|
+      name = "Testprodukt #{i}"
+      { name:, brand: "Testmarke",
+        name_normalized: Product.normalize(name), brand_normalized: "testmarke",
+        category_id: categories(:aufstriche).id, retail_chain_id: retail_chains(:migros).id,
+        created_by_id: users(:anna).id, created_at: now, updated_at: now }
+    end
+
+    Product.insert_all(rows)
+  end
+
   def valid_params(overrides = {})
     { product: VALID.merge(category_id: categories(:aufstriche).id,
                            retail_chain_id: retail_chains(:migros).id).merge(overrides) }
@@ -66,6 +80,39 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
 
     assert_select ".product-card", 0
     assert_select "a[href=?]", new_product_path
+  end
+
+  # Q4: Die Antwortzeit darf nicht mit dem Katalog wachsen
+
+  test "lange Trefferlisten werden seitenweise ausgegeben" do
+    create_test_products(ProductsController::PER_PAGE + 5)
+
+    get products_path
+
+    assert_select ".product-card", ProductsController::PER_PAGE,
+                  "es werden nie mehr als PER_PAGE Karten gerendert"
+    assert_select ".pagination a", text: "Weiter"
+    assert_select ".pagination a", text: "Zurück", count: 0
+
+    get products_path(page: 2)
+
+    assert_select ".product-card", Product.visible.count - ProductsController::PER_PAGE
+    assert_select ".pagination a", text: "Zurück"
+  end
+
+  test "die Seitenwahl behält Suche und Filter bei" do
+    create_test_products(ProductsController::PER_PAGE + 1)
+
+    get products_path(q: "testprodukt", retail_chain_id: retail_chains(:migros).id)
+
+    assert_select ".pagination a[href*=?]", "q=testprodukt"
+    assert_select ".pagination a[href*=?]", "retail_chain_id"
+  end
+
+  test "ohne zweite Seite erscheint keine Blätterleiste" do
+    get products_path
+
+    assert_select ".pagination", 0
   end
 
   # F5: Detailseite

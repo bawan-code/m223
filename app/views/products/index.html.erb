@@ -49,10 +49,31 @@
     </div>
 
     <% if @products.any? %>
-      <p class="hint"><%= t("products.result_count", count: @products.size) %></p>
+      <p class="hint">
+        <%= t("products.result_count", count: @total) %>
+        <% if @pages > 1 %>
+          · <%= t("products.page_of", page: @page, pages: @pages) %>
+        <% end %>
+      </p>
+
       <div class="product-list">
         <%= render partial: "products/product", collection: @products %>
       </div>
+
+      <% if @pages > 1 %>
+        <nav class="actions pagination">
+          <% if @page > 1 %>
+            <%= link_to t("products.previous_page"),
+                        products_path(request.query_parameters.merge(page: @page - 1)),
+                        class: "button button-secondary" %>
+          <% end %>
+          <% if @page < @pages %>
+            <%= link_to t("products.next_page"),
+                        products_path(request.query_parameters.merge(page: @page + 1)),
+                        class: "button button-secondary" %>
+          <% end %>
+        </nav>
+      <% end %>
     <% else %>
       <div class="card">
         <p><%= t("products.empty") %></p>
