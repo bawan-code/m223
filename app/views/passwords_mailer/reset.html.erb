@@ -2,7 +2,7 @@
 
 <p>
   Du kannst dein Passwort für Probiert hier zurücksetzen:<br>
-  <%= link_to edit_password_url(@user.password_reset_token), edit_password_url(@user.password_reset_token) %>
+  <%= link_to @reset_url, @reset_url %>
 </p>
 
 <p>Der Link ist <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %> gültig.</p>

@@ -19,6 +19,20 @@ Massnahme ist durch einen Test in `test/controllers/` abgesichert.
 | Fehlermeldungen             | Keine technischen Details im UI; Validierungsfehler in Alltagssprache (`config/locales/de.yml`).                                                                                                                                                                                                                                   | alle Controller-Tests prüfen die sichtbaren Meldungen                                       |
 
 Nicht umgesetzt (bewusst ausserhalb des Projektumfangs): Zwei-Faktor-
-Authentifizierung, E-Mail-Versand über SMTP (Links werden im Entwicklungs-Log
-ausgegeben – `Rails.logger.info` in `PasswordsMailer` bzw. `UserMailer`),
-HTTPS-Erzwingung (`config.force_ssl` gilt nur in Produktion).
+Authentifizierung, E-Mail-Versand über SMTP, HTTPS-Erzwingung
+(`config.force_ssl` gilt nur in Produktion).
+
+**Links in der Entwicklung:** Es wird nichts verschickt
+(`config.action_mailer.delivery_method = :test`). Beide Mailer schreiben ihren
+Link über `ApplicationMailer#log_link` als eigene Zeile ins Log:
+
+```sh
+grep "^--> " log/development.log | tail -2
+```
+
+Der Mail-Text selbst wird bewusst **nicht** mehr geloggt
+(`config.action_mailer.logger = nil`): er ist quoted-printable codiert und
+bricht lange Zeilen mit einem `=` am Zeilenende um – ein daraus kopierter Link
+enthält diese `=`, die Signatur stimmt dann nicht mehr und der Token gilt als
+ungültig. Die Mail selbst lässt sich unter
+<http://localhost:3000/rails/mailers> ansehen.

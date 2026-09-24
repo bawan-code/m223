@@ -37,6 +37,13 @@ Rails.application.configure do
   # Kein SMTP in der Entwicklung: Mails (inkl. Bestätigungslinks) landen im Log.
   config.action_mailer.delivery_method = :test
 
+  # Ohne diese Zeile schreibt Action Mailer die komplette Mail ins Log. Dieser
+  # Text ist quoted-printable codiert (lange Zeilen mit "=" umgebrochen); ein
+  # daraus kopierter Link ist kaputt. Die Mailer loggen die Links stattdessen
+  # selbst (ApplicationMailer#log_link), die Mail selbst lässt sich unter
+  # http://localhost:3000/rails/mailers ansehen.
+  config.action_mailer.logger = nil
+
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
 
