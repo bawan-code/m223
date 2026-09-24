@@ -1,0 +1,17 @@
+<% content_for :title, t("profiles.edit") %>
+
+<div class="card form-narrow">
+  <h1><%= t("profiles.edit") %></h1>
+
+  <%= render "shared/errors", record: @user %>
+
+  <%= form_with model: @user, url: profile_path, method: :patch do |form| %>
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true, autofocus: true, autocomplete: "name" %>
+
+    <div class="actions">
+      <%= form.submit t("forms.save") %>
+      <%= link_to t("forms.cancel"), profile_path, class: "button button-secondary" %>
+    </div>
+  <% end %>
+</div>

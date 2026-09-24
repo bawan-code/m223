@@ -1,8 +1,19 @@
 <% content_for :title, t("nav.profile") %>
 
-<div class="card">
+<div class="card form-narrow">
   <h1><%= t("nav.profile") %></h1>
+
   <p><strong><%= User.human_attribute_name(:name) %>:</strong> <%= @user.name %></p>
   <p><strong><%= User.human_attribute_name(:email_address) %>:</strong> <%= @user.email_address %></p>
   <p><strong><%= User.human_attribute_name(:role) %>:</strong> <%= @user.role_name %></p>
+
+  <% if @user.email_change_pending? %>
+    <p class="hint"><%= t("profiles.pending_email", email: @user.unconfirmed_email) %></p>
+  <% end %>
+
+  <div class="actions">
+    <%= link_to t("profiles.edit"), edit_profile_path, class: "button" %>
+    <%= link_to t("profiles.change_password"), edit_password_change_path, class: "button button-secondary" %>
+    <%= link_to t("profiles.change_email"), new_email_change_path, class: "button button-secondary" %>
+  </div>
 </div>

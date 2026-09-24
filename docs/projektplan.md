@@ -190,7 +190,7 @@ abgewiesen; Gast wird bei geschützter Route umgeleitet. Commit.
 
 ---
 
-## Aufgabe 3: Benutzerprofil (Tag 3)
+## Aufgabe 3: Benutzerprofil (Tag 3) ✅ erledigt
 
 Ziel: Profil ansehen, Name und Passwort ändern, E-Mail mit Bestätigung ändern.
 
@@ -217,11 +217,23 @@ nicht), Passwortänderung ohne korrektes aktuelles Passwort → 422,
 E-Mail-Wechsel setzt nur `unconfirmed_email`, Bestätigung übernimmt sie,
 abgelaufener/ungültiger Token → Meldung. Commit.
 
+Umgesetzt wie geplant, mit zwei Ergänzungen:
+
+- Beim Vormerken der neuen Adresse prüft `User#unconfirmed_email_available`
+  bereits, ob sie vergeben oder die eigene ist – sonst liefe der Benutzer erst
+  nach dem Klick auf den Bestätigungslink in den Fehler. Der
+  Gleichzeitigkeitsfall (jemand registriert die Adresse dazwischen) wird beim
+  Bestätigen abgefangen und in Alltagssprache gemeldet.
+- Eine erfolgreiche Passwortänderung beendet alle übrigen Sitzungen des Kontos;
+  die eigene bleibt bestehen (`docs/sicherheit.md`).
+
 ---
 
 ## Aufgabe 4: Benutzerverwaltung (Tag 3)
 
-Ziel: Admin-Bereich mit Benutzerübersicht, Rollen, Kontosperrung; erste Policy.
+Ziel: Admin-Bereich mit Benutzerübersicht, Bearbeiten der Benutzerdetails,
+Rollen, Kontosperrung; erste Policy. Deckt `exercises/benutzerverwaltung.md`
+Punkt 1–4 ab.
 
 - `bin/rails g pundit:install`; `ApplicationController` includes
   `Pundit::Authorization`, `def pundit_user = Current.user`,
@@ -234,6 +246,20 @@ Ziel: Admin-Bereich mit Benutzerübersicht, Rollen, Kontosperrung; erste Policy.
 - `UserPolicy`: `index?/edit?/update?/lock?/destroy?` nur `administrator?`;
   eigenes Konto nicht sperren, nicht löschen, nicht herabstufen
   (`record != user`). Rollenänderung nur über erlaubte `permitted_attributes`.
+- **Benutzerdetails bearbeiten** (`Admin::UsersController#edit/#update`,
+  Aufgabenstellung Punkt 2): ein Formular mit Name, E-Mail und Rolle.
+  - `permitted_attributes` in `UserPolicy`: `[:name, :email_address]`, dazu
+    `:role` nur, wenn `record != user` – so kann sich ein Administrator nicht
+    selbst herabstufen, und Rolle/Sperrstatus sind nirgends über
+    Massenzuweisung erreichbar.
+  - Die E-Mail wird hier **direkt** gesetzt, ohne Bestätigungslink – bewusst
+    anders als der Selbstbedienungsweg aus Aufgabe 3: der Administrator handelt
+    absichtlich, die Änderung landet im Aktivitätsprotokoll (Aufgabe 7), und ein
+    Bestätigungslink an eine fremde Adresse würde den Vorgang nur blockieren.
+    Ein hängiges `unconfirmed_email` wird dabei verworfen.
+  - Eindeutigkeit sichern Validierung und Unique-Index (`users.email_address`);
+    eine bereits vergebene Adresse → `flash.now[:alert]`, `render :edit,
+    status: :unprocessable_entity`, Eingaben bleiben stehen (Q3).
 - Konto sperren: `locked_at` setzen + `user.sessions.destroy_all` in einer
   Transaktion.
 - Konto löschen (4.4): `User.transaction do` Bewertungen löschen und für jedes
@@ -244,11 +270,17 @@ Ziel: Admin-Bereich mit Benutzerübersicht, Rollen, Kontosperrung; erste Policy.
   Katalog** und verlieren nur den Ersteller (`dependent: :nullify`, siehe
   Nachträge zu Aufgabe 1); die Aggregate der Produkte müssen daher auch hier
   stimmen.
-- Views gemäss Wegleitung: Tabelle Name, E-Mail, Rolle, Status, Aktionen.
+- Views gemäss Wegleitung: Übersicht als Tabelle (Name, E-Mail, Rolle, Status,
+  Aktionen), Bearbeitungsformular mit Name, E-Mail und Rollen-Auswahl; die
+  Rollen-Auswahl fehlt beim eigenen Konto.
 
 **Verifikation:** `admin/users_controller_test.rb`: Benutzer und Moderator →
-403; Admin sieht Liste, ändert Rolle, sperrt Konto (Session weg, Login
-abgewiesen), kann sich nicht selbst sperren. `user_policy_test.rb`. Commit.
+403 (auch auf `edit`/`update`, nicht nur auf `index`); Admin sieht Liste,
+ändert **Name und E-Mail** eines Benutzers, ändert die Rolle, sperrt Konto
+(Session weg, Login abgewiesen), kann sich nicht selbst sperren und nicht
+selbst herabstufen; bereits vergebene E-Mail → 422 mit Meldung und erhaltenen
+Eingaben. `user_policy_test.rb` prüft zusätzlich `permitted_attributes`.
+Commit.
 
 ---
 

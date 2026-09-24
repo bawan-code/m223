@@ -5,8 +5,13 @@ Rails.application.routes.draw do
   get  "signup", to: "registrations#new", as: :signup
   post "signup", to: "registrations#create"
 
-  # Eigenes Profil (Aufgabe 3); keine ID in der URL, immer Current.user
-  resource :profile, only: %i[ show ]
+  # Eigenes Profil (F1); keine ID in der URL – es gibt keine Route auf ein fremdes Profil
+  resource :profile, only: %i[ show edit update ]
+  resource :password_change, only: %i[ edit update ]
+  resource :email_change, only: %i[ new create ]
+  # Bestätigungslink aus der Mail: der signierte Token identifiziert das Konto,
+  # deshalb auch ohne Anmeldung erreichbar (wie beim Passwort-Reset)
+  get "email_confirmations/:token", to: "email_confirmations#show", as: :email_confirmation
 
   # Platzhalter bis zur Produktsuche (Aufgabe 6: root "products#index")
   root "pages#home"

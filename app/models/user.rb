@@ -24,6 +24,14 @@ class User < ApplicationRecord
   validates :email_address, presence: true, uniqueness: true,
             format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :unconfirmed_email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_nil: true
+  validate :unconfirmed_email_available
+
+  # Signierter, ablaufender Token für den Bestätigungslink – keine Token-Spalte nötig.
+  # Der Block macht den Token ungültig, sobald eine andere Adresse vorgemerkt oder
+  # die Bestätigung durchgeführt wurde; der Link taugt also nur ein einziges Mal.
+  generates_token_for :email_confirmation, expires_in: 1.day do
+    unconfirmed_email
+  end
   # allow_nil: beim Laden eines bestehenden Users ist password nil; beim Setzen muss es lang genug sein
   validates :password, length: { minimum: PASSWORD_MIN_LENGTH }, allow_nil: true
 
@@ -38,5 +46,25 @@ class User < ApplicationRecord
 
   def locked?
     locked_at.present?
+  end
+
+  # Eine E-Mail-Änderung ist vorgemerkt, aber noch nicht bestätigt
+  def email_change_pending?
+    unconfirmed_email.present?
+  end
+
+  private
+
+  # Schon beim Vormerken melden, wenn die Adresse vergeben ist – sonst läuft der
+  # Benutzer erst nach dem Klick auf den Bestätigungslink in den Fehler. Den
+  # Gleichzeitigkeitsfall fängt die Eindeutigkeitsprüfung beim Bestätigen ab.
+  def unconfirmed_email_available
+    return if unconfirmed_email.blank?
+
+    if unconfirmed_email == email_address
+      errors.add(:unconfirmed_email, :same_as_current)
+    elsif User.where.not(id: id).exists?(email_address: unconfirmed_email)
+      errors.add(:unconfirmed_email, :taken)
+    end
   end
 end

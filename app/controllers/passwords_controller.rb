@@ -20,7 +20,9 @@ class PasswordsController < ApplicationController
   end
 
   def update
-    if @user.update(params.permit(:password, :password_confirmation))
+    # .presence: ein leeres Passwort würde has_secure_password stillschweigend
+    # ignorieren; als nil greift die Pflichtfeld-Prüfung.
+    if @user.update(password: params[:password].presence, password_confirmation: params[:password_confirmation])
       @user.sessions.destroy_all
       redirect_to new_session_path, notice: t("auth.password_reset")
     else

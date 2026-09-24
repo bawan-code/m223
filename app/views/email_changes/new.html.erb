@@ -1,0 +1,20 @@
+<% content_for :title, t("profiles.change_email") %>
+
+<div class="card form-narrow">
+  <h1><%= t("profiles.change_email") %></h1>
+  <p class="hint"><%= t("profiles.email_change_hint") %></p>
+
+  <%= render "shared/errors", record: @user %>
+
+  <%# method: :post ist nötig, weil form_with für einen bestehenden Datensatz sonst
+      PATCH verwendet – die Route email_changes#create nimmt nur POST entgegen. %>
+  <%= form_with model: @user, url: email_change_path, method: :post do |form| %>
+    <%= form.label :unconfirmed_email %>
+    <%= form.email_field :unconfirmed_email, required: true, autofocus: true, autocomplete: "email" %>
+
+    <div class="actions">
+      <%= form.submit t("profiles.request_confirmation") %>
+      <%= link_to t("forms.cancel"), profile_path, class: "button button-secondary" %>
+    </div>
+  <% end %>
+</div>

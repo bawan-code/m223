@@ -1,0 +1,11 @@
+<p>Hallo <%= @user.name %></p>
+
+<p>
+  Bestätige hier deine neue E-Mail-Adresse für Probiert:<br>
+  <%= link_to @confirmation_url, @confirmation_url %>
+</p>
+
+<p>
+  Der Link ist einen Tag gültig. Bis zur Bestätigung gilt weiterhin deine
+  bisherige Adresse <%= @user.email_address %>.
+</p>

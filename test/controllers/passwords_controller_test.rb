@@ -34,6 +34,15 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 0, user.sessions.count
   end
 
+  test "ein leeres neues Passwort wird abgelehnt statt still ignoriert" do
+    user = users(:anna)
+
+    put password_path(user.password_reset_token), params: { password: "", password_confirmation: "" }
+
+    assert_response :unprocessable_entity
+    assert user.reload.authenticate("probiert-test-2026")
+  end
+
   test "ungültiger Token wird abgewiesen" do
     get edit_password_path("kein-gueltiger-token")
 

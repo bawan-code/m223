@@ -36,6 +36,23 @@ de:
     reset_link_invalid: "Der Link ist ungültig oder abgelaufen. Fordere einen neuen an."
     password_reset: "Dein Passwort wurde geändert. Melde dich mit dem neuen Passwort an."
     new_password: "Neues Passwort setzen"
+  profiles:
+    edit: "Profil bearbeiten"
+    updated: "Dein Profil wurde gespeichert."
+    change_password: "Passwort ändern"
+    current_password: "Aktuelles Passwort"
+    current_password_wrong: "Das aktuelle Passwort stimmt nicht."
+    password_changed: "Dein Passwort wurde geändert. Andere Geräte wurden abgemeldet."
+    other_sessions_hint: "Nach der Änderung bleibst du hier angemeldet; alle anderen Geräte werden abgemeldet."
+    change_email: "E-Mail ändern"
+    email_change_hint: "Wir schicken einen Bestätigungslink an die neue Adresse. Bis du ihn anklickst, gilt deine bisherige Adresse."
+    request_confirmation: "Bestätigungslink anfordern"
+    email_change_requested: "Wir haben einen Bestätigungslink an %{email} geschickt."
+    pending_email: "Bestätigung ausstehend für %{email}."
+    confirmation_subject: "Neue E-Mail-Adresse bestätigen – Probiert"
+    email_confirmed: "Deine E-Mail-Adresse lautet jetzt %{email}."
+    confirmation_invalid: "Der Bestätigungslink ist ungültig, abgelaufen oder bereits verwendet. Fordere einen neuen an."
+    email_taken: "Diese E-Mail-Adresse wurde inzwischen von jemand anderem registriert. Wähle eine andere."
 
   activerecord:
     models:
@@ -104,6 +121,11 @@ de:
           attributes:
             name_normalized:
               already_exists: "gibt es bei dieser Kette und Marke bereits"
+        user:
+          attributes:
+            unconfirmed_email:
+              taken: "wird bereits von einem anderen Konto verwendet"
+              same_as_current: "ist bereits deine aktuelle Adresse"
         rating:
           attributes:
             user_id:
