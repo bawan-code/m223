@@ -69,6 +69,11 @@ der Fall abgedeckt, in dem sich der Zustand zwischen Prüfung und Schreiben
 
 `public/400.html`, `404.html`, `422.html`, `500.html` und
 `406-unsupported-browser.html` greifen, wenn der Request den Controller gar
-nicht erreicht (Produktion). Sie sind noch die englischen Rails-Vorlagen und
-werden vor der Abgabe übersetzt – siehe Projektplan, Querschnitt
-«Fehlerbehandlung und User Feedback».
+nicht erreicht (Produktion). Wie die Fehlerseiten der Applikation sagen sie in
+Klartext, was passiert ist und was man als Nächstes tun kann (Q3), und führen
+zurück zur Produktsuche. Ausnahme ist die Seite für veraltete Browser: Der Link
+würde wieder auf sie selbst führen, sie bittet deshalb nur um ein Update.
+
+Die Seiten sind im Stil der Applikation gestaltet, kommen aber ohne
+Stylesheets, Schriften oder Bilder von aussen aus. Bei einem Fehler dieser Art
+ist nicht sicher, dass weitere Dateien noch ausgeliefert werden.

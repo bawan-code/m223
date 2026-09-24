@@ -655,8 +655,8 @@ werden daneben genannt.
 
 Die 1. MVP-Iteration ist vollständig umgesetzt: **F1–F8** funktionieren, die
 Qualitätsattribute **Q1–Q5** sind durch automatisierte Tests beziehungsweise
-eine Messung nachgewiesen. Die Testsuite umfasst 230 Tests, läuft grün und in
-3,5 Sekunden; Einzelnachweise in [`testing.md`](testing.md), die Behandlung
+eine Messung nachgewiesen. Die Testsuite umfasst 234 Tests, läuft grün und in
+3,4 Sekunden; Einzelnachweise in [`testing.md`](testing.md), die Behandlung
 aller Fehler- und Konfliktfälle in [`fehlerbehandlung.md`](fehlerbehandlung.md),
 die Sicherheitsaspekte der Authentifizierung in
 [`sicherheit.md`](sicherheit.md).
@@ -674,19 +674,44 @@ Kategorien und Handelsketten durch die Administration).
 | `products.created_by_id` ist nullable | Der Katalog gehört der Gemeinschaft: ein gelöschtes Konto darf seine Produkte samt fremder Bewertungen nicht mitnehmen (4.4) |
 | `categories` und `retail_chains` haben `name_normalized` mit Unique-Index | Der Index auf `name` war schreibweise-abhängig, «Migros» und «MIGROS» konnten nebeneinander entstehen. SQLite kennt keinen Unicode-fähigen Vergleich ohne Gross-/Kleinschreibung |
 | Gesperrte Produkte liefern für Gäste und Benutzer **403** statt 404 | Einheitlich mit allen übrigen Berechtigungsprüfungen (Q2). Ein 404 würde die Existenz besser verbergen – der Katalog ist jedoch öffentlich, die Sperrung kein Geheimnis |
-| Die Trefferliste wird seitenweise ausgegeben (24 pro Seite) | Ohne Begrenzung verfehlte die Suche Q4 deutlich (95. Perzentil 2271 ms). Messung und Begründung in `testing.md` |
+| Die Trefferliste wird seitenweise ausgegeben (12 pro Seite) | Ohne Begrenzung verfehlte die Suche Q4 deutlich (95. Perzentil 2271 ms). Messung und Begründung in `testing.md` |
 | Drei Ablehnungen erscheinen als Klartext statt als 403-Seite | Gesperrtes Produkt, bereits gemeldete Bewertung, bereits übernommene Meldung sind Zustände, keine fehlenden Rechte. Screen 7 verlangt die Meldung ausdrücklich. Abgewiesen wird der Versuch trotzdem serverseitig |
 | Keine Browser-Dialoge für gefährliche Aktionen | Ein `window.confirm` ist nicht gestaltbar, nicht übersetzbar und fällt ohne JavaScript ersatzlos aus. Konto- und Bewertungslöschung haben stattdessen eine eigene Bestätigungsseite, die serverseitig wirkt |
 | Die Filterspalte klappt unterhalb von 1200 px zu | Sie belegte auf Tablets rund ein Viertel der Fläche; umgesetzt ohne JavaScript (Screen 1) |
 
-### Offene Punkte
+## 7. Glossar
 
-- Die statischen Fehlerseiten in `public/` (`404.html`, `422.html`, `500.html`)
-  sind noch die englischen Rails-Vorlagen. Sie greifen nur in Produktion, wenn
-  ein Request den Controller gar nicht erreicht; innerhalb der Applikation sind
-  alle Fehlerseiten deutsch.
-- Ein Glossar der Fachbegriffe (deutscher Begriff ↔ Klassenname) ist geplant,
-  damit die englischen Klassennamen als dokumentierte Entscheidung erkennbar
-  sind statt als Inkonsistenz.
-- Die Abgabe selbst – PDF-Export dieser Dokumentation und Foliensatz – steht
-  noch aus.
+Oberfläche und Dokumentation sind deutsch, Klassen-, Methoden- und
+Spaltennamen englisch – so verlangen es die Rails-Konventionen, auf denen
+Generatoren, Assoziationen und Pundit aufbauen. Deutsch bleiben dagegen die
+Enum-Werte für Rollen, Status und Meldegründe, weil sie fachliche Zustände
+benennen. Die Tabelle ordnet jedem Fachbegriff seine Stelle im Code zu; in
+Oberfläche und Dokumentation steht jeweils nur der Fachbegriff.
+
+| Fachbegriff | Code | Bedeutung |
+| --- | --- | --- |
+| Produkt | `Product` | Eintrag im Katalog. Bezeichnung, Marke und Handelskette bestimmen es eindeutig, die Kategorie ordnet es ein |
+| Handelskette | `RetailChain` | Anbieter, bei dem das Produkt erhältlich ist: Migros, Coop, Aldi, Lidl … |
+| Kategorie | `Category` | Produktgruppe wie Milchprodukte oder Saucen |
+| Stammdaten | `Category`, `RetailChain` (`load_stammdaten`) | Kategorien und Handelsketten zusammen; ihre Verwaltung durch die Administration folgt mit F12 |
+| Duplikat | `Product#existing_duplicate`, `name_normalized`, `brand_normalized` | Produkt mit gleicher Bezeichnung, Marke und Handelskette, unabhängig von Gross-/Kleinschreibung und Leerzeichen. Der Unique-Index lässt kein zweites zu |
+| Bewertung | `Rating` | 1–5 Sterne mit optionalem Kommentar; pro Benutzer und Produkt höchstens eine |
+| Bewertung abgeben, ändern, zurückziehen | `Rating.submit!`, `Rating#change!`, `Rating#withdraw!` | Die Schreibvorgänge der Kernfunktion; jeder führt die Aggregate des Produkts in derselben Transaktion nach (Q1) |
+| Durchschnitt, Anzahl Bewertungen | `Product#average_rating`, `ratings_count`, `ratings_sum` | Aggregate über die aktiven Bewertungen eines Produkts |
+| Verteilung | `Product#stars_distribution` | Anzahl aktiver Bewertungen je Sternwert von 5 bis 1 |
+| Siegel «Probiert!» | `Product#certified?`, `Product::CERTIFIED_FROM` | Auszeichnung für Produkte mit durchschnittlich mindestens 4 Sternen, gerundet wie in der Anzeige |
+| Meldung | `Report` | Hinweis eines Benutzers, dass eine fremde Bewertung unpassend ist |
+| Meldegrund | `Report#reason`: `beleidigend`, `spam`, `kein_bezug`, `anderes` | Warum die Bewertung gemeldet wurde |
+| Meldungsstatus | `Report#status`: `offen`, `in_bearbeitung`, `freigegeben`, `gesperrt` | Stand der Meldung von der Erfassung bis zum Entscheid |
+| Übernehmen | `Report#claim!`, `Report#unclaim!` | Die Moderation reserviert eine offene Meldung für sich (pessimistische Sperre) oder gibt sie unentschieden zurück |
+| Freigeben, Sperren (Entscheid) | `Report#release!`, `Report#block!` | Freigeben lässt die Bewertung stehen; Sperren blendet sie aus und nimmt sie aus dem Durchschnitt |
+| Konto | `User` | Registrierter Zugang mit E-Mail-Adresse und Passwort |
+| Rolle: Benutzer, Moderator, Administrator | `User#role`: `benutzer`, `moderator`, `administrator` | Die drei Rollen aus 4.3, jede mit den Rechten der vorherigen |
+| Gast | `user == nil` in den Policies | Nicht angemeldeter Besucher; darf nur lesen |
+| Sitzung | `Session` | Eine Anmeldung auf einem Gerät; Abmelden löscht sie |
+| Gesperrt (Produkt) | `Product#locked_at`, `Product#locked?` | Von der Moderation gesperrt: kann nicht bewertet werden und ist für Gäste und Benutzer nicht sichtbar |
+| Gesperrt (Bewertung) | `Rating#status`: `aktiv`, `gesperrt` | Nach einer Meldung gesperrt: ausgeblendet und nicht im Durchschnitt |
+| Gesperrt (Konto) | `User#locked_at`, `User#locked?` | Von der Administration gesperrt: die Anmeldung wird abgewiesen |
+| Berechtigung | Policy (`app/policies`, Pundit) | Regel, wer was darf; verweigert wird serverseitig mit 403 (Q2) |
+| Bearbeitungskonflikt | `lock_version` (optimistische Sperre) | Zwei Personen bearbeiten dasselbe Produkt gleichzeitig; wer später speichert, sieht die aktuellen Werte neben den eigenen Eingaben |
+| Verlauf, Aktivitäten | `PaperTrail::Version`, `ActivityPolicy` | Protokoll der Änderungen an Produkten, Bewertungen und Meldungen mit Zeitpunkt und Person |

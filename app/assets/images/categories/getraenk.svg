@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#27316c"/><stop offset="1" stop-color="#0a0f2c"/></radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#34407a"/>
+  <g fill="#fff"><circle cx="11" cy="22" r=".8"/><circle cx="52" cy="12" r=".6"/><circle cx="56" cy="40" r=".8"/><circle cx="14" cy="47" r=".6"/><circle cx="24" cy="9" r=".5"/></g>
+  <defs><linearGradient id="drink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a494ff"/><stop offset="1" stop-color="#2fd0c0"/></linearGradient></defs>
+  <path d="M36 36 40 11l6-2" fill="none" stroke="#ff8a3d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M23.3 29h17.4L39 50q-7 3.5-14 0z" fill="url(#drink)"/>
+  <g fill="#fff"><circle cx="28" cy="36" r=".7"/><circle cx="34" cy="42" r=".9"/><circle cx="31" cy="47" r=".6"/><circle cx="36" cy="33" r=".5"/></g>
+  <path d="M22 20h20l-3 30q-7 3.5-14 0z" fill="#cfe6ff" fill-opacity=".1" stroke="#cfe6ff" stroke-width="1.2" stroke-linejoin="round"/>
+  <circle cx="23" cy="20" r="5" fill="#ffb347" stroke="#ff8a3d"/>
+  <path d="M23 15v10M18 20h10M19.5 16.5l7 7M26.5 16.5l-7 7" stroke="#ff8a3d" stroke-width=".7"/>
+  <g fill="none" stroke="#cfe6ff" stroke-opacity=".7"><circle cx="46" cy="24" r="1.6"/><circle cx="50" cy="31" r="1"/><circle cx="44" cy="16" r="1.1"/></g>
+</svg>

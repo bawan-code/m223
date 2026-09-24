@@ -8,9 +8,9 @@ bin/rails test        # gesamte Suite
 bin/rubocop           # Code-Style
 ```
 
-**Stand:** 230 Tests, 949 Assertions, 0 Fehler, 0 `skip`, Laufzeit **3,5 s**
-(Q5 verlangt unter 60 s). 28 Testdateien: 7 Modelle, 5 Policies,
-13 Controller, 2 Mailer, 1 Projektregel.
+**Stand:** 234 Tests, 964 Assertions, 0 Fehler, 0 `skip`, Laufzeit **3,4 s**
+(Q5 verlangt unter 60 s). 29 Testdateien: 7 Modelle, 5 Policies,
+13 Controller, 1 Helper, 2 Mailer, 1 Projektregel.
 
 Die Tests verwenden die separate Testdatenbank von Rails und Fixtures aus
 `test/fixtures` (die Seeds sind ausschliesslich Demo-Daten). `sign_in_as` in
@@ -106,7 +106,9 @@ woran es lag: Die Suche selbst brauchte 46 ms (4 Treffer) bis 79 ms
 732 ms – und unter zehn gleichzeitigen Anfragen entsprechend mehr. Der Aufwand
 lag also nicht in der Abfrage, sondern in der unbegrenzten Ausgabe.
 
-Behoben durch `ProductsController::PER_PAGE = 24` mit Blätterleiste: Die
+Behoben durch `ProductsController::PER_PAGE` mit Blätterleiste (gemessen
+mit 24 Karten pro Seite; seit dem 24.09.2026 sind es 12, was die Ausgabe
+nur weiter verkleinert): Die
 Antwortzeit hängt jetzt an der Seitengrösse statt an der Kataloggrösse.
 Abgesichert durch `ProductsControllerTest` «lange Trefferlisten werden
 seitenweise ausgegeben» – der Test prüft, dass nie mehr als `PER_PAGE` Karten
@@ -115,7 +117,7 @@ gerendert werden, unabhängig von der Anzahl Produkte.
 ### Q5 – Testbarkeit und Wartbarkeit
 
 Alle Modelle und alle Autorisierungsregeln der 1. Iteration sind abgedeckt, die
-Suite läuft grün in 3,5 s (Grenzwert 60 s) und enthält kein `skip`. Zusätzlich
+Suite läuft grün in 3,4 s (Grenzwert 60 s) und enthält kein `skip`. Zusätzlich
 laufen `bin/rubocop` ohne Beanstandung und `bin/brakeman` ohne neue Befunde;
 beides ist in der CI (`.github/workflows/ci.yml`) hinterlegt.
 

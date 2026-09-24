@@ -3,7 +3,7 @@ class ProductsController < ApplicationController
   # das kostete im Q4-Benchmark über zwei Sekunden, während die Abfrage selbst
   # unter 100 ms bleibt. Die Seitengrösse hält die Antwortzeit unabhängig von
   # der Katalogrösse.
-  PER_PAGE = 24
+  PER_PAGE = 12
 
   allow_unauthenticated_access only: %i[ index show ]
   before_action :set_product, only: %i[ show edit update lock unlock ]

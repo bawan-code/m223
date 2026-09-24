@@ -82,4 +82,18 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, hummus.ratings_count
     assert_equal 5, hummus.ratings_sum
   end
+
+  test "certified? ab 4 Sternen im Schnitt, gerundet wie in der Anzeige" do
+    product = Product.new(ratings_count: 2, ratings_sum: 8)
+    assert product.certified?
+
+    product.ratings_sum = 7
+    assert_not product.certified?, "3,5 reicht nicht"
+
+    product.assign_attributes(ratings_count: 25, ratings_sum: 99)
+    assert product.certified?, "3,96 wird als 4,0 angezeigt und trägt das Siegel"
+
+    product.assign_attributes(ratings_count: 0, ratings_sum: 0)
+    assert_not product.certified?
+  end
 end

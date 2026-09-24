@@ -278,4 +278,17 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 422, max.response.status
     assert_equal "Hummus von Moni", @product.reload.name, "die erste Änderung bleibt bestehen"
   end
+
+  test "ab 4 Sternen im Schnitt tragen Detailseite und Liste das Siegel «Probiert!»" do
+    get product_path(@product)
+    assert_select ".certificate", 0
+
+    @product.update_columns(ratings_count: 2, ratings_sum: 9)
+
+    get product_path(@product)
+    assert_select ".rating-average .certificate"
+
+    get products_path
+    assert_select ".product-title .certificate-badge", text: "Probiert!"
+  end
 end

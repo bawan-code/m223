@@ -40,7 +40,7 @@ beachtet») – gilt für jeden Commit, nicht nur am Schluss:
   (`RatingTest`, `RatingsControllerTest`, `RatingPolicyTest`).
 - Sprache: Klassen- und Methodennamen englisch (Rails-Konvention), alles
   Sichtbare – UI, Enum-Werte, Fehlermeldungen, Kommentare, Doku, Commits –
-  deutsch. Die Zuordnung hält das Glossar im Projektantrag fest (Abschluss).
+  deutsch. Die Zuordnung hält das Glossar im Projektantrag fest (Abschnitt 7).
 
 Stack (fix): Ruby 4.0.6 (mise), Rails 8.1.3.1, SQLite3, Propshaft, Minitest,
 Pundit, PaperTrail. Sprache in UI, Docs und Commits: Deutsch.
@@ -625,11 +625,10 @@ werden bestätigt, technische Fehlermeldungen erscheinen nie ungefiltert.
   `render "errors/not_found", status: :not_found` mit Weg zurück zur
   Produktsuche. Betrifft gelöschte Bewertungen, gesperrte Produkte für Gäste
   (`policy_scope`) und geratene IDs.
-- **Statische Fehlerseiten auf Deutsch**: `public/404.html`, `422.html`,
-  `500.html`, `400.html`, `406-unsupported-browser.html` sind noch die
-  englischen Rails-Vorlagen («The page you were looking for doesn't exist») –
-  übersetzen und optisch an das Layout angleichen. Sie greifen in Produktion
-  und wenn der Request den Controller gar nicht erreicht.
+- **Statische Fehlerseiten auf Deutsch** ✅: `public/404.html`, `422.html`,
+  `500.html`, `400.html`, `406-unsupported-browser.html` übersetzt und im Stil
+  des Layouts gestaltet, ohne Stylesheets oder Schriften von aussen. Sie
+  greifen in Produktion, wenn der Request den Controller gar nicht erreicht.
 - **Formularfehler**: immer `render … status: :unprocessable_entity` mit
   `shared/_errors`; Eingaben bleiben im Formular stehen. Nie `redirect_to` nach
   einem Validierungsfehler – dabei gingen die Eingaben verloren.
@@ -664,7 +663,12 @@ lässt. Verlinkt aus `README.md` und `docs/projektantrag.md`.
 - `docs/projektantrag.md` 4.5 an Generator anpassen (siehe Kontext), Bilder
   (`docs/images/ERM.png`) einbinden.
 
-### Glossar der Fachbegriffe
+### Glossar der Fachbegriffe ✅ erledigt
+
+Umgesetzt als Abschnitt 7 am Ende von `docs/projektantrag.md` – nicht nach 4.5,
+damit 4.6 und 4.7 samt allen Verweisen darauf ihre Nummern behalten. Stichprobe
+auf Synonyme (Rezension, Review, Nutzer, Händler) in Doku und Oberfläche ohne
+Befund.
 
 Bewertungskriterium «domänenspezifische Fachbegriffe verwendet» und Vorgabe der
 Wegleitung «einheitliche Verwendung von Fachbegriffen». Die Doku ist deutsch,

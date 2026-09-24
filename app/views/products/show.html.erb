@@ -30,27 +30,43 @@
   <div class="flash flash-notice"><%= t("products.locked_hint") %></div>
 <% end %>
 
-<div class="layout-two">
-  <section class="card">
+<div class="layout-two layout-equal">
+  <section class="card summary-card">
     <h2><%= t("products.summary") %></h2>
 
     <% if @product.ratings_count.positive? %>
-      <p class="rating-average">
-        <%= render "shared/stars", value: @product.average_rating %>
-        <strong><%= number_with_precision(@product.average_rating, precision: 1) %></strong>
-        <span class="muted"><%= t("products.rating_count", count: @product.ratings_count) %></span>
-      </p>
+      <% average = @product.average_rating %>
+      <div class="summary-body">
+        <div class="rating-average">
+          <%= render "products/certificate" if @product.certified? %>
+          <strong class="rating-score"><%= number_with_precision(average, precision: 1) %></strong>
+          <%# Zwei übereinanderliegende Sternreihen: die goldene wird auf den
+              exakten Anteil zugeschnitten, so zeigt 3,5 auch 3½ Sterne. %>
+          <span class="stars-precise" style="--fill: <%= (average / Rating::STARS.max * 100).round(1) %>%"
+                role="img" aria-label="<%= t("ratings.stars_of", value: number_with_precision(average, precision: 1), max: Rating::STARS.max) %>">
+            <span class="stars-precise-base" aria-hidden="true"><%= "★" * Rating::STARS.max %></span>
+            <span class="stars-precise-fill" aria-hidden="true"><%= "★" * Rating::STARS.max %></span>
+          </span>
+          <span class="muted"><%= t("products.rating_count", count: @product.ratings_count) %></span>
+        </div>
 
-      <table class="distribution">
-        <% @product.stars_distribution.each do |stars, count| %>
-          <tr>
-            <th><%= t("ratings.star_row", count: stars) %></th>
-            <td><%= count %></td>
-          </tr>
-        <% end %>
-      </table>
+        <table class="distribution">
+          <% @product.stars_distribution.each do |stars, count| %>
+            <tr>
+              <th scope="row"><%= t("ratings.star_row", count: stars) %></th>
+              <td class="distribution-bar" aria-hidden="true">
+                <span style="--share: <%= (count * 100.0 / @product.ratings_count).round(1) %>%"></span>
+              </td>
+              <td class="distribution-count"><%= count %></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
     <% else %>
-      <p class="muted"><%= t("ratings.none_yet") %></p>
+      <div class="summary-empty">
+        <span class="stars-precise-base" aria-hidden="true"><%= "★" * Rating::STARS.max %></span>
+        <p class="muted"><%= t("ratings.none_yet") %></p>
+      </div>
     <% end %>
   </section>
 

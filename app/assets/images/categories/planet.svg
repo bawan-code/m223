@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#27316c"/><stop offset="1" stop-color="#0a0f2c"/></radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#34407a"/>
+  <g fill="#fff"><circle cx="11" cy="22" r=".8"/><circle cx="52" cy="12" r=".6"/><circle cx="56" cy="40" r=".8"/><circle cx="14" cy="47" r=".6"/><circle cx="24" cy="9" r=".5"/></g>
+  <defs><radialGradient id="p" cx="35%" cy="30%"><stop offset="0" stop-color="#8fe0a0"/><stop offset=".6" stop-color="#3f9a5c"/><stop offset="1" stop-color="#1d4a33"/></radialGradient></defs>
+  <ellipse cx="32" cy="35" rx="22" ry="8" fill="none" stroke="#a494ff" stroke-opacity=".5" stroke-dasharray="2 3" transform="rotate(-15 32 35)"/>
+  <circle cx="32" cy="35" r="13" fill="url(#p)"/>
+  <path d="M24 31q4-3 7 0t6 2M27 41q5 2 9-1" fill="none" stroke="#2fd0c0" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+  <path d="M32 16l-3.5 7h7z" fill="#2f6f4e"/>
+  <circle cx="52" cy="28" r="3.5" fill="#c9c2b0"/>
+</svg>

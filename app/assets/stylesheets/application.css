@@ -1,24 +1,33 @@
 /*
- * Basis-Styles für Probiert. Bewusst schlicht: Desktop-Browser, ein
- * Spaltenraster, Kopfzeile gemäss Fat-Marker-Sketches (docs/projektantrag.md 4.7).
+ * Styles für Probiert. Raster und Kopfzeile gemäss Fat-Marker-Sketches
+ * (docs/projektantrag.md 4.7). Gestaltung angelehnt an das Spiel Outer Wilds:
+ * Sternenhimmel, Lagerfeuer-Orange der Hearthians, Violett und Blau der Nomai.
+ * Die rein dekorativen Teile stehen gesammelt am Ende der Datei.
  */
 
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap");
+
 :root {
-  --color-bg: #f7f6f2;
-  --color-surface: #ffffff;
-  --color-text: #222222;
-  --color-muted: #6b6b6b;
-  --color-border: #d9d6cf;
-  --color-primary: #2f6f4e;
-  --color-primary-contrast: #ffffff;
-  --color-star: #d99a00;
-  --color-success-bg: #e3f3e8;
-  --color-success-fg: #1f5d38;
-  --color-alert-bg: #fbe6e3;
-  --color-alert-fg: #8a2a1c;
-  --color-notice-bg: #fff6d6;
-  --color-notice-fg: #6b4e00;
-  --radius: 6px;
+  --color-bg: #060917;
+  --color-surface: rgba(14, 20, 46, 0.8);
+  --color-text: #ebe5d5;
+  --color-muted: #8e97c0;
+  --color-border: #2a3468;
+  --color-primary: #ff8a3d;
+  --color-primary-contrast: #1b0d03;
+  --color-star: #ffc247;
+  --color-nomai: #a494ff;
+  --color-glow: #72d5ff;
+  --color-success-bg: rgba(126, 226, 168, 0.1);
+  --color-success-fg: #8ff0b8;
+  --color-alert-bg: rgba(255, 107, 90, 0.12);
+  --color-alert-fg: #ffab9e;
+  --color-notice-bg: rgba(255, 194, 71, 0.1);
+  --color-notice-fg: #ffd27a;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, monospace;
+  --nomai-spiral: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='7 6 12 11'%3E%3Cpath d='M12 12a1 1 0 0 1 2 0a2 2 0 0 1-4 0a3 3 0 0 1 6 0a4 4 0 0 1-8 0a5 5 0 0 1 10 0' fill='none' stroke='%23a494ff' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --radius: 3px;
   --space: 1rem;
 }
 
@@ -26,11 +35,16 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.5;
   color: var(--color-text);
-  background: var(--color-bg);
+  background:
+    radial-gradient(ellipse 55% 45% at 92% -8%, rgba(255, 138, 61, 0.3), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 0% 100%, rgba(164, 148, 255, 0.2), transparent 70%),
+    radial-gradient(ellipse 35% 30% at 65% 90%, rgba(114, 213, 255, 0.08), transparent 70%),
+    linear-gradient(180deg, transparent, rgba(22, 30, 76, 0.55) 60%, transparent) var(--color-bg);
+  background-attachment: fixed;
 }
 
 a { color: var(--color-primary); }
@@ -177,16 +191,129 @@ th { font-weight: 600; }
 .product-card:hover { border-color: var(--color-primary); }
 .product-name { font-weight: 600; }
 
+/* Links die Illustration zur Kategorie, rechts der Text */
+.product-card { grid-template-columns: 3.5rem 1fr; align-items: center; column-gap: 0.9rem; }
+.product-card-body { display: grid; gap: 0.15rem; }
+.product-illustration { width: 3.5rem; height: 3.5rem; }
+
+/* Name und – ab 4 Sternen – das Siegel rechts daneben */
+.product-title { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; }
+
 /* Produktdetail (Screen 3) */
 /* Die Beschreibung steht direkt unter dem Produktnamen; begrenzte Zeilenlänge,
    damit sie auf breiten Bildschirmen lesbar bleibt. */
 .product-description { max-width: 48rem; }
 
-.rating-average { font-size: 1.1rem; }
+/* «Bewertung» und «Deine Bewertung» stehen nebeneinander und sind gleich hoch,
+   auch wenn das Formular rechts länger ist als die Übersicht links. */
+.layout-equal { align-items: stretch; }
+.layout-equal > .card { display: flex; flex-direction: column; }
 
-.distribution { width: auto; }
-.distribution th { font-weight: 400; padding-left: 0; }
-.distribution caption { text-align: left; font-weight: 600; padding: 0.5rem 0; }
+.summary-card h2 { margin-top: 0; }
+
+/* Übersicht: links die grosse Kennzahl, rechts die Verteilung als Balken.
+   Beide füllen die volle Kartenhöhe, damit kein leerer Rest unten bleibt. */
+.summary-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(9rem, auto) 1fr;
+  gap: calc(var(--space) * 1.5);
+  align-items: center;
+}
+
+.rating-average {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: calc(var(--space) * 1.25) var(--space);
+  border-radius: calc(var(--radius) * 2);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 138, 61, 0.28), transparent 65%),
+    linear-gradient(160deg, #1b2452, #0c1130);
+  border: 1px solid #34407a;
+  box-shadow: inset 0 0 32px rgba(164, 148, 255, 0.14);
+  text-align: center;
+}
+
+.rating-score {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-family: var(--font-mono);
+  background: linear-gradient(180deg, #fff1c9, var(--color-star) 45%, var(--color-primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 12px rgba(255, 138, 61, 0.45));
+  font-variant-numeric: tabular-nums;
+}
+
+.stars-precise {
+  position: relative;
+  display: inline-block;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+.stars-precise-base { color: var(--color-border); letter-spacing: 0.05em; }
+
+.stars-precise-fill {
+  position: absolute;
+  inset: 0;
+  width: var(--fill);
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--color-star);
+  text-shadow: 0 1px 2px rgba(217, 154, 0, 0.35);
+}
+
+.distribution { width: 100%; background: transparent; }
+.distribution th, .distribution td { border: 0; padding: 0.3rem 0; }
+.distribution th {
+  width: 1%;
+  padding-right: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--color-muted);
+}
+
+.distribution-bar span {
+  display: block;
+  height: 0.6rem;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, #ff6a2b, var(--color-star)) 0 0 / var(--share) 100% no-repeat,
+    rgba(255, 255, 255, 0.07);
+}
+
+.distribution-count {
+  width: 1%;
+  padding-left: 0.75rem !important;
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space);
+}
+
+.summary-empty .stars-precise-base { font-size: 2rem; }
+
+@media (max-width: 36rem) {
+  .summary-body { grid-template-columns: 1fr; }
+}
 
 .rating {
   padding: 0.5rem 0;
@@ -245,3 +372,427 @@ fieldset label { font-weight: 400; }
 @media (max-width: 60rem) {
   .layout-two { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   Outer Wilds
+   Nur Dekoration: Farben, Glanz und Bewegung. Raster und Abstände oben
+   bleiben unverändert, Pseudo-Elemente fangen keine Klicks ab.
+   ========================================================================== */
+
+html { color-scheme: dark; scrollbar-color: #34407a var(--color-bg); }
+::selection { background: rgba(255, 138, 61, 0.4); color: #fff; }
+
+/* Sternenhimmel über dem Nebel; die Sterne funkeln leicht. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20px 30px, #fff 0 1px, transparent 1.6px),
+    radial-gradient(circle at 140px 90px, #cfe6ff 0 1px, transparent 1.6px),
+    radial-gradient(circle at 90px 180px, #ffe3c2 0 1.3px, transparent 2px),
+    radial-gradient(circle at 170px 60px, #fff 0 0.8px, transparent 1.4px),
+    radial-gradient(circle at 280px 250px, #bfd4ff 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at 60px 320px, #fff 0 0.8px, transparent 1.4px);
+  background-size: 230px 230px, 310px 310px, 410px 410px;
+  animation: twinkle 6s ease-in-out infinite alternate;
+}
+
+/* Die Supernova: am Ende der 22-Minuten-Schleife wird es kurz gleissend hell. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 92% -8%, #fff, #d8f3ff 20%, rgba(114, 213, 255, 0.7) 45%, rgba(164, 148, 255, 0.3) 75%, transparent);
+  animation: supernova 1320s linear infinite;
+}
+
+.site-header {
+  position: relative;
+  background: rgba(6, 9, 23, 0.72);
+  border-bottom-color: rgba(164, 148, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Die Zeitschleife: der Streifen füllt sich in 22 Minuten, dann von vorn. */
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-star) 70%, #fff3c4 90%, var(--color-glow));
+  box-shadow: 0 0 10px rgba(255, 138, 61, 0.6);
+  animation: time-loop 1320s linear infinite;
+}
+
+/* Marke: eine kleine Sonne, um die ein Planet kreist. */
+.brand {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffe2bf;
+  text-shadow: 0 0 14px rgba(255, 138, 61, 0.6);
+}
+
+.brand::before {
+  content: "";
+  flex: none;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff1c9, #ffb347 35%, #ff6a2b 70%, #a3320f);
+  box-shadow: 0 0 14px 2px rgba(255, 138, 61, 0.65);
+}
+
+.brand::after {
+  content: "";
+  position: absolute;
+  left: calc(0.65rem - 3px);
+  top: calc(50% - 3px);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-glow);
+  box-shadow: 0 0 6px var(--color-glow);
+  animation: orbit 5s linear infinite;
+}
+
+h1, h2 { font-family: var(--font-mono); }
+h1 { color: #fff3dc; text-shadow: 0 0 28px rgba(255, 138, 61, 0.3); }
+
+h2 {
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+/* Nomai-Spirale vor jedem Abschnittstitel */
+h2::before {
+  content: "";
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.55em;
+  vertical-align: -0.45em;
+  background: var(--nomai-spiral) center / contain no-repeat;
+  filter: drop-shadow(0 0 4px rgba(164, 148, 255, 0.9));
+  animation: spin 24s linear infinite;
+}
+
+a:not([class]) {
+  color: var(--color-glow);
+  text-decoration-color: rgba(114, 213, 255, 0.4);
+  text-underline-offset: 3px;
+}
+
+a:not([class]):hover { color: #e9f8ff; text-shadow: 0 0 10px rgba(114, 213, 255, 0.8); }
+.user-name { color: var(--color-text); text-decoration: none; }
+.user-name:hover { color: #ffe2bf; }
+
+/* Karten als Einträge im Schiffslogbuch, mit leuchtenden HUD-Ecken */
+.card {
+  position: relative;
+  border-color: rgba(114, 213, 255, 0.14);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(6px);
+}
+
+.card::after {
+  --hud: linear-gradient(var(--color-primary), var(--color-primary));
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background:
+    var(--hud) left top / 14px 2px, var(--hud) left top / 2px 14px,
+    var(--hud) right top / 14px 2px, var(--hud) right top / 2px 14px,
+    var(--hud) left bottom / 14px 2px, var(--hud) left bottom / 2px 14px,
+    var(--hud) right bottom / 14px 2px, var(--hud) right bottom / 2px 14px;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+}
+
+.product-card { transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px rgba(255, 138, 61, 0.35), 0 10px 28px -10px rgba(255, 138, 61, 0.55);
+}
+
+.product-name { color: #fff3dc; font-weight: 700; }
+
+/* Die Illustrationen schweben leicht versetzt, beim Überfahren kippen sie. */
+.product-illustration {
+  filter: drop-shadow(0 0 8px rgba(114, 213, 255, 0.25));
+  animation: float 6s ease-in-out infinite alternate;
+  transition: transform 0.3s;
+}
+
+.product-card:nth-child(even) .product-illustration { animation-delay: -3s; }
+.product-card:hover .product-illustration { transform: rotate(-10deg) scale(1.1); }
+
+@keyframes float { to { translate: 0 -3px; rotate: 4deg; } }
+
+/* Knöpfe: Lagerfeuer-Orange; sekundär im Nomai-Violett */
+button, input[type="submit"], .button {
+  font-weight: 700;
+  border-color: #ffa05c;
+  background: linear-gradient(180deg, #ffa45e, #f2711f);
+  box-shadow: 0 6px 18px -8px rgba(255, 138, 61, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s, border-color 0.15s;
+}
+
+button:hover, input[type="submit"]:hover, .button:hover {
+  color: var(--color-primary-contrast);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -8px rgba(255, 138, 61, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.button-secondary {
+  background: rgba(164, 148, 255, 0.07);
+  border-color: rgba(164, 148, 255, 0.45);
+  color: #d4ccff;
+  box-shadow: none;
+}
+
+.button-secondary:hover {
+  color: #eef9ff;
+  border-color: var(--color-glow);
+  box-shadow: 0 0 16px -2px rgba(114, 213, 255, 0.55);
+}
+
+input[type="text"], input[type="email"], input[type="password"],
+input[type="search"], input[type="number"], select, textarea {
+  background: rgba(4, 7, 20, 0.65);
+  color: var(--color-text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+::placeholder { color: #69729c; }
+input[type="radio"], input[type="checkbox"] { accent-color: var(--color-primary); }
+
+:focus-visible { outline: 2px solid var(--color-glow); outline-offset: 2px; }
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-glow);
+  box-shadow: 0 0 0 3px rgba(114, 213, 255, 0.18), 0 0 18px -4px rgba(114, 213, 255, 0.6);
+}
+
+table { background: transparent; }
+
+thead th {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-nomai);
+}
+
+tbody tr { transition: background 0.15s; }
+tbody tr:hover { background: rgba(114, 213, 255, 0.05); }
+
+.stars { text-shadow: 0 0 8px rgba(255, 194, 71, 0.55); }
+.stars .muted { color: #323c70; text-shadow: none; }
+
+.flash, .errors {
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-left-width: 4px;
+  backdrop-filter: blur(6px);
+}
+
+@keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(1turn); } }
+@keyframes time-loop { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes supernova { 0%, 99.5% { opacity: 0; } 99.75% { opacity: 0.9; } 100% { opacity: 0; } }
+
+@keyframes orbit {
+  from { transform: rotate(0turn) translateX(1.05rem); }
+  to { transform: rotate(1turn) translateX(1.05rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation: none !important; transition: none !important; }
+}
+
+/* ==========================================================================
+   Hintergrund-Effekte: Planetenbahnen um die Sonne, Meteore und der Komet.
+   Nur sichtbar mit `fx-on` auf <html>;
+   geschaltet wird mit dem Knopf unten links (app/javascript/application.js).
+   ========================================================================== */
+
+.fx {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fx-on .fx { display: block; }
+
+/* Mit Effekten ziehen die Sterne in drei Ebenen verschieden schnell vorbei. */
+.fx-on body::before { animation: twinkle 6s ease-in-out infinite alternate, drift 120s linear infinite; }
+
+/* Umlaufbahnen: alle 12vmax ein Ring um die Sonne */
+.fx::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-radial-gradient(circle at 92% -8%, transparent 0 calc(12vmax - 1px), rgba(164, 148, 255, 0.13) calc(12vmax - 1px) 12vmax);
+}
+
+.fx i { position: absolute; border-radius: 50%; }
+
+.fx-sun {
+  left: calc(92% - 20vmax);
+  top: calc(-8% - 20vmax);
+  width: 40vmax;
+  height: 40vmax;
+  background: radial-gradient(closest-side, rgba(255, 170, 80, 0.4), transparent);
+  animation: pulse 5s ease-in-out infinite alternate;
+}
+
+/* Drehpunkt in der Sonne; der Planet sitzt im Abstand --r daneben. */
+.fx-orbit {
+  left: 92%;
+  top: -8%;
+  animation: spin var(--t) linear infinite reverse;
+}
+
+.fx-orbit::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--r) - var(--s) / 2);
+  top: calc(var(--s) / -2);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7), var(--c) 45%, rgba(0, 0, 0, 0.6));
+  box-shadow: 0 0 14px var(--c);
+}
+
+.fx-meteor {
+  left: 0;
+  top: var(--y);
+  width: 160px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffd9a8);
+  opacity: 0;
+  animation: meteor var(--t) linear infinite;
+}
+
+.fx-meteor::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px 3px var(--glow, #ffb347);
+}
+
+/* Der Komet (Interloper) fliegt in die Gegenrichtung. */
+.fx-comet {
+  --a: 160deg;
+  --glow: var(--color-glow);
+  left: auto;
+  right: 0;
+  width: 300px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #bfefff);
+}
+
+.fx-switch {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 1001;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fx-switch::before { content: "✦ " / ""; }
+
+.fx-switch[aria-pressed="false"] {
+  background: rgba(6, 9, 23, 0.85);
+  border-color: var(--color-border);
+  color: var(--color-muted);
+  box-shadow: none;
+}
+
+@keyframes drift { to { background-position: 0 460px, 0 620px, 0 820px; } }
+@keyframes pulse { to { transform: scale(1.15); } }
+
+@keyframes meteor {
+  from { opacity: 0; transform: rotate(var(--a, 18deg)) translateX(-30vw); }
+  4% { opacity: 1; }
+  30%, to { opacity: 0; transform: rotate(var(--a, 18deg)) translateX(130vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx, .fx-switch { display: none !important; }
+}
+
+/* ==========================================================================
+   Siegel «Probiert!» für Produkte ab Product::CERTIFIED_FROM Sternen im
+   Schnitt: gross als gestempeltes Siegel auf der Detailseite, klein als
+   glänzendes Abzeichen neben dem Namen in der Produktliste.
+   ========================================================================== */
+
+.certificate {
+  width: 7.5rem;
+  height: auto;
+  margin-bottom: 0.25rem;
+  rotate: -8deg;
+  filter: drop-shadow(0 6px 14px rgba(255, 138, 61, 0.45));
+  animation: stamp 0.7s cubic-bezier(0.2, 1.6, 0.4, 1) both, seal-glow 3s ease-in-out 0.7s infinite alternate;
+}
+
+.certificate-ring { font: 700 5.2px var(--font-mono); letter-spacing: 0.4px; fill: var(--color-star); }
+.certificate-text { font: 700 12px var(--font-mono); fill: #ffe2bf; }
+.certificate-stars { font-size: 7px; letter-spacing: 1px; fill: var(--color-star); }
+
+.certificate-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.1em 0.65em;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #2a1402;
+  background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, 0.85) 50%, transparent 60%) 0 0 / 250% 100% no-repeat,
+    linear-gradient(180deg, #ffd27a, #ff9a4d);
+  box-shadow: 0 0 12px rgba(255, 170, 60, 0.55), inset 0 0 0 1px rgba(255, 241, 201, 0.7);
+  animation: shine 3.5s ease-in-out infinite;
+}
+
+.certificate-badge::before { content: "✦" / ""; }
+
+@keyframes stamp { from { opacity: 0; scale: 1.8; } }
+@keyframes seal-glow { to { filter: drop-shadow(0 6px 22px rgba(255, 194, 71, 0.8)); } }
+@keyframes shine { from { background-position: 100% 0, 0 0; } 60%, to { background-position: 0 0, 0 0; } }

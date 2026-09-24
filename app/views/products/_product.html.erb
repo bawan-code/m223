@@ -1,16 +1,24 @@
 <%= link_to product, class: "product-card" do %>
-  <span class="product-name"><%= product.name %></span>
-  <span class="muted"><%= product.brand %> · <%= product.retail_chain.name %></span>
-  <span>
-    <%= render "shared/stars", value: product.average_rating %>
-    <% if product.ratings_count.positive? %>
-      <span class="muted"><%= number_with_precision(product.average_rating, precision: 1) %>
-        (<%= t("products.rating_count", count: product.ratings_count) %>)</span>
-    <% else %>
-      <span class="muted"><%= t("ratings.none") %></span>
+  <%= category_illustration(product.category) %>
+  <span class="product-card-body">
+    <span class="product-title">
+      <span class="product-name"><%= product.name %></span>
+      <% if product.certified? %>
+        <span class="certificate-badge" title="<%= t("products.certified_hint", stars: Product::CERTIFIED_FROM) %>"><%= t("products.certified") %></span>
+      <% end %>
+    </span>
+    <span class="muted"><%= product.brand %> · <%= product.retail_chain.name %></span>
+    <span>
+      <%= render "shared/stars", value: product.average_rating %>
+      <% if product.ratings_count.positive? %>
+        <span class="muted"><%= number_with_precision(product.average_rating, precision: 1) %>
+          (<%= t("products.rating_count", count: product.ratings_count) %>)</span>
+      <% else %>
+        <span class="muted"><%= t("ratings.none") %></span>
+      <% end %>
+    </span>
+    <% if product.locked? %>
+      <span class="muted"><%= t("products.locked_badge") %></span>
     <% end %>
   </span>
-  <% if product.locked? %>
-    <span class="muted"><%= t("products.locked_badge") %></span>
-  <% end %>
 <% end %>

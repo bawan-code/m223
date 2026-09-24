@@ -66,6 +66,14 @@ class Product < ApplicationRecord
     ratings_sum.fdiv(ratings_count)
   end
 
+  # Ab diesem Durchschnitt trägt ein Produkt das Siegel «Probiert!». Gerundet
+  # wie in der Anzeige, damit ein angezeigtes «4,0» nie ohne Siegel dasteht.
+  CERTIFIED_FROM = 4
+
+  def certified?
+    ratings_count.positive? && average_rating.round(1) >= CERTIFIED_FROM
+  end
+
   # Anzahl aktiver Bewertungen je Sternwert, 5..1, fehlende Werte als 0
   def stars_distribution
     counts = ratings.active.group(:stars).count

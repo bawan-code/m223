@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#27316c"/><stop offset="1" stop-color="#0a0f2c"/></radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#bg)" stroke="#34407a"/>
+  <g fill="#fff"><circle cx="11" cy="22" r=".8"/><circle cx="52" cy="12" r=".6"/><circle cx="56" cy="40" r=".8"/><circle cx="14" cy="47" r=".6"/><circle cx="24" cy="9" r=".5"/></g>
+  <g transform="rotate(35 32 32)">
+    <path d="M28 46q4 16 8 0z" fill="#ffc247"/>
+    <path d="M30 46q2 9 4 0z" fill="#fff1c9"/>
+    <path d="M26 36l-6 11 6-2zM38 36l6 11-6-2z" fill="#ff8a3d"/>
+    <rect x="26" y="22" width="12" height="25" rx="4" fill="#e0452c"/>
+    <path d="M29 23v-7h6v7z" fill="#e0452c"/>
+    <path d="M28.5 16.5 32 9l3.5 7.5z" fill="#ebe5d5"/>
+    <circle cx="32" cy="31" r="3.6" fill="#72d5ff" stroke="#ebe5d5" stroke-width="1.2"/>
+    <path d="M28 27v12" stroke="#fff" stroke-opacity=".35" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+</svg>

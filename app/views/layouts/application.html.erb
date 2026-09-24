@@ -52,5 +52,20 @@
       <%= render "shared/flash" %>
       <%= yield %>
     </main>
+
+    <%# Hintergrund-Effekte im Stil von Outer Wilds, rein dekorativ. %>
+    <div class="fx" aria-hidden="true">
+      <i class="fx-sun"></i>
+      <i class="fx-orbit" style="--r: 12vmax; --t: 24s; --s: 14px; --c: #ff9a4d"></i>
+      <i class="fx-orbit" style="--r: 24vmax; --t: 40s; --s: 20px; --c: #5fcf7a; animation-delay: -12s"></i>
+      <i class="fx-orbit" style="--r: 36vmax; --t: 60s; --s: 18px; --c: #8f7dff; animation-delay: -40s"></i>
+      <i class="fx-orbit" style="--r: 48vmax; --t: 85s; --s: 34px; --c: #2fd0c0; animation-delay: -20s"></i>
+      <i class="fx-orbit" style="--r: 60vmax; --t: 120s; --s: 26px; --c: #7d8aa0; animation-delay: -70s"></i>
+      <i class="fx-meteor" style="--y: 6%; --t: 9s; animation-delay: -2s"></i>
+      <i class="fx-meteor" style="--y: 32%; --t: 13s; animation-delay: -8s"></i>
+      <i class="fx-meteor" style="--y: 55%; --t: 17s; animation-delay: -4s"></i>
+      <i class="fx-meteor fx-comet" style="--y: 12%; --t: 26s; animation-delay: -6s"></i>
+    </div>
+    <button type="button" class="fx-switch" aria-pressed="false"><%= t("nav.effects") %></button>
   </body>
 </html>
