@@ -40,13 +40,7 @@
         <div class="rating-average">
           <%= render "products/certificate" if @product.certified? %>
           <strong class="rating-score"><%= number_with_precision(average, precision: 1) %></strong>
-          <%# Zwei übereinanderliegende Sternreihen: die goldene wird auf den
-              exakten Anteil zugeschnitten, so zeigt 3,5 auch 3½ Sterne. %>
-          <span class="stars-precise" style="--fill: <%= (average / Rating::STARS.max * 100).round(1) %>%"
-                role="img" aria-label="<%= t("ratings.stars_of", value: number_with_precision(average, precision: 1), max: Rating::STARS.max) %>">
-            <span class="stars-precise-base" aria-hidden="true"><%= "★" * Rating::STARS.max %></span>
-            <span class="stars-precise-fill" aria-hidden="true"><%= "★" * Rating::STARS.max %></span>
-          </span>
+          <%= render "shared/stars", value: average, precise: true %>
           <span class="muted"><%= t("products.rating_count", count: @product.ratings_count) %></span>
         </div>
 
@@ -64,7 +58,7 @@
       </div>
     <% else %>
       <div class="summary-empty">
-        <span class="stars-precise-base" aria-hidden="true"><%= "★" * Rating::STARS.max %></span>
+        <%= render "shared/stars", value: nil %>
         <p class="muted"><%= t("ratings.none_yet") %></p>
       </div>
     <% end %>

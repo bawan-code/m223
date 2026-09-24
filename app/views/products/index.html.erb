@@ -26,11 +26,15 @@
 
         <%= form.label :category_id, Product.human_attribute_name(:category) %>
         <%= form.select :category_id, @categories.map { |c| [ c.name, c.id ] },
-                        { include_blank: t("products.all") }, selected: params[:category_id] %>
+                        { include_blank: t("products.all"), selected: params[:category_id] } %>
 
         <%= form.label :retail_chain_id, Product.human_attribute_name(:retail_chain) %>
         <%= form.select :retail_chain_id, @retail_chains.map { |c| [ c.name, c.id ] },
-                        { include_blank: t("products.all") }, selected: params[:retail_chain_id] %>
+                        { include_blank: t("products.all"), selected: params[:retail_chain_id] } %>
+
+        <%= form.label :sort, t("products.sort") %>
+        <%= form.select :sort, Product::SORTINGS.map { |sorting| [ t("products.sortings.#{sorting}"), sorting ] },
+                        { include_blank: t("products.sortings.name"), selected: params[:sort] } %>
 
         <div class="actions">
           <%= form.submit t("products.apply_filter") %>

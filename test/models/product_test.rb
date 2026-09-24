@@ -96,4 +96,25 @@ class ProductTest < ActiveSupport::TestCase
     product.assign_attributes(ratings_count: 0, ratings_sum: 0)
     assert_not product.certified?
   end
+
+  test "sorted ordnet nach Bewertung, unbewertete Produkte stehen in beiden Richtungen am Schluss" do
+    hummus, pesto, unrated = products(:hummus), products(:pesto), products(:locked_product)
+    scope = Product.where(id: [ hummus, pesto, unrated ])
+
+    assert_equal [ hummus, pesto, unrated ], scope.sorted("beste").to_a
+    assert_equal [ pesto, hummus, unrated ], scope.sorted("schlechteste").to_a
+  end
+
+  test "sorted zieht bei gleichem Durchschnitt das Produkt mit mehr Bewertungen vor" do
+    hummus, pesto = products(:hummus), products(:pesto)
+    hummus.update_columns(ratings_count: 4, ratings_sum: 16)
+    pesto.update_columns(ratings_count: 1, ratings_sum: 4)
+
+    assert_equal [ hummus, pesto ], Product.where(id: [ hummus, pesto ]).sorted("beste").to_a
+  end
+
+  test "sorted ohne oder mit unbekannter Wahl sortiert alphabetisch" do
+    assert_equal Product.order(:name, :brand).to_a, Product.sorted.to_a
+    assert_equal Product.order(:name, :brand).to_a, Product.sorted("irgendwas").to_a
+  end
 end

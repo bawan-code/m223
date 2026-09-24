@@ -71,6 +71,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input.filter-toggle[checked]"
     assert_select "label.filter-summary", text: /hummus/
     assert_select "label.filter-summary", text: /Aufstriche/
+    assert_select "select[name=category_id] option[selected][value=?]", categories(:aufstriche).id.to_s
   end
 
   test "ohne Treffer erscheint der Hinweis mit dem Weg zum Erfassen" do
@@ -279,7 +280,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Hummus von Moni", @product.reload.name, "die erste Änderung bleibt bestehen"
   end
 
-  test "ab 4 Sternen im Schnitt tragen Detailseite und Liste das Siegel «Probiert!»" do
+  test "ab 4 Sternen im Schnitt tragen Detailseite und Liste das Siegel «Probiert»" do
     get product_path(@product)
     assert_select ".certificate", 0
 
@@ -289,6 +290,28 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".rating-average .certificate"
 
     get products_path
-    assert_select ".product-title .certificate-badge", text: "Probiert!"
+    assert_select ".product-title .certificate-badge", text: "Probiert"
+  end
+
+  test "die Übersicht füllt den letzten Stern anteilig" do
+    get product_path(@product)
+
+    assert_select ".rating-average .star", 5
+    assert_select ".rating-average .star-lit", 4
+    assert_select ".rating-average .star-lit[style='--lit: 50%']", 1, "3,5 Sterne: der vierte ist halb gefüllt"
+  end
+
+  test "die Liste lässt sich nach bester und nach schlechtester Bewertung sortieren" do
+    products(:pesto).update_columns(ratings_count: 1, ratings_sum: 5)
+    Product.create!(name: "Apfelmus", brand: "M-Classic", category: categories(:aufstriche),
+                    retail_chain: retail_chains(:migros), created_by: users(:anna))
+
+    get products_path(sort: "beste")
+    assert_equal [ "Pesto Verde", "Hummus Classic", "Apfelmus" ], css_select(".product-name").map { |name| name.text.strip }
+
+    get products_path(sort: "schlechteste")
+    assert_equal [ "Hummus Classic", "Pesto Verde", "Apfelmus" ], css_select(".product-name").map { |name| name.text.strip }
+    assert_select "select[name=sort] option[selected][value=schlechteste]"
+    assert_select "label.filter-summary", text: /Schlechteste Bewertung zuerst/
   end
 end

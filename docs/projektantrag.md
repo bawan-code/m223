@@ -655,8 +655,8 @@ werden daneben genannt.
 
 Die 1. MVP-Iteration ist vollständig umgesetzt: **F1–F8** funktionieren, die
 Qualitätsattribute **Q1–Q5** sind durch automatisierte Tests beziehungsweise
-eine Messung nachgewiesen. Die Testsuite umfasst 234 Tests, läuft grün und in
-3,4 Sekunden; Einzelnachweise in [`testing.md`](testing.md), die Behandlung
+eine Messung nachgewiesen. Die Testsuite umfasst 239 Tests, läuft grün und in
+4,0 Sekunden; Einzelnachweise in [`testing.md`](testing.md), die Behandlung
 aller Fehler- und Konfliktfälle in [`fehlerbehandlung.md`](fehlerbehandlung.md),
 die Sicherheitsaspekte der Authentifizierung in
 [`sicherheit.md`](sicherheit.md).
@@ -678,6 +678,7 @@ Kategorien und Handelsketten durch die Administration).
 | Drei Ablehnungen erscheinen als Klartext statt als 403-Seite | Gesperrtes Produkt, bereits gemeldete Bewertung, bereits übernommene Meldung sind Zustände, keine fehlenden Rechte. Screen 7 verlangt die Meldung ausdrücklich. Abgewiesen wird der Versuch trotzdem serverseitig |
 | Keine Browser-Dialoge für gefährliche Aktionen | Ein `window.confirm` ist nicht gestaltbar, nicht übersetzbar und fällt ohne JavaScript ersatzlos aus. Konto- und Bewertungslöschung haben stattdessen eine eigene Bestätigungsseite, die serverseitig wirkt |
 | Die Filterspalte klappt unterhalb von 1200 px zu | Sie belegte auf Tablets rund ein Viertel der Fläche; umgesetzt ohne JavaScript (Screen 1) |
+| Die Trefferliste lässt sich nach Bewertung sortieren, beste oder schlechteste zuerst | Ergänzung zu F2: Wer vergleicht, will die besten Produkte zuerst sehen – oder die, von denen andere abraten. Unbewertete Produkte stehen dabei am Schluss, bei gleichem Durchschnitt zuerst das Produkt mit mehr Bewertungen |
 
 ## 7. Glossar
 
@@ -699,7 +700,8 @@ Oberfläche und Dokumentation steht jeweils nur der Fachbegriff.
 | Bewertung abgeben, ändern, zurückziehen | `Rating.submit!`, `Rating#change!`, `Rating#withdraw!` | Die Schreibvorgänge der Kernfunktion; jeder führt die Aggregate des Produkts in derselben Transaktion nach (Q1) |
 | Durchschnitt, Anzahl Bewertungen | `Product#average_rating`, `ratings_count`, `ratings_sum` | Aggregate über die aktiven Bewertungen eines Produkts |
 | Verteilung | `Product#stars_distribution` | Anzahl aktiver Bewertungen je Sternwert von 5 bis 1 |
-| Siegel «Probiert!» | `Product#certified?`, `Product::CERTIFIED_FROM` | Auszeichnung für Produkte mit durchschnittlich mindestens 4 Sternen, gerundet wie in der Anzeige |
+| Siegel «Probiert» | `Product#certified?`, `Product::CERTIFIED_FROM` | Auszeichnung für Produkte mit durchschnittlich mindestens 4 Sternen, gerundet wie in der Anzeige |
+| Sortierung | `Product.sorted`, `Product::SORTINGS`: `beste`, `schlechteste` | Reihenfolge der Trefferliste: ohne Wahl alphabetisch, sonst nach Durchschnitt; unbewertete Produkte stehen am Schluss |
 | Meldung | `Report` | Hinweis eines Benutzers, dass eine fremde Bewertung unpassend ist |
 | Meldegrund | `Report#reason`: `beleidigend`, `spam`, `kein_bezug`, `anderes` | Warum die Bewertung gemeldet wurde |
 | Meldungsstatus | `Report#status`: `offen`, `in_bearbeitung`, `freigegeben`, `gesperrt` | Stand der Meldung von der Erfassung bis zum Entscheid |

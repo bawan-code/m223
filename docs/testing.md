@@ -8,7 +8,7 @@ bin/rails test        # gesamte Suite
 bin/rubocop           # Code-Style
 ```
 
-**Stand:** 234 Tests, 964 Assertions, 0 Fehler, 0 `skip`, Laufzeit **3,4 s**
+**Stand:** 239 Tests, 980 Assertions, 0 Fehler, 0 `skip`, Laufzeit **4,0 s**
 (Q5 verlangt unter 60 s). 29 Testdateien: 7 Modelle, 5 Policies,
 13 Controller, 1 Helper, 2 Mailer, 1 Projektregel.
 
@@ -23,7 +23,7 @@ in einem einzelnen Prozess sonst nicht herstellen lassen.
 | Nr. | Anforderung | Geprüft durch | Ergebnis |
 | --- | --- | --- | --- |
 | F1 | Registrieren, Anmelden, Abmelden, Sitzungen | `RegistrationsControllerTest`, `SessionsControllerTest`, `PasswordsControllerTest` | bestanden |
-| F2 | Produkte nach Bezeichnung, Marke, Kategorie und Kette suchen und filtern | `ProductsControllerTest` «Suche findet über Bezeichnung und Marke», «Filter nach Kategorie und Handelskette», `ProductTest` | bestanden |
+| F2 | Produkte nach Bezeichnung, Marke, Kategorie und Kette suchen und filtern, nach Bewertung sortieren | `ProductsControllerTest` «Suche findet über Bezeichnung und Marke», «Filter nach Kategorie und Handelskette», «die Liste lässt sich nach bester und nach schlechtester Bewertung sortieren», `ProductTest` | bestanden |
 | F3 | Bewerten mit 1–5 Sternen, genau eine Bewertung pro Benutzer und Produkt | `RatingsControllerTest`, `RatingTest` «Sterne müssen zwischen 1 und 5 liegen», «pro Benutzer und Produkt höchstens eine Bewertung» | bestanden |
 | F4 | Eigene Bewertung ändern und löschen, Aggregate werden nachgeführt | `RatingsControllerTest` «ändern/löschen korrigiert die Aggregate», `RatingTest` | bestanden |
 | F5 | Detailseite mit Durchschnitt, Anzahl, Verteilung und Kommentaren | `ProductsControllerTest` «die Detailseite zeigt Durchschnitt, Anzahl, Verteilung und Kommentare» | bestanden |
@@ -117,7 +117,7 @@ gerendert werden, unabhängig von der Anzahl Produkte.
 ### Q5 – Testbarkeit und Wartbarkeit
 
 Alle Modelle und alle Autorisierungsregeln der 1. Iteration sind abgedeckt, die
-Suite läuft grün in 3,4 s (Grenzwert 60 s) und enthält kein `skip`. Zusätzlich
+Suite läuft grün in 4,0 s (Grenzwert 60 s) und enthält kein `skip`. Zusätzlich
 laufen `bin/rubocop` ohne Beanstandung und `bin/brakeman` ohne neue Befunde;
 beides ist in der CI (`.github/workflows/ci.yml`) hinterlegt.
 

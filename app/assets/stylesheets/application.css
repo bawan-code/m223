@@ -27,6 +27,9 @@
   --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Space Mono", ui-monospace, monospace;
   --nomai-spiral: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='7 6 12 11'%3E%3Cpath d='M12 12a1 1 0 0 1 2 0a2 2 0 0 1-4 0a3 3 0 0 1 6 0a4 4 0 0 1-8 0a5 5 0 0 1 10 0' fill='none' stroke='%23a494ff' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --sparkle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3CradialGradient id='h'%3E%3Cstop offset='.2' stop-opacity='.45'/%3E%3Cstop offset='1' stop-opacity='0'/%3E%3C/radialGradient%3E%3Ccircle cx='12' cy='12' r='12' fill='url(%23h)'/%3E%3Cpath d='M12 1.5C13.4 8.4 15.6 10.6 22.5 12 15.6 13.4 13.4 15.6 12 22.5 10.6 15.6 8.4 13.4 1.5 12 8.4 10.6 10.6 8.4 12 1.5z'/%3E%3C/svg%3E");
+  --star-light: radial-gradient(circle, #fff 0 12%, #ffe7a3 26%, var(--color-star) 48%, var(--color-primary) 75%);
+  --star-dim: #2f3a70;
   --radius: 3px;
   --space: 1rem;
 }
@@ -148,7 +151,20 @@ th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var
 th { font-weight: 600; }
 
 .muted { color: var(--color-muted); }
-.stars { color: var(--color-star); letter-spacing: 0.05em; }
+/* Sterne als vierzackiges Funkeln (Maske --sparkle): leuchtend mit weissem
+   Kern und Halo, leer als dunkler, unbeleuchteter Stern. */
+.stars { display: inline-flex; gap: 0.1em; vertical-align: -0.15em; }
+
+.star {
+  width: 1.05em;
+  height: 1.05em;
+  background: var(--star-dim);
+  -webkit-mask: var(--sparkle) center / contain no-repeat;
+  mask: var(--sparkle) center / contain no-repeat;
+}
+
+/* Ein angebrochener Stern (--lit unter 100 %) ist rechts vom Anteil dunkel. */
+.star-lit { background: linear-gradient(90deg, transparent var(--lit, 100%), var(--star-dim) 0), var(--star-light); }
 
 .site-nav form { display: inline; }
 .user-name { white-space: nowrap; }
@@ -252,25 +268,7 @@ th { font-weight: 600; }
   font-variant-numeric: tabular-nums;
 }
 
-.stars-precise {
-  position: relative;
-  display: inline-block;
-  font-size: 1.5rem;
-  line-height: 1;
-  letter-spacing: 0.05em;
-}
-
-.stars-precise-base { color: var(--color-border); letter-spacing: 0.05em; }
-
-.stars-precise-fill {
-  position: absolute;
-  inset: 0;
-  width: var(--fill);
-  overflow: hidden;
-  white-space: nowrap;
-  color: var(--color-star);
-  text-shadow: 0 1px 2px rgba(217, 154, 0, 0.35);
-}
+.stars-large { font-size: 1.5rem; }
 
 .distribution { width: 100%; background: transparent; }
 .distribution th, .distribution td { border: 0; padding: 0.3rem 0; }
@@ -309,7 +307,7 @@ th { font-weight: 600; }
   padding: var(--space);
 }
 
-.summary-empty .stars-precise-base { font-size: 2rem; }
+.summary-empty .stars { font-size: 2rem; }
 
 @media (max-width: 36rem) {
   .summary-body { grid-template-columns: 1fr; }
@@ -608,8 +606,14 @@ thead th {
 tbody tr { transition: background 0.15s; }
 tbody tr:hover { background: rgba(114, 213, 255, 0.05); }
 
-.stars { text-shadow: 0 0 8px rgba(255, 194, 71, 0.55); }
-.stars .muted { color: #323c70; text-shadow: none; }
+/* Leuchtende Sterne funkeln leicht versetzt – nicht in der Produktliste, wo
+   zwölf Karten gleichzeitig zu unruhig wären. */
+.star-lit { animation: sparkle 2.8s ease-in-out infinite alternate; }
+.star-lit:nth-child(2n) { animation-delay: -1.2s; }
+.star-lit:nth-child(3n) { animation-delay: -2.1s; }
+.product-card .star-lit { animation: none; }
+
+@keyframes sparkle { to { opacity: 0.7; scale: 0.82; } }
 
 .flash, .errors {
   border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
@@ -756,9 +760,9 @@ tbody tr:hover { background: rgba(114, 213, 255, 0.05); }
 }
 
 /* ==========================================================================
-   Siegel «Probiert!» für Produkte ab Product::CERTIFIED_FROM Sternen im
-   Schnitt: gross als gestempeltes Siegel auf der Detailseite, klein als
-   glänzendes Abzeichen neben dem Namen in der Produktliste.
+   Siegel «Probiert» für Produkte ab Product::CERTIFIED_FROM Sternen im
+   Schnitt: gross als Missionsabzeichen der Outer Wilds Ventures auf der
+   Detailseite, klein als glänzendes Abzeichen neben dem Namen in der Liste.
    ========================================================================== */
 
 .certificate {
@@ -770,9 +774,13 @@ tbody tr:hover { background: rgba(114, 213, 255, 0.05); }
   animation: stamp 0.7s cubic-bezier(0.2, 1.6, 0.4, 1) both, seal-glow 3s ease-in-out 0.7s infinite alternate;
 }
 
-.certificate-ring { font: 700 5.2px var(--font-mono); letter-spacing: 0.4px; fill: var(--color-star); }
-.certificate-text { font: 700 12px var(--font-mono); fill: #ffe2bf; }
-.certificate-stars { font-size: 7px; letter-spacing: 1px; fill: var(--color-star); }
+.certificate-title { font: 700 10px var(--font-mono); letter-spacing: 2px; fill: #ffe2bf; }
+.certificate-ring { font: 700 5.4px var(--font-mono); letter-spacing: 0.6px; fill: var(--color-star); }
+.certificate-sparkle, .certificate-sun { transform-box: fill-box; transform-origin: center; }
+.certificate-sparkle { fill: #ffe7a3; animation: sparkle 2.8s ease-in-out infinite alternate; }
+.certificate-sparkle:nth-child(2n) { animation-delay: -1.2s; }
+.certificate-sparkle:nth-child(3n) { animation-delay: -2.1s; }
+.certificate-sun { animation: pulse 3s ease-in-out infinite alternate; }
 
 .certificate-badge {
   display: inline-flex;

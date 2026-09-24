@@ -34,7 +34,21 @@ class Product < ApplicationRecord
   # Filter der Produktsuche (Screen 1): ein leerer Filter schränkt nicht ein.
   scope :in_category, ->(id) { id.present? ? where(category_id: id) : all }
   scope :from_chain, ->(id) { id.present? ? where(retail_chain_id: id) : all }
-  scope :sorted, -> { order(:name, :brand) }
+  # Sortierung der Trefferliste (Screen 1); ohne Wahl alphabetisch. Nach
+  # Bewertung stehen unbewertete Produkte immer am Schluss – sie sind weder gut
+  # noch schlecht bewertet. Bei gleichem Durchschnitt kommt das Produkt mit mehr
+  # Bewertungen zuerst, weil sein Durchschnitt belastbarer ist.
+  SORTINGS = %w[ beste schlechteste ].freeze
+  UNRATED_LAST = Arel.sql("products.ratings_count = 0")
+  RATING_AVERAGE = Arel.sql("CAST(products.ratings_sum AS REAL) / NULLIF(products.ratings_count, 0)")
+
+  scope :sorted, ->(sorting = nil) {
+    case sorting
+    when "beste" then order(UNRATED_LAST, RATING_AVERAGE.desc, ratings_count: :desc, name: :asc, brand: :asc)
+    when "schlechteste" then order(UNRATED_LAST, RATING_AVERAGE.asc, ratings_count: :desc, name: :asc, brand: :asc)
+    else order(:name, :brand)
+    end
+  }
   scope :search, ->(query) {
     term = self.normalize(query)
     next all if term.blank?
@@ -66,7 +80,7 @@ class Product < ApplicationRecord
     ratings_sum.fdiv(ratings_count)
   end
 
-  # Ab diesem Durchschnitt trägt ein Produkt das Siegel «Probiert!». Gerundet
+  # Ab diesem Durchschnitt trägt ein Produkt das Siegel «Probiert». Gerundet
   # wie in der Anzeige, damit ein angezeigtes «4,0» nie ohne Siegel dasteht.
   CERTIFIED_FROM = 4
 

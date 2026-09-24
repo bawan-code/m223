@@ -18,14 +18,16 @@ module ProductsHelper
               class: "product-illustration", size: 56
   end
 
-  # Kurzfassung der gesetzten Filter für die zugeklappte Filterleiste – damit
-  # auch im eingeklappten Zustand erkennbar bleibt, wonach gefiltert wird.
+  # Kurzfassung der gesetzten Filter und der Sortierung für die zugeklappte
+  # Filterleiste – damit auch im eingeklappten Zustand erkennbar bleibt, wonach
+  # gefiltert und sortiert wird.
   # Arbeitet auf den bereits geladenen Sammlungen, ohne zusätzliche Abfrage.
   def active_filters(categories, retail_chains)
     [
       params[:q].presence,
       categories.find { |category| category.id.to_s == params[:category_id] }&.name,
-      retail_chains.find { |chain| chain.id.to_s == params[:retail_chain_id] }&.name
+      retail_chains.find { |chain| chain.id.to_s == params[:retail_chain_id] }&.name,
+      (t("products.sortings.#{params[:sort]}") if Product::SORTINGS.include?(params[:sort]))
     ].compact
   end
 end

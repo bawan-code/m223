@@ -1,4 +1,13 @@
-<%# Sterne-Anzeige; `value` darf nil sein (noch keine Bewertung) %>
-<span class="stars" aria-label="<%= value ? t("ratings.stars_of", value: number_with_precision(value, precision: 1), max: Rating::STARS.max) : t("ratings.none") %>">
-  <%= "★" * value.to_f.round %><span class="muted"><%= "☆" * (Rating::STARS.max - value.to_f.round) %></span>
-</span>
+<%# Sterne-Anzeige; `value` darf nil sein (noch keine Bewertung). Mit
+    `precise: true` wird der letzte Stern anteilig gefüllt (3,5 → 3½ Sterne)
+    und die Reihe gross dargestellt, sonst wird auf ganze Sterne gerundet. %>
+<% precise = local_assigns.fetch(:precise, false) %>
+<% shown = precise ? value.to_f : value.to_f.round %>
+<%= tag.span class: [ "stars", { "stars-large" => precise } ], role: "img",
+             aria: { label: value ? t("ratings.stars_of", value: number_with_precision(value, precision: 1), max: Rating::STARS.max) : t("ratings.none") } do %>
+  <% Rating::STARS.max.times do |i| %>
+    <% lit = (shown - i).clamp(0, 1) %>
+    <%= tag.span class: [ "star", { "star-lit" => lit.positive? } ],
+                 style: ("--lit: #{(lit * 100).round}%" if lit.between?(0.01, 0.99)) %>
+  <% end %>
+<% end %>

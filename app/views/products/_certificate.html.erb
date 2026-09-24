@@ -1,21 +1,66 @@
-<%# Siegel «Probiert!» ab Product::CERTIFIED_FROM Sternen im Schnitt (Detailseite) %>
-<svg class="certificate" viewBox="0 0 120 124" role="img" aria-label="<%= t("products.certified") %>">
+<%# Siegel «Probiert» ab Product::CERTIFIED_FROM Sternen im Schnitt (Detailseite):
+    ein Missionsabzeichen wie das der Outer Wilds Ventures. Die vier Sterne der
+    Konstellation stehen für die vier Sterne, ab denen es vergeben wird. %>
+<svg class="certificate" viewBox="0 0 120 120" role="img" aria-label="<%= t("products.certified") %>">
   <title><%= t("products.certified_hint", stars: Product::CERTIFIED_FROM) %></title>
   <defs>
-    <radialGradient id="certificate-gold" cx="35%" cy="30%" r="80%">
-      <stop offset="0" stop-color="#fff1c9"/>
-      <stop offset=".45" stop-color="#ffc247"/>
-      <stop offset="1" stop-color="#e0661f"/>
+    <radialGradient id="certificate-space" cx="50%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#2d2f7c"/>
+      <stop offset=".6" stop-color="#141a48"/>
+      <stop offset="1" stop-color="#0a0e2a"/>
     </radialGradient>
-    <path id="certificate-ring" d="M24 56a36 36 0 1 1 72 0a36 36 0 1 1-72 0"/>
+    <radialGradient id="certificate-glow">
+      <stop offset="0" stop-color="#fff1c9"/>
+      <stop offset=".35" stop-color="#ffc247"/>
+      <stop offset="1" stop-color="#ff8a3d" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="certificate-planet" cx="35%" cy="30%">
+      <stop offset="0" stop-color="#8fe0a0"/>
+      <stop offset=".6" stop-color="#3f9a5c"/>
+      <stop offset="1" stop-color="#1d4a33"/>
+    </radialGradient>
+    <clipPath id="certificate-field"><circle cx="60" cy="60" r="40"/></clipPath>
+    <path id="certificate-top" d="M15.5 60a44.5 44.5 0 0 1 89 0"/>
+    <path id="certificate-bottom" d="M9 60a51 51 0 0 0 102 0"/>
+    <path id="certificate-sparkle" d="M0-5.25C.7-1.8 1.8-.7 5.25 0 1.8.7.7 1.8 0 5.25-.7 1.8-1.8.7-5.25 0-1.8-.7-.7-1.8 0-5.25z"/>
   </defs>
-  <path d="M44 84 58 90 48 122 41 114 33 118z" fill="#c2402a"/>
-  <path d="M76 84 62 90 72 122 79 114 87 118z" fill="#9e3120"/>
-  <path d="M60.0 6.0 66.0 10.4 72.9 7.7 77.6 13.5 85.0 12.7 88.0 19.5 95.4 20.6 96.5 28.0 103.3 31.0 102.5 38.4 108.3 43.1 105.6 50.0 110.0 56.0 105.6 62.0 108.3 68.9 102.5 73.6 103.3 81.0 96.5 84.0 95.4 91.4 88.0 92.5 85.0 99.3 77.6 98.5 72.9 104.3 66.0 101.6 60.0 106.0 54.0 101.6 47.1 104.3 42.4 98.5 35.0 99.3 32.0 92.5 24.6 91.4 23.5 84.0 16.7 81.0 17.5 73.6 11.7 68.9 14.4 62.0 10.0 56.0 14.4 50.0 11.7 43.1 17.5 38.4 16.7 31.0 23.5 28.0 24.6 20.6 32.0 19.5 35.0 12.7 42.4 13.5 47.1 7.7 54.0 10.4z" fill="url(#certificate-gold)" stroke="#fff1c9" stroke-width=".8"/>
-  <circle cx="60" cy="56" r="42" fill="#10163a" stroke="#7a3a12" stroke-width="2"/>
-  <circle cx="60" cy="56" r="31" fill="none" stroke="#ffc247" stroke-width=".7" stroke-dasharray="1.5 2.5"/>
-  <text class="certificate-ring"><textPath href="#certificate-ring" textLength="222" lengthAdjust="spacing"><%= t("products.certified_ring") %></textPath></text>
-  <path d="M60 33l2.2 5 5.3.4-4 3.5 1.2 5.2-4.7-2.7-4.7 2.7 1.2-5.2-4-3.5 5.3-.4z" fill="#ffc247"/>
-  <text class="certificate-text" x="60" y="64" text-anchor="middle" textLength="54" lengthAdjust="spacingAndGlyphs"><%= t("products.certified") %></text>
-  <text class="certificate-stars" x="60" y="77" text-anchor="middle">★★★★</text>
+
+  <%# Aufnäher mit Steppnaht %>
+  <circle cx="60" cy="60" r="58" fill="#10163a" stroke="#ff8a3d" stroke-width="3"/>
+  <circle cx="60" cy="60" r="54.5" fill="none" stroke="#ffc247" stroke-width=".8" stroke-dasharray="2 2"/>
+
+  <%# Weltraum: Sonne, Timber Hearth mit Umlaufbahn, startendes Schiff %>
+  <g clip-path="url(#certificate-field)">
+    <circle cx="60" cy="60" r="40" fill="url(#certificate-space)"/>
+    <g fill="#fff">
+      <circle cx="30" cy="36" r=".7"/><circle cx="48" cy="28" r=".5"/><circle cx="74" cy="62" r=".6"/>
+      <circle cx="90" cy="66" r=".8"/><circle cx="70" cy="90" r=".6"/><circle cx="26" cy="64" r=".5"/>
+      <circle cx="84" cy="84" r=".7"/><circle cx="58" cy="70" r=".4"/>
+    </g>
+    <circle class="certificate-sun" cx="86" cy="34" r="17" fill="url(#certificate-glow)"/>
+    <circle cx="86" cy="34" r="4.5" fill="#fff1c9"/>
+    <ellipse cx="44" cy="84" rx="24" ry="7" fill="none" stroke="#a494ff" stroke-opacity=".6" stroke-dasharray="2.5 2.5" transform="rotate(-18 44 84)"/>
+    <circle cx="44" cy="84" r="12" fill="url(#certificate-planet)"/>
+    <path d="M37 81q3-2 6 0t6 1M39 89q4 2 8-1" fill="none" stroke="#2fd0c0" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+    <path d="M44 67.5l-2.5 5h5z" fill="#2f6f4e"/>
+    <path d="M56 78q7-3 12-9" fill="none" stroke="#ffc247" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
+    <g transform="translate(70 67) rotate(-50)">
+      <path d="M-5-1.2l-3 1.2 3 1.2z" fill="#ffc247"/>
+      <path d="M-5-2.5h5l4 2.5-4 2.5h-5z" fill="#ebe5d5"/>
+      <circle cx=".5" r="1" fill="#72d5ff"/>
+    </g>
+  </g>
+  <circle cx="60" cy="60" r="41.5" fill="none" stroke="#ffc247" stroke-width=".8" stroke-dasharray="2 2"/>
+
+  <%# Konstellation aus vier funkelnden Sternen %>
+  <path d="M30 54 41 45 53 50 64 40" fill="none" stroke="#cfe6ff" stroke-opacity=".5" stroke-width=".6"/>
+  <g>
+    <use class="certificate-sparkle" href="#certificate-sparkle" x="30" y="54"/>
+    <use class="certificate-sparkle" href="#certificate-sparkle" x="41" y="45"/>
+    <use class="certificate-sparkle" href="#certificate-sparkle" x="53" y="50"/>
+    <use class="certificate-sparkle" href="#certificate-sparkle" x="64" y="40"/>
+  </g>
+
+  <text class="certificate-title"><textPath href="#certificate-top" startOffset="50%" text-anchor="middle"><%= t("products.certified").upcase %></textPath></text>
+  <text class="certificate-ring"><textPath href="#certificate-bottom" startOffset="50%" text-anchor="middle"><%= t("products.certified_ring") %></textPath></text>
 </svg>

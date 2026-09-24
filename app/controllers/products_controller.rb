@@ -20,7 +20,7 @@ class ProductsController < ApplicationController
     @page = [ params[:page].to_i, 1 ].max
     @pages = [ (@total / PER_PAGE.to_f).ceil, 1 ].max
     @products = matches.includes(:category, :retail_chain)
-                       .sorted
+                       .sorted(params[:sort])
                        .limit(PER_PAGE)
                        .offset((@page - 1) * PER_PAGE)
 
