@@ -1,0 +1,35 @@
+<% content_for :title, t("moderation.decide_title") %>
+
+<div class="card form-narrow">
+  <h1><%= t("moderation.decide_title") %></h1>
+
+  <p>
+    <strong><%= Report.human_attribute_name(:reason) %>:</strong>
+    <%= Report.human_attribute_name("reasons.#{@report.reason}") %>
+  </p>
+  <p class="muted"><%= t("moderation.reported_by", name: @report.reporter.name) %></p>
+
+  <blockquote class="rating">
+    <p>
+      <%= render "shared/stars", value: @report.rating.stars %>
+      <strong><%= @report.rating.user.name %></strong>
+      <span class="muted"><%= link_to @report.rating.product.name, @report.rating.product %></span>
+    </p>
+    <p><%= @report.rating.comment %></p>
+  </blockquote>
+
+  <% if @report.decided? %>
+    <p><strong><%= t("moderation.decided_status", status: Report.human_attribute_name("statuses.#{@report.status}")) %></strong></p>
+    <%= link_to t("forms.back"), moderation_reports_path, class: "button button-secondary" %>
+  <% else %>
+    <div class="actions">
+      <%= button_to t("moderation.release"), release_moderation_report_path(@report), method: :patch,
+                    class: "button" %>
+      <%= button_to t("moderation.block"), block_moderation_report_path(@report), method: :patch,
+                    class: "button" %>
+      <%= button_to t("moderation.unclaim"), unclaim_moderation_report_path(@report), method: :patch,
+                    class: "button button-secondary" %>
+    </div>
+    <p class="hint"><%= t("moderation.decide_hint") %></p>
+  <% end %>
+</div>

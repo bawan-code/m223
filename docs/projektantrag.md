@@ -560,6 +560,17 @@ Jede Karte ist als Ganzes klickbar und führt zur Produktdetailseite. Bei null
 Treffern erscheint statt der Liste «Kein Produkt gefunden» mit derselben
 Schaltfläche «Produkt neu erfassen».
 
+Die Filterspalte steht wie skizziert links, sobald das Fenster breit genug ist
+(ab 1200 px). Darunter – also bereits auf grossen Tablets – wandert sie über
+die Liste und ist zugeklappt, weil sie sonst einen erheblichen Teil der Höhe
+belegt. Zugeklappt nennt sie die gesetzten Filter («Hummus · Aufstriche»),
+damit erkennbar bleibt, warum die Liste verkürzt ist; ist ein Filter gesetzt,
+startet sie offen. Umgesetzt mit einer versteckten Checkbox und einer
+CSS-Regel, die nur unterhalb des Umbruchpunkts greift – ohne eigenes
+JavaScript und mit der Tastatur bedienbar. (`<details>` wäre naheliegender,
+scheidet aber aus: dessen Inhalt hängt am `open`-Attribut, das sich per CSS
+nicht aufheben lässt, sodass die Leiste auf grossen Bildschirmen leer bliebe.)
+
 #### Screen 2: Registrieren und Anmelden (`@Registrieren`, `@Anmelden`)
 
 ![registrieren/abmelden](images/register_siginin.svg)

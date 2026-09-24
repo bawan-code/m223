@@ -1,0 +1,20 @@
+<% content_for :title, t("products.edit") %>
+
+<div class="card form-narrow">
+  <h1><%= t("products.edit") %></h1>
+
+  <% if @current %>
+    <%# Konflikt: die aktuellen Werte neben den eigenen Eingaben zeigen (Screen 9) %>
+    <table class="distribution">
+      <caption><%= t("products.stale_current") %></caption>
+      <tr><th><%= Product.human_attribute_name(:name) %></th><td><%= @current.name %></td></tr>
+      <tr><th><%= Product.human_attribute_name(:brand) %></th><td><%= @current.brand %></td></tr>
+      <tr><th><%= Product.human_attribute_name(:category) %></th><td><%= @current.category.name %></td></tr>
+      <tr><th><%= Product.human_attribute_name(:retail_chain) %></th><td><%= @current.retail_chain.name %></td></tr>
+      <tr><th><%= Product.human_attribute_name(:description) %></th><td><%= @current.description %></td></tr>
+    </table>
+  <% end %>
+
+  <%= render "products/form", product: @product, url: product_path(@product),
+             submit: t("forms.save"), cancel_url: product_path(@product) %>
+</div>

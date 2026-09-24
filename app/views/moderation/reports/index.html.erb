@@ -1,0 +1,30 @@
+<% content_for :title, t("moderation.title") %>
+
+<div class="card">
+  <h1><%= t("moderation.title") %></h1>
+
+  <% [ [ :open, @open_reports, false ], [ :mine, @my_reports, false ],
+       [ :others, @other_reports, true ], [ :decided, @decided_reports, true ] ].each do |key, reports, dimmed| %>
+    <h2><%= t("moderation.#{key}") %></h2>
+
+    <% if reports.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th><%= t("moderation.reported_at") %></th>
+            <th><%= Report.human_attribute_name(:reason) %></th>
+            <th><%= Report.human_attribute_name(:rating) %></th>
+            <th><%= Rating.human_attribute_name(:comment) %></th>
+            <th><%= t("moderation.moderator") %></th>
+            <th><%= t("admin.users.actions") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "moderation/reports/report", collection: reports, locals: { dimmed: } %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="muted"><%= t("moderation.empty") %></p>
+    <% end %>
+  <% end %>
+</div>

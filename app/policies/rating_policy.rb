@@ -10,6 +10,7 @@ class RatingPolicy < ApplicationPolicy
   def update? = owner?
   def edit? = update?
   def destroy? = owner?
+  def confirm_destroy? = destroy?
 
   def block? = moderator_or_admin?
   def unblock? = moderator_or_admin?

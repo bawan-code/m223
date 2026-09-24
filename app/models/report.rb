@@ -1,4 +1,15 @@
 class Report < ApplicationRecord
+  # Zwei Moderatoren haben gleichzeitig «Übernehmen» gedrückt; der Verlierer
+  # erfährt, wer schneller war.
+  class AlreadyClaimed < StandardError
+    attr_reader :moderator
+
+    def initialize(moderator)
+      @moderator = moderator
+      super("Meldung ist bereits übernommen")
+    end
+  end
+
   belongs_to :rating
   belongs_to :reporter, class_name: "User", inverse_of: :reports
   belongs_to :moderator, class_name: "User", optional: true, inverse_of: :moderated_reports
@@ -22,6 +33,38 @@ class Report < ApplicationRecord
 
   def decided?
     freigegeben? || gesperrt?
+  end
+
+  # Pessimistische Sperre (Projektantrag 4.4): Die Meldung wird innerhalb der
+  # Transaktion neu geladen und nur übernommen, wenn sie dann noch frei ist.
+  # Genau eine Moderatorin gewinnt, die andere bleibt auf der Liste.
+  def claim!(moderator)
+    self.class.transaction do
+      fresh = self.class.lock.find(id)
+      raise AlreadyClaimed, fresh.moderator if fresh.moderator_id.present?
+
+      fresh.update!(moderator:, claimed_at: Time.current, status: :in_bearbeitung)
+      reload
+    end
+  end
+
+  # Wieder freigeben, ohne zu entscheiden
+  def unclaim!
+    update!(moderator: nil, claimed_at: nil, status: :offen)
+  end
+
+  # Entscheidung: Bewertung bleibt stehen
+  def release!
+    update!(status: :freigegeben, decided_at: Time.current)
+  end
+
+  # Entscheidung: Bewertung wird gesperrt. Sperrung, Aggregate des Produkts und
+  # die Entscheidung selbst gehören in eine Transaktion.
+  def block!
+    self.class.transaction do
+      rating.block!
+      update!(status: :gesperrt, decided_at: Time.current)
+    end
   end
 
   private

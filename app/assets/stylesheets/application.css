@@ -138,3 +138,110 @@ th { font-weight: 600; }
 
 .site-nav form { display: inline; }
 .user-name { white-space: nowrap; }
+
+/* Produktsuche (Screen 1) */
+.layout-sidebar {
+  display: grid;
+  grid-template-columns: 16rem 1fr;
+  gap: var(--space);
+  align-items: start;
+}
+
+.layout-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space);
+  align-items: start;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space);
+}
+
+.product-list { display: grid; gap: 0.5rem; }
+
+.product-card {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.75rem var(--space);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.product-card:hover { border-color: var(--color-primary); }
+.product-name { font-weight: 600; }
+
+/* Produktdetail (Screen 3) */
+/* Die Beschreibung steht direkt unter dem Produktnamen; begrenzte Zeilenlänge,
+   damit sie auf breiten Bildschirmen lesbar bleibt. */
+.product-description { max-width: 48rem; }
+
+.rating-average { font-size: 1.1rem; }
+
+.distribution { width: auto; }
+.distribution th { font-weight: 400; padding-left: 0; }
+.distribution caption { text-align: left; font-weight: 600; padding: 0.5rem 0; }
+
+.rating {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+  margin: 0;
+}
+
+.rating:last-child { border-bottom: 0; }
+
+.stars-input { border: 0; padding: 0; margin: 0.75rem 0 0; }
+.stars-input legend { font-weight: 600; }
+.stars-input label { display: inline-block; margin-right: 0.75rem; font-weight: 400; }
+.stars-input input { width: auto; }
+
+fieldset { border: 0; padding: 0; margin: 0.75rem 0 0; }
+fieldset legend { font-weight: 600; }
+fieldset label { font-weight: 400; }
+
+/* Filterleiste (Screen 1)
+   Ab Desktop steht sie dauerhaft offen in der Seitenspalte. Darunter – also
+   schon auf grossen Tablets – wandert sie über die Liste und ist zugeklappt,
+   damit sie nicht die halbe Höhe belegt. Das Aufklappen macht <details>
+   selbst, ohne JavaScript. */
+.filter-title { margin-top: 0; }
+
+/* Die Checkbox ist nur Schalter, nie sichtbar – aber fokussierbar, damit die
+   Leiste auch mit der Tastatur auf- und zugeht. */
+.filter-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+/* Ab Desktop braucht es keine Umschaltfläche: der Filter steht offen. */
+.filter-summary { display: none; }
+
+@media (max-width: 75rem) {
+  .layout-sidebar { grid-template-columns: 1fr; }
+  .filter-title { display: none; }
+
+  .filter-summary {
+    display: block;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .filter-summary .muted { font-weight: 400; }
+  .filter-summary::before { content: "▸ "; color: var(--color-primary); }
+  .filter-toggle:checked ~ .filter-summary::before { content: "▾ "; }
+
+  .filter-toggle:not(:checked) ~ .filter-body { display: none; }
+  .filter-toggle:focus-visible ~ .filter-summary { outline: 2px solid var(--color-primary); }
+}
+
+@media (max-width: 60rem) {
+  .layout-two { grid-template-columns: 1fr; }
+}

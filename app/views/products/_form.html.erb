@@ -1,0 +1,37 @@
+<% if @existing %>
+  <div class="errors" role="alert">
+    <strong><%= t("products.duplicate") %></strong>
+    <p><%= link_to @existing.name + " · " + @existing.brand, @existing %></p>
+    <p class="hint"><%= t("products.duplicate_hint") %></p>
+  </div>
+<% end %>
+
+<%= render "shared/errors", record: product %>
+
+<%= form_with model: product, url: url do |form| %>
+  <%# Optimistisches Locking: ohne dieses Feld bliebe eine zwischenzeitliche
+      Änderung unbemerkt und würde überschrieben. %>
+  <% if product.persisted? %>
+    <%= form.hidden_field :lock_version %>
+  <% end %>
+
+  <%= form.label :name %>
+  <%= form.text_field :name, required: true, autofocus: true %>
+
+  <%= form.label :brand %>
+  <%= form.text_field :brand, required: true %>
+
+  <%= form.label :category_id %>
+  <%= form.select :category_id, @categories.map { |c| [ c.name, c.id ] }, include_blank: t("products.choose") %>
+
+  <%= form.label :retail_chain_id %>
+  <%= form.select :retail_chain_id, @retail_chains.map { |c| [ c.name, c.id ] }, include_blank: t("products.choose") %>
+
+  <%= form.label :description %>
+  <%= form.text_area :description, rows: 3, maxlength: 1000 %>
+
+  <div class="actions">
+    <%= form.submit submit %>
+    <%= link_to t("forms.cancel"), cancel_url, class: "button button-secondary" %>
+  </div>
+<% end %>

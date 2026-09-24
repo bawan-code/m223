@@ -1,0 +1,25 @@
+<% content_for :title, t("ratings.confirm_title") %>
+
+<div class="card form-narrow">
+  <h1><%= t("ratings.confirm_title") %></h1>
+
+  <div class="errors" role="alert">
+    <strong><%= t("ratings.confirm_warning") %></strong>
+  </div>
+
+  <p class="muted"><%= link_to @rating.product.name, @rating.product %></p>
+
+  <blockquote class="rating">
+    <p><%= render "shared/stars", value: @rating.stars %></p>
+    <% if @rating.comment.present? %>
+      <p><%= @rating.comment %></p>
+    <% end %>
+  </blockquote>
+
+  <p class="hint"><%= t("ratings.confirm_hint") %></p>
+
+  <div class="actions">
+    <%= button_to t("ratings.destroy_final"), rating_path(@rating), method: :delete, class: "button" %>
+    <%= link_to t("forms.cancel"), @rating.product, class: "button button-secondary" %>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<% content_for :title, t("ratings.edit_title") %>
+
+<div class="card form-narrow">
+  <h1><%= t("ratings.edit_title") %></h1>
+  <p class="muted"><%= link_to @rating.product.name, @rating.product %></p>
+
+  <%= render "ratings/form", rating: @rating, url: rating_path(@rating), submit: t("forms.save") %>
+
+  <div class="actions">
+    <%= link_to t("forms.cancel"), @rating.product, class: "button button-secondary" %>
+  </div>
+</div>

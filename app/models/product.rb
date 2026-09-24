@@ -22,6 +22,9 @@ class Product < ApplicationRecord
   }
 
   scope :visible, -> { where(locked_at: nil) }
+  # Filter der Produktsuche (Screen 1): ein leerer Filter schränkt nicht ein.
+  scope :in_category, ->(id) { id.present? ? where(category_id: id) : all }
+  scope :from_chain, ->(id) { id.present? ? where(retail_chain_id: id) : all }
   scope :sorted, -> { order(:name, :brand) }
   scope :search, ->(query) {
     term = self.normalize(query)
@@ -31,11 +34,17 @@ class Product < ApplicationRecord
     where("products.name_normalized LIKE :p OR products.brand_normalized LIKE :p", p: pattern)
   }
 
-  # Das bereits vorhandene Produkt mit derselben Identität (für den Duplikat-Hinweis)
+  # Das bereits vorhandene Produkt mit derselben Identität (für den
+  # Duplikat-Hinweis). Normalisiert selbst, damit die Suche auch dann greift,
+  # wenn die Validierung noch nicht gelaufen ist – etwa wenn der Unique-Index
+  # zugeschlagen hat, bevor das Modell geprüft wurde.
   def existing_duplicate
-    return nil if name_normalized.blank? || brand_normalized.blank? || retail_chain_id.nil?
+    name_key = self.class.normalize(name)
+    brand_key = self.class.normalize(brand)
+    return nil if name_key.blank? || brand_key.blank? || retail_chain_id.nil?
 
-    Product.where(name_normalized:, brand_normalized:, retail_chain_id:).where.not(id:).first
+    Product.where(name_normalized: name_key, brand_normalized: brand_key, retail_chain_id:)
+           .where.not(id:).first
   end
 
   def locked?

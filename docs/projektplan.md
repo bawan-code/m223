@@ -320,8 +320,11 @@ Umgesetzt wie geplant, mit drei Präzisierungen:
   Q3-Konflikte kommen in Aufgabe 6 dazu).
 - Das Löschen eines Kontos hat einen eigenen Bestätigungsschritt bekommen
   (`confirm_destroy`): Die Übersicht verlinkt nur (GET) auf eine Seite, welche
-  die Folgen benennt; gelöscht wird erst durch das Formular dort. Die erste
-  Stufe wirkt serverseitig, `data-turbo-confirm` kommt als zweites Netz dazu.
+  die Folgen benennt; gelöscht wird erst durch das Formular dort. Dasselbe
+  Muster gilt für das Löschen einer Bewertung (Aufgabe 6). Browser-Dialoge
+  (`data-turbo-confirm`) werden im ganzen Projekt nicht verwendet – sie sind
+  nicht gestaltbar, nicht übersetzbar und ohne JavaScript wirkungslos;
+  `NoBrowserDialogsTest` hält die Regel fest.
 - Dabei aufgefallen und behoben: `config/importmap.rb` und
   `app/javascript/application.js` fehlten seit Aufgabe 0, die Importmap war leer
   («imports»: {}) und die Applikation lud **kein** JavaScript. Turbo war damit
@@ -372,7 +375,7 @@ Umgesetzt wie geplant, mit zwei Ergänzungen:
 
 ---
 
-## Aufgabe 6: Kernfunktion (Tag 4)
+## Aufgabe 6: Kernfunktion (Tag 4) ✅ erledigt
 
 Ziel: F2–F8 gemäss Breadboards 2–8 und Screens 1, 3–9, mit Locking und
 Transaktionen aus 4.4.
@@ -479,6 +482,29 @@ Screens 1, 3–9 als ERB gemäss 4.7; Partials `products/_product`,
 - Meldung: zweiter `claim` → abgewiesen, `moderator_id` unverändert; fremder
   Moderator auf `release` → 403.
 - Manuell: zwei Browser (normal + Inkognito) für Demo. Commit.
+
+Umgesetzt wie geplant, mit vier Präzisierungen:
+
+- **Ablehnung durch eine Policy ist nicht immer ein 403.** Drei Fälle sind ein
+  Zustand, kein fehlendes Recht: ein zwischenzeitlich gesperrtes Produkt, eine
+  bereits gemeldete Bewertung und eine bereits übernommene Meldung. Die
+  zuständigen Controller übersetzen sie in eine Erklärung mit nächstem Schritt
+  (so verlangt es Screen 7 ausdrücklich), jede andere Ablehnung bleibt ein 403.
+  Die Regel steht in `docs/fehlerbehandlung.md`.
+- Jede Änderung an einer Bewertung läuft durch `Rating.with_aggregates` – ein
+  Block, der das Produkt innerhalb der Transaktion lädt, die Änderung ausführt
+  und die Aggregate neu berechnet. `submit!`, `change!`, `withdraw!`, `block!`
+  und `unblock!` nutzen ihn; damit gibt es genau eine Stelle, an der Q1
+  durchgesetzt wird.
+- `verify_authorized` / `verify_policy_scoped` mussten von `only: :index` auf
+  `if:`/`unless:` umgestellt werden: Rails verlangt sonst, dass jeder Controller
+  eine `index`-Action besitzt, sobald ein Callback sie namentlich nennt.
+- Dabei aufgefallen: Die Meldungsliste war für Benutzer erreichbar (nur leer),
+  weil der Policy-Scope allein die Seite nicht schützt. `Moderation::
+  ReportsController#index` autorisiert jetzt zusätzlich explizit.
+- `config/importmap.rb` und `app/javascript/application.js` fehlten seit
+  Aufgabe 0 (siehe Aufgabe 4); erst dadurch sind Turbo und damit die
+  422-Antworten bei Formularfehlern überhaupt wirksam.
 
 ---
 

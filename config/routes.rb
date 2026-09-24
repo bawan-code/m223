@@ -26,8 +26,36 @@ Rails.application.routes.draw do
     end
   end
 
-  # Platzhalter bis zur Produktsuche (Aufgabe 6: root "products#index")
-  root "pages#home"
+  # Kernfunktion: Katalog, Bewertungen, Meldungen (F2–F8)
+  resources :products, only: %i[ index show new create edit update ] do
+    member do
+      patch :lock
+      patch :unlock
+    end
+    # Bewertung abgeben immer im Kontext des Produkts; ändern und löschen
+    # danach über die Bewertung selbst (shallow).
+    resources :ratings, only: %i[ create ]
+  end
+
+  resources :ratings, only: %i[ edit update destroy ] do
+    # Wie beim Konto: der Klick öffnet nur die Bestätigungsseite, gelöscht wird
+    # erst durch das Formular darauf.
+    member { get :confirm_destroy }
+    resources :reports, only: %i[ new create ]
+  end
+
+  namespace :moderation do
+    resources :reports, only: %i[ index show ] do
+      member do
+        patch :claim
+        patch :unclaim
+        patch :release
+        patch :block
+      end
+    end
+  end
+
+  root "products#index"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check

@@ -27,9 +27,11 @@ class RatingPolicyTest < ActiveSupport::TestCase
   test "nur der Verfasser ändert und löscht seine Bewertung" do
     assert RatingPolicy.new(users(:anna), @own).update?
     assert RatingPolicy.new(users(:anna), @own).destroy?
+    assert RatingPolicy.new(users(:anna), @own).confirm_destroy?
 
     assert_not RatingPolicy.new(users(:ben), @own).update?
     assert_not RatingPolicy.new(users(:ben), @own).destroy?
+    assert_not RatingPolicy.new(users(:ben), @own).confirm_destroy?
   end
 
   # Moderator

@@ -14,8 +14,10 @@ class ApplicationController < ActionController::Base
   # eine vergessene Prüfung fällt damit sofort als Fehler auf, statt still eine
   # offene Tür zu hinterlassen. Controller ohne fremden Datensatz nehmen das
   # über SkipAuthorization begründet heraus.
-  after_action :verify_authorized, except: :index
-  after_action :verify_policy_scoped, only: :index
+  # `if:`/`unless:` statt `only: :index` – sonst verlangt Rails, dass jeder
+  # Controller eine index-Action besitzt, sobald ein Callback sie namentlich nennt.
+  after_action :verify_authorized, unless: :listing?
+  after_action :verify_policy_scoped, if: :listing?
 
   rescue_from Pundit::NotAuthorizedError, with: :forbidden
   # Gelöschte oder nicht sichtbare Datensätze (auch geratene IDs) enden in einer
@@ -27,6 +29,11 @@ class ApplicationController < ActionController::Base
   # Pundit arbeitet mit dem angemeldeten Benutzer; bei Gästen ist das nil.
   def pundit_user
     current_user
+  end
+
+  # Listen filtert der Policy-Scope, Einzelzugriffe prüft die Policy.
+  def listing?
+    action_name == "index"
   end
 
   def forbidden

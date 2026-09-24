@@ -1,0 +1,21 @@
+<%= render "shared/errors", record: rating %>
+
+<%= form_with model: rating, url: url, method: (rating.persisted? ? :patch : :post) do |form| %>
+  <fieldset class="stars-input">
+    <legend><%= Rating.human_attribute_name(:stars) %></legend>
+    <% Rating::STARS.to_a.reverse.each do |value| %>
+      <label>
+        <%= form.radio_button :stars, value, checked: rating.stars == value %>
+        <%= t("ratings.star_row", count: value) %>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <%= form.label :comment %>
+  <%= form.text_area :comment, rows: 4, maxlength: 1000 %>
+
+  <div class="actions">
+    <%= form.submit submit %>
+    <%= yield if block_given? %>
+  </div>
+<% end %>

@@ -4,6 +4,7 @@ hummus:
   brand: M-Classic
   name_normalized: hummus classic
   brand_normalized: m-classic
+  description: Cremiger Kichererbsen-Aufstrich mit Sesampaste und Zitrone.
   category: aufstriche
   retail_chain: migros
   created_by: anna

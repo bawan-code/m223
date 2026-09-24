@@ -29,36 +29,62 @@ chains = %w[Migros Coop Aldi Lidl].index_with do |name|
 end
 
 puts "Produkte…"
+# Bezeichnung, Marke, Kategorie, Handelskette, erfassende Person, Beschreibung
 products_data = [
-  [ "Hummus Classic",        "M-Classic",       "Aufstriche",     "Migros", :anna ],
-  [ "Hummus Natur",          "Qualité & Prix",  "Aufstriche",     "Coop",   :ben ],
-  [ "Hummus",                "Bio",             "Aufstriche",     "Aldi",   :clara ],
-  [ "Hummus Paprika",        "Lidl Bio",        "Aufstriche",     "Lidl",   :anna ],
-  [ "Pesto Verde",           "M-Classic",       "Saucen",         "Migros", :ben ],
-  [ "Pesto alla Genovese",   "Fine Food",       "Saucen",         "Coop",   :anna ],
-  [ "Chili Sauce",           "Prix Garantie",   "Saucen",         "Coop",   :clara ],
-  [ "Tomatensauce Basilico", "Cucina",          "Saucen",         "Aldi",   :ben ],
-  [ "Bio Joghurt Nature",    "Migros Bio",      "Milchprodukte",  "Migros", :anna ],
-  [ "Griechischer Joghurt",  "Milbona",         "Milchprodukte",  "Lidl",   :clara ],
-  [ "Mozzarella",            "Qualité & Prix",  "Milchprodukte",  "Coop",   :ben ],
-  [ "Chips Paprika",         "Zweifel",         "Snacks",         "Migros", :anna ],
-  [ "Nachos Cheese",         "Snack Day",       "Snacks",         "Lidl",   :ben ],
-  [ "Salznüsse",             "Sun Queen",       "Snacks",         "Migros", :clara ],
-  [ "Eistee Pfirsich",       "Kult",            "Getränke",       "Migros", :anna ],
-  [ "Cola Zero",             "Prix Garantie",   "Getränke",       "Coop",   :ben ],
-  [ "Apfelschorle",          "Rivella",         "Getränke",       "Aldi",   :clara ],
-  [ "Lasagne Bolognese",     "Anna's Best",     "Fertiggerichte", "Migros", :anna ],
-  [ "Pizza Margherita",      "Betty Bossi",     "Fertiggerichte", "Coop",   :ben ],
-  [ "Curry Chicken",         "Vitasia",         "Fertiggerichte", "Lidl",   :clara ]
+  [ "Hummus Classic", "M-Classic", "Aufstriche", "Migros", :anna,
+    "Cremiger Kichererbsen-Aufstrich mit Sesampaste und einem Spritzer Zitrone. 200-g-Becher aus dem Kühlregal." ],
+  [ "Hummus Natur", "Qualité & Prix", "Aufstriche", "Coop", :ben,
+    "Klassischer Hummus ohne Zusätze, mild gewürzt. Die günstigste Variante im Sortiment." ],
+  [ "Hummus", "Bio", "Aufstriche", "Aldi", :clara,
+    "Bio-Hummus aus biologischem Anbau im 175-g-Becher. Etwas fester als die übrigen." ],
+  [ "Hummus Paprika", "Lidl Bio", "Aufstriche", "Lidl", :anna,
+    "Hummus mit gerösteter Paprika, leicht rauchig im Geschmack. Bio-Qualität." ],
+  [ "Pesto Verde", "M-Classic", "Saucen", "Migros", :ben,
+    "Basilikumpesto mit Cashewkernen und Hartkäse im 190-g-Glas. Reicht für zwei Portionen Pasta." ],
+  [ "Pesto alla Genovese", "Fine Food", "Saucen", "Coop", :anna,
+    "Pesto mit Pinienkernen und Basilikum aus Ligurien. Premiumlinie, entsprechend teurer." ],
+  [ "Chili Sauce", "Prix Garantie", "Saucen", "Coop", :clara,
+    "Scharfe Chilisauce in der Quetschflasche, süss-sauer abgeschmeckt." ],
+  [ "Tomatensauce Basilico", "Cucina", "Saucen", "Aldi", :ben,
+    "Passierte Tomaten mit Basilikum, ohne Zuckerzusatz. 350-g-Glas." ],
+  [ "Bio Joghurt Nature", "Migros Bio", "Milchprodukte", "Migros", :anna,
+    "Naturjoghurt aus Bio-Vollmilch im 500-g-Becher. Ohne Zucker und ohne Aromen." ],
+  [ "Griechischer Joghurt", "Milbona", "Milchprodukte", "Lidl", :clara,
+    "Cremiger Joghurt nach griechischer Art mit 10 % Fett. Auch zum Kochen geeignet." ],
+  [ "Mozzarella", "Qualité & Prix", "Milchprodukte", "Coop", :ben,
+    "Mozzarella im Wasserbad, 150 g Abtropfgewicht. Für Caprese und Pizza." ],
+  [ "Chips Paprika", "Zweifel", "Snacks", "Migros", :anna,
+    "Paprikachips aus Schweizer Kartoffeln im 175-g-Beutel." ],
+  [ "Nachos Cheese", "Snack Day", "Snacks", "Lidl", :ben,
+    "Maischips mit Käsegeschmack. Passen zu Dip und Guacamole." ],
+  [ "Salznüsse", "Sun Queen", "Snacks", "Migros", :clara,
+    "Geröstete und gesalzene Erdnüsse in der 200-g-Packung." ],
+  [ "Eistee Pfirsich", "Kult", "Getränke", "Migros", :anna,
+    "Eistee mit Pfirsichgeschmack in der 1,5-Liter-Flasche." ],
+  [ "Cola Zero", "Prix Garantie", "Getränke", "Coop", :ben,
+    "Koffeinhaltiges Erfrischungsgetränk ohne Zucker, 1,5 Liter." ],
+  [ "Apfelschorle", "Rivella", "Getränke", "Aldi", :clara,
+    "Apfelsaftschorle mit Mineralwasser, 50 % Fruchtgehalt." ],
+  [ "Lasagne Bolognese", "Anna's Best", "Fertiggerichte", "Migros", :anna,
+    "Fertiglasagne mit Rindfleischsauce und Béchamel für zwei Personen. 15 Minuten in den Ofen." ],
+  [ "Pizza Margherita", "Betty Bossi", "Fertiggerichte", "Coop", :ben,
+    "Steinofenpizza mit Tomatensauce und Mozzarella aus der Kühltheke." ],
+  [ "Curry Chicken", "Vitasia", "Fertiggerichte", "Lidl", :clara,
+    "Hähnchencurry mit Basmatireis in der 400-g-Schale für die Mikrowelle." ]
 ]
-products = products_data.map do |name, brand, category, chain, creator|
-  Product.create_with(created_by: users[creator], category: categories[category])
-         .find_or_create_by!(name_normalized: Product.normalize(name),
-                             brand_normalized: Product.normalize(brand),
-                             retail_chain: chains[chain]) do |p|
+products = products_data.map do |name, brand, category, chain, creator, description|
+  product = Product.create_with(created_by: users[creator], category: categories[category])
+                   .find_or_create_by!(name_normalized: Product.normalize(name),
+                                       brand_normalized: Product.normalize(brand),
+                                       retail_chain: chains[chain]) do |p|
     p.name = name
     p.brand = brand
   end
+
+  # Auch bei bestehenden Einträgen nachziehen, damit ein erneutes Seeden
+  # geänderte Demo-Texte tatsächlich übernimmt.
+  product.update!(description:) if product.description != description
+  product
 end
 
 puts "Bewertungen…"

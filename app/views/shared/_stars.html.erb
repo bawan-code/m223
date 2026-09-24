@@ -1,0 +1,4 @@
+<%# Sterne-Anzeige; `value` darf nil sein (noch keine Bewertung) %>
+<span class="stars" aria-label="<%= value ? t("ratings.stars_of", value: number_with_precision(value, precision: 1), max: Rating::STARS.max) : t("ratings.none") %>">
+  <%= "★" * value.to_f.round %><span class="muted"><%= "☆" * (Rating::STARS.max - value.to_f.round) %></span>
+</span>

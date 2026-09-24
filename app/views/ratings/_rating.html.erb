@@ -1,0 +1,25 @@
+<article class="rating">
+  <p>
+    <%= render "shared/stars", value: rating.stars %>
+    <strong><%= rating.user.name %></strong>
+    <span class="muted"><%= l(rating.created_at.to_date, format: :long) %></span>
+    <% if rating.gesperrt? %>
+      <span class="muted"><%= t("ratings.blocked_badge") %></span>
+    <% end %>
+  </p>
+
+  <% if rating.comment.present? %>
+    <p><%= rating.comment %></p>
+  <% end %>
+
+  <div class="actions">
+    <% if policy(Report.new(rating:, reporter: current_user)).create? %>
+      <%= link_to t("reports.report"), new_rating_report_path(rating), class: "button button-secondary" %>
+    <% end %>
+    <% if policy(rating).block? %>
+      <% if rating.gesperrt? %>
+        <span class="muted"><%= t("ratings.blocked_badge") %></span>
+      <% end %>
+    <% end %>
+  </div>
+</article>

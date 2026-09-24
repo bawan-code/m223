@@ -11,6 +11,17 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    # Ersetzt eine Klassenmethode für die Dauer des Blocks, sodass sie den
+    # angegebenen Fehler wirft. Damit lassen sich Gleichzeitigkeitsfälle
+    # auslösen, die sich in einem einzelnen Testprozess sonst nicht herstellen
+    # lassen – etwa ein Unique-Index, der zuschlägt, nachdem die Validierung
+    # bereits zufrieden war.
+    def raising(klass, method, error, message = "simulierter Gleichzeitigkeitsfall")
+      original = klass.method(method)
+      klass.define_singleton_method(method) { |*| raise error, message }
+      yield
+    ensure
+      klass.define_singleton_method(method, original)
+    end
   end
 end

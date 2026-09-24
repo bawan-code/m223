@@ -1,0 +1,65 @@
+<% content_for :title, t("products.search") %>
+
+<div class="layout-sidebar">
+  <% filters = active_filters(@categories, @retail_chains) %>
+
+  <aside class="card filter-panel">
+    <%# Aufklappbar ohne JavaScript. Die Checkbox steuert ausschliesslich auf
+        schmalen Viewports die Sichtbarkeit (CSS); ab Desktop greift die Regel
+        nicht und der Filter steht immer offen. Bewusst kein <details>: dessen
+        Inhalt hängt am open-Attribut, das sich per CSS nicht aufheben lässt. %>
+    <input type="checkbox" id="filter-toggle" class="filter-toggle"
+           <%= "checked" if filters.any? %>>
+    <label class="filter-summary" for="filter-toggle">
+      <%= t("products.filter") %>
+      <span class="muted">
+        <%= filters.any? ? filters.join(" · ") : t("products.no_filter") %>
+      </span>
+    </label>
+
+    <div class="filter-body">
+      <h2 class="filter-title"><%= t("products.filter") %></h2>
+
+      <%= form_with url: products_path, method: :get do |form| %>
+        <%= form.label :q, t("products.search_label") %>
+        <%= form.search_field :q, value: params[:q] %>
+
+        <%= form.label :category_id, Product.human_attribute_name(:category) %>
+        <%= form.select :category_id, @categories.map { |c| [ c.name, c.id ] },
+                        { include_blank: t("products.all") }, selected: params[:category_id] %>
+
+        <%= form.label :retail_chain_id, Product.human_attribute_name(:retail_chain) %>
+        <%= form.select :retail_chain_id, @retail_chains.map { |c| [ c.name, c.id ] },
+                        { include_blank: t("products.all") }, selected: params[:retail_chain_id] %>
+
+        <div class="actions">
+          <%= form.submit t("products.apply_filter") %>
+          <%= link_to t("products.reset_filter"), products_path, class: "button button-secondary" %>
+        </div>
+        <% end %>
+    </div>
+  </aside>
+
+  <section>
+    <div class="card list-header">
+      <h1><%= t("products.search") %></h1>
+      <% if policy(Product.new).create? %>
+        <%= link_to t("products.new"), new_product_path, class: "button" %>
+      <% end %>
+    </div>
+
+    <% if @products.any? %>
+      <p class="hint"><%= t("products.result_count", count: @products.size) %></p>
+      <div class="product-list">
+        <%= render partial: "products/product", collection: @products %>
+      </div>
+    <% else %>
+      <div class="card">
+        <p><%= t("products.empty") %></p>
+        <% if policy(Product.new).create? %>
+          <%= link_to t("products.new"), new_product_path, class: "button" %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+</div>

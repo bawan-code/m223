@@ -1,0 +1,95 @@
+<% content_for :title, @product.name %>
+
+<div class="card list-header">
+  <div>
+    <h1><%= @product.name %></h1>
+    <% if @product.description.present? %>
+      <p class="product-description"><%= @product.description %></p>
+    <% end %>
+
+    <p class="muted">
+      <%= @product.brand %> · <%= @product.retail_chain.name %> · <%= @product.category.name %>
+    </p>
+  </div>
+
+  <div class="actions">
+    <% if policy(@product).update? %>
+      <%= link_to t("products.edit"), edit_product_path(@product), class: "button button-secondary" %>
+    <% end %>
+    <% if @product.locked? %>
+      <%= button_to t("products.unlock"), unlock_product_path(@product), method: :patch,
+                    class: "button button-secondary" if policy(@product).unlock? %>
+    <% elsif policy(@product).lock? %>
+      <%= button_to t("products.lock"), lock_product_path(@product), method: :patch,
+                    class: "button button-secondary" %>
+    <% end %>
+  </div>
+</div>
+
+<% if @product.locked? %>
+  <div class="flash flash-notice"><%= t("products.locked_hint") %></div>
+<% end %>
+
+<div class="layout-two">
+  <section class="card">
+    <h2><%= t("products.summary") %></h2>
+
+    <% if @product.ratings_count.positive? %>
+      <p class="rating-average">
+        <%= render "shared/stars", value: @product.average_rating %>
+        <strong><%= number_with_precision(@product.average_rating, precision: 1) %></strong>
+        <span class="muted"><%= t("products.rating_count", count: @product.ratings_count) %></span>
+      </p>
+
+      <table class="distribution">
+        <% @product.stars_distribution.each do |stars, count| %>
+          <tr>
+            <th><%= t("ratings.star_row", count: stars) %></th>
+            <td><%= count %></td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <p class="muted"><%= t("ratings.none_yet") %></p>
+    <% end %>
+  </section>
+
+  <section class="card">
+    <h2><%= t("ratings.yours") %></h2>
+
+    <% if @own_rating %>
+      <p>
+        <%= render "shared/stars", value: @own_rating.stars %>
+        <% if @own_rating.gesperrt? %>
+          <span class="muted"><%= t("ratings.blocked_badge") %></span>
+        <% end %>
+      </p>
+      <p><%= @own_rating.comment %></p>
+      <div class="actions">
+        <%= link_to t("forms.edit"), edit_rating_path(@own_rating), class: "button" if policy(@own_rating).update? %>
+        <%# Link statt Formular: ein versehentlicher Klick öffnet nur die
+            Bestätigungsseite und löscht noch nichts. %>
+        <%= link_to t("forms.delete"), confirm_destroy_rating_path(@own_rating),
+                    class: "button button-secondary" if policy(@own_rating).confirm_destroy? %>
+      </div>
+    <% elsif @product.locked? %>
+      <p class="muted"><%= t("products.locked_hint") %></p>
+    <% elsif current_user %>
+      <%= render "ratings/form", rating: @rating, url: product_ratings_path(@product), submit: t("ratings.submit") %>
+    <% else %>
+      <p><%= t("ratings.sign_in_to_rate") %></p>
+      <%= link_to t("nav.sign_in"), new_session_path, class: "button" %>
+    <% end %>
+  </section>
+</div>
+
+<section class="card">
+  <h2><%= t("ratings.others") %></h2>
+
+  <% others = @ratings.reject { |rating| rating.user_id == current_user&.id } %>
+  <% if others.any? %>
+    <%= render partial: "ratings/rating", collection: others, as: :rating %>
+  <% else %>
+    <p class="muted"><%= t("ratings.no_others") %></p>
+  <% end %>
+</section>

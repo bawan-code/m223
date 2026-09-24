@@ -38,6 +38,57 @@ class ReportTest < ActiveSupport::TestCase
     assert_predicate reports(:claimed_by_max), :decided?
   end
 
+  # Pessimistische Sperre beim Übernehmen (4.4)
+
+  test "eine Meldung lässt sich nur einmal übernehmen" do
+    report = reports(:open)
+
+    report.claim!(users(:moni))
+
+    assert_equal users(:moni), report.reload.moderator
+    assert_predicate report, :in_bearbeitung?
+
+    error = assert_raises Report::AlreadyClaimed do
+      reports(:open).claim!(users(:max))
+    end
+
+    assert_equal users(:moni), error.moderator, "der Verlierer erfährt, wer schneller war"
+    assert_equal users(:moni), report.reload.moderator
+  end
+
+  test "Zurückgeben macht die Meldung wieder übernehmbar" do
+    report = reports(:claimed_by_max)
+
+    report.unclaim!
+
+    assert_nil report.moderator_id
+    assert_predicate report, :offen?
+    assert_nothing_raised { report.claim!(users(:moni)) }
+  end
+
+  test "Freigeben lässt die Bewertung unverändert" do
+    report = reports(:claimed_by_max)
+
+    report.release!
+
+    assert_predicate report, :freigegeben?
+    assert_not_nil report.decided_at
+    assert_predicate ratings(:anna_pesto).reload, :aktiv?
+  end
+
+  test "Sperren entscheidet die Meldung und nimmt die Bewertung aus dem Durchschnitt" do
+    report = reports(:claimed_by_max)
+    product = products(:pesto)
+
+    report.block!
+
+    assert_predicate report, :gesperrt?
+    assert_not_nil report.decided_at
+    assert_predicate ratings(:anna_pesto).reload, :gesperrt?
+    assert_equal 0, product.reload.ratings_count
+    assert_equal 0, product.ratings_sum
+  end
+
   test "Scopes für offene und übernommene Meldungen" do
     assert_equal [ reports(:open) ], Report.open_reports.to_a
     assert_equal [ reports(:claimed_by_max) ], Report.claimed_by(users(:max)).to_a

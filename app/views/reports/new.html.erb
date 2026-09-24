@@ -1,0 +1,29 @@
+<% content_for :title, t("reports.title") %>
+
+<div class="card form-narrow">
+  <h1><%= t("reports.title") %></h1>
+
+  <blockquote class="rating">
+    <p><%= render "shared/stars", value: @rating.stars %> <strong><%= @rating.user.name %></strong></p>
+    <p><%= @rating.comment %></p>
+  </blockquote>
+
+  <%= render "shared/errors", record: @report %>
+
+  <%= form_with model: @report, url: rating_reports_path(@rating) do |form| %>
+    <fieldset>
+      <legend><%= Report.human_attribute_name(:reason) %></legend>
+      <% Report.reasons.keys.each do |reason| %>
+        <label>
+          <%= form.radio_button :reason, reason %>
+          <%= Report.human_attribute_name("reasons.#{reason}") %>
+        </label>
+      <% end %>
+    </fieldset>
+
+    <div class="actions">
+      <%= form.submit t("reports.submit") %>
+      <%= link_to t("forms.cancel"), @rating.product, class: "button button-secondary" %>
+    </div>
+  <% end %>
+</div>

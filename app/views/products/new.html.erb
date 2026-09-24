@@ -1,0 +1,9 @@
+<% content_for :title, t("products.new") %>
+
+<div class="card form-narrow">
+  <h1><%= t("products.new") %></h1>
+  <p class="hint"><%= t("products.new_hint") %></p>
+
+  <%= render "products/form", product: @product, url: products_path,
+             submit: t("products.create"), cancel_url: products_path %>
+</div>

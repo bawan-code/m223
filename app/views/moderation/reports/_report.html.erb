@@ -1,0 +1,23 @@
+<tr class="<%= "muted" if local_assigns[:dimmed] %>">
+  <td><%= l(report.created_at.to_date, format: :long) %></td>
+  <td><%= Report.human_attribute_name("reasons.#{report.reason}") %></td>
+  <td>
+    <%= link_to report.rating.product.name, report.rating.product %><br>
+    <span class="muted"><%= t("moderation.rating_by", name: report.rating.user.name) %></span>
+  </td>
+  <td><%= truncate(report.rating.comment, length: 80) %></td>
+  <td>
+    <% if report.moderator %>
+      <%= report.moderator.name %>
+    <% else %>
+      <span class="muted"><%= t("moderation.unclaimed") %></span>
+    <% end %>
+  </td>
+  <td class="actions">
+    <% if policy(report).claim? %>
+      <%= button_to t("moderation.claim"), claim_moderation_report_path(report), method: :patch, class: "button" %>
+    <% elsif policy(report).show? %>
+      <%= link_to t("moderation.open_action"), moderation_report_path(report), class: "button" %>
+    <% end %>
+  </td>
+</tr>
