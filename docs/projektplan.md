@@ -508,7 +508,7 @@ Umgesetzt wie geplant, mit vier Präzisierungen:
 
 ---
 
-## Aufgabe 7: Aktivitätsprotokoll (Tag 4)
+## Aufgabe 7: Aktivitätsprotokoll (Tag 4) ✅ erledigt
 
 - `gem "paper_trail"`, `bin/rails g paper_trail:install`, migrieren.
 - `has_paper_trail` in `Product`, `Rating`, `Report` (bei `Rating` `comment`
@@ -529,6 +529,23 @@ Umgesetzt wie geplant, mit vier Präzisierungen:
 **Verifikation:** Test: erfolgreiche Bewertung erzeugt genau eine Version mit
 `whodunnit == user.id`; fehlgeschlagene Bewertung (gesperrtes Produkt) erzeugt
 keine; Benutzer auf `/activities` → 403. Commit.
+
+Umgesetzt wie geplant, mit drei Anmerkungen:
+
+- **Rails 7.1+ und PaperTrail beissen sich stillschweigend.** Die Versionen
+  werden als YAML abgelegt, beim Lesen erlaubt Rails aber nur freigegebene
+  Klassen. Ohne `config.active_record.yaml_column_permitted_classes` liefert
+  `version.changeset` ein leeres Hash – ohne Fehlermeldung. Die Spalte
+  «Geändert» wäre dann dauerhaft leer geblieben und niemandem aufgefallen.
+- Die Aggregate `ratings_count` und `ratings_sum` stehen bewusst **nicht** im
+  Protokoll (`ignore` in `Product`, zusätzlich werden sie per `update_columns`
+  geschrieben): sie sind abgeleitete Werte, jede Bewertung hätte sonst einen
+  zweiten, inhaltsleeren Eintrag erzeugt. Ein Test hält das fest.
+- Der Feed zeigt die Namen der geänderten Felder auf Deutsch
+  (`ActivitiesHelper#changed_attribute_names`); bei «erfasst» und «gelöscht»
+  bleibt die Spalte leer, weil dort schlicht alle Felder aufgezählt würden.
+- ERM 4.5 musste nicht angepasst werden: die Entität `VERSION` stimmt mit der
+  erzeugten Tabelle überein, `object_changes` war bereits vorgesehen.
 
 ---
 

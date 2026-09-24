@@ -18,6 +18,8 @@ class ProductsController < ApplicationController
   def show
     authorize @product
     load_ratings
+    # Verlauf nur für die Moderation – dieselbe Regel wie beim Protokoll.
+    @versions = @product.versions.reorder(created_at: :desc).limit(10) if policy(:activity).index?
   end
 
   def new

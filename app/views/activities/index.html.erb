@@ -1,0 +1,49 @@
+<% content_for :title, t("activities.title") %>
+
+<div class="card">
+  <h1><%= t("activities.title") %></h1>
+  <p class="hint"><%= t("activities.intro", count: ActivitiesController::ENTRIES) %></p>
+
+  <% if @versions.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th><%= t("activities.when") %></th>
+          <th><%= t("activities.actor") %></th>
+          <th><%= t("activities.event") %></th>
+          <th><%= t("activities.object") %></th>
+          <th><%= t("activities.changed") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @versions.each do |version| %>
+          <tr>
+            <td><%= l(version.created_at, format: :short) %></td>
+            <td>
+              <% if (actor = @actors[version.whodunnit]) %>
+                <%= actor.name %>
+              <% else %>
+                <span class="muted"><%= t("activities.unknown_actor") %></span>
+              <% end %>
+            </td>
+            <td><%= t("activities.events.#{version.event}") %></td>
+            <td>
+              <% target = activity_target_path(version) %>
+              <% if target %>
+                <%= link_to activity_object_label(version), target %>
+              <% else %>
+                <span class="muted"><%= activity_object_label(version) %></span>
+              <% end %>
+            </td>
+            <td>
+              <% names = changed_attribute_names(version) %>
+              <%= names.any? ? names.to_sentence : "–" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="muted"><%= t("activities.empty") %></p>
+  <% end %>
+</div>

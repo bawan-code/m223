@@ -83,6 +83,28 @@
   </section>
 </div>
 
+<% if @versions.present? %>
+  <section class="card">
+    <h2><%= t("products.history") %></h2>
+
+    <table>
+      <tbody>
+        <% @versions.each do |version| %>
+          <tr>
+            <td><%= l(version.created_at, format: :short) %></td>
+            <td><%= User.find_by(id: version.whodunnit)&.name || t("activities.unknown_actor") %></td>
+            <td><%= t("activities.events.#{version.event}") %></td>
+            <td>
+              <% names = changed_attribute_names(version) %>
+              <%= names.any? ? names.to_sentence : "–" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+<% end %>
+
 <section class="card">
   <h2><%= t("ratings.others") %></h2>
 

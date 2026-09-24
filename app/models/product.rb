@@ -8,6 +8,15 @@ class Product < ApplicationRecord
   belongs_to :created_by, class_name: "User", inverse_of: :products, optional: true
   has_many :ratings, dependent: :destroy
 
+  # Aktivitätsprotokoll (F-Anforderung «Nachvollziehbarkeit»). Die Aggregate
+  # sind abgeleitete Werte und werden ohnehin per update_columns geschrieben;
+  # `ignore` hält sie zusätzlich aus dem Protokoll, damit dort nur echte
+  # redaktionelle Änderungen stehen. lock_version ist reine Mechanik.
+  # `skip`: die normalisierten Spalten sind aus Bezeichnung und Marke abgeleitet
+  # und erschienen im Protokoll sonst als zweite, gleichlautende Zeile.
+  has_paper_trail ignore: %i[ ratings_count ratings_sum lock_version ],
+                  skip: %i[ name_normalized brand_normalized ]
+
   normalizes :name, :brand, with: ->(v) { v.squish }
 
   before_validation :set_normalized_fields

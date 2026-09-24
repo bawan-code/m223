@@ -19,6 +19,9 @@ class ApplicationController < ActionController::Base
   after_action :verify_authorized, unless: :listing?
   after_action :verify_policy_scoped, if: :listing?
 
+  # Hält fest, wer eine Änderung ausgelöst hat (Aktivitätsprotokoll).
+  before_action :set_paper_trail_whodunnit
+
   rescue_from Pundit::NotAuthorizedError, with: :forbidden
   # Gelöschte oder nicht sichtbare Datensätze (auch geratene IDs) enden in einer
   # verständlichen Seite statt in einer technischen Fehlermeldung.
@@ -34,6 +37,11 @@ class ApplicationController < ActionController::Base
   # Listen filtert der Policy-Scope, Einzelzugriffe prüft die Policy.
   def listing?
     action_name == "index"
+  end
+
+  # PaperTrail speichert whodunnit als String; bei Gästen bleibt es leer.
+  def user_for_paper_trail
+    Current.user&.id
   end
 
   def forbidden

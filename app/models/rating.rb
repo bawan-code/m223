@@ -8,6 +8,10 @@ class Rating < ApplicationRecord
   belongs_to :product
   has_many :reports, dependent: :destroy
 
+  # Sterne, Kommentar und Sperrstatus werden vollständig protokolliert –
+  # gerade die Änderung eines gemeldeten Kommentars muss nachvollziehbar sein.
+  has_paper_trail
+
   # gesperrt: von einem Moderator nach einer Meldung ausgeblendet
   enum :status, { aktiv: 0, gesperrt: 1 }, default: :aktiv, validate: true
 

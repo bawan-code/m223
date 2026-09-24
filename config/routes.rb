@@ -44,6 +44,9 @@ Rails.application.routes.draw do
     resources :reports, only: %i[ new create ]
   end
 
+  # Aktivitätsprotokoll für Moderation und Administration
+  resources :activities, only: :index
+
   namespace :moderation do
     resources :reports, only: %i[ index show ] do
       member do

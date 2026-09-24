@@ -14,6 +14,9 @@ class Report < ApplicationRecord
   belongs_to :reporter, class_name: "User", inverse_of: :reports
   belongs_to :moderator, class_name: "User", optional: true, inverse_of: :moderated_reports
 
+  # Wer eine Meldung übernommen und wie entschieden hat, gehört ins Protokoll.
+  has_paper_trail
+
   # Bewusst ohne Default (auch in der Datenbank): ohne gewählten Grund bleibt
   # reason nil und die Meldung wird abgewiesen, statt still «beleidigend» zu werden.
   enum :reason, { beleidigend: 0, spam: 1, kein_bezug: 2, anderes: 3 }, validate: true

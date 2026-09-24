@@ -89,6 +89,7 @@ de:
     unlocked: "Das Produkt ist wieder sichtbar."
     locked_badge: "Gesperrt"
     locked_hint: "Dieses Produkt wurde gesperrt und kann nicht bewertet werden."
+    history: "Verlauf"
   ratings:
     yours: "Deine Bewertung"
     others: "Bewertungen anderer"
@@ -144,6 +145,22 @@ de:
     blocked: "Die Bewertung wurde gesperrt und aus dem Durchschnitt genommen."
     unclaim: "Zurückgeben"
     decided_status: "Entschieden: %{status}"
+  activities:
+    title: "Aktivitäten"
+    intro: "Die letzten %{count} Änderungen an Produkten, Bewertungen und Meldungen."
+    when: "Zeitpunkt"
+    actor: "Wer"
+    event: "Was"
+    object: "Objekt"
+    changed: "Geändert"
+    unknown_actor: "System"
+    rating_on: "Bewertung zu %{product}"
+    report_on: "Meldung zu %{product}"
+    empty: "Noch keine Änderungen aufgezeichnet."
+    events:
+      create: "Erfasst"
+      update: "Geändert"
+      destroy: "Gelöscht"
   admin:
     users:
       title: "Benutzerverwaltung"
@@ -218,10 +235,19 @@ de:
         category: "Kategorie"
         retail_chain: "Handelskette"
         created_by: "Ersteller"
+        # Spaltennamen, wie sie im Aktivitätsprotokoll auftauchen
+        category_id: "Kategorie"
+        retail_chain_id: "Handelskette"
+        created_by_id: "Ersteller"
+        locked_at: "Sperrung"
       rating:
         stars: "Sterne"
         comment: "Kommentar"
         product: "Produkt"
+        product_id: "Produkt"
+        status: "Status"
+        # Absichtlich «Bewertung»: ergibt die Meldung «Bewertung für dieses
+        # Produkt gibt es von dir bereits». Die Spalte ändert sich nie.
         user_id: "Bewertung"
       report:
         reason: "Grund"
@@ -236,6 +262,12 @@ de:
           freigegeben: "Freigegeben"
           gesperrt: "Gesperrt"
         rating: "Bewertung"
+        rating_id: "Bewertung"
+        status: "Status"
+        moderator_id: "Moderation"
+        claimed_at: "Übernommen"
+        decided_at: "Entschieden"
+        # Absichtlich «Meldung», siehe rating.user_id
         reporter_id: "Meldung"
     errors:
       models:
