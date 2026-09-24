@@ -45,6 +45,20 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal Product.count, Product.search("  ").count
   end
 
+  test "beim Erfassen ist der Ersteller Pflicht" do
+    product = Product.new(@attrs.except(:created_by))
+
+    assert_not product.valid?
+    assert product.errors.added?(:created_by, :blank)
+  end
+
+  test "ein Produkt ohne Ersteller bleibt bearbeitbar" do
+    product = products(:hummus)
+    product.update_column(:created_by_id, nil)
+
+    assert product.reload.update(description: "Nach dem Löschen des Kontos bearbeitet")
+  end
+
   test "visible blendet gesperrte Produkte aus" do
     assert_not_includes Product.visible, products(:locked_product)
     assert_includes Product.visible, products(:hummus)

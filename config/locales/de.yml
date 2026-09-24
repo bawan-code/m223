@@ -59,8 +59,10 @@ de:
           administrator: "Administrator"
       category:
         name: "Name"
+        name_normalized: "Name"
       retail_chain:
         name: "Name"
+        name_normalized: "Name"
       product:
         name: "Bezeichnung"
         brand: "Marke"
@@ -68,6 +70,7 @@ de:
         description: "Beschreibung"
         category: "Kategorie"
         retail_chain: "Handelskette"
+        created_by: "Ersteller"
       rating:
         stars: "Sterne"
         comment: "Kommentar"
@@ -89,6 +92,14 @@ de:
         reporter_id: "Meldung"
     errors:
       models:
+        category:
+          attributes:
+            name_normalized:
+              already_exists: "gibt es bereits"
+        retail_chain:
+          attributes:
+            name_normalized:
+              already_exists: "gibt es bereits"
         product:
           attributes:
             name_normalized:

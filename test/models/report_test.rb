@@ -22,6 +22,13 @@ class ReportTest < ActiveSupport::TestCase
     assert report.errors.added?(:reason, :inclusion, value: nil)
   end
 
+  test "ohne gewählten Grund wird die Meldung abgewiesen statt still gesetzt" do
+    report = Report.new(rating: ratings(:ben_hummus), reporter: users(:moni))
+
+    assert_nil report.reason, "reason darf keinen Datenbank-Default haben"
+    assert_not report.valid?
+  end
+
   test "claimed? und decided? spiegeln den Status" do
     assert_not reports(:open).claimed?
     assert_predicate reports(:claimed_by_max), :claimed?

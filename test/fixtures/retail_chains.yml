@@ -1,5 +1,7 @@
 migros:
   name: Migros
+  name_normalized: migros
 
 coop:
   name: Coop
+  name_normalized: coop

@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_123122) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_24_064809) do
   create_table "categories", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
+    t.string "name_normalized", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_categories_on_name", unique: true
+    t.index ["name_normalized"], name: "index_categories_on_name_normalized", unique: true
   end
 
   create_table "products", force: :cascade do |t|
@@ -23,7 +24,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_123122) do
     t.string "brand_normalized", null: false
     t.integer "category_id", null: false
     t.datetime "created_at", null: false
-    t.integer "created_by_id", null: false
+    t.integer "created_by_id"
     t.text "description"
     t.integer "lock_version", default: 0, null: false
     t.datetime "locked_at"
@@ -60,7 +61,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_123122) do
     t.datetime "decided_at"
     t.integer "moderator_id"
     t.integer "rating_id", null: false
-    t.integer "reason", default: 0, null: false
+    t.integer "reason", null: false
     t.integer "reporter_id", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -73,8 +74,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_123122) do
   create_table "retail_chains", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
+    t.string "name_normalized", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_retail_chains_on_name", unique: true
+    t.index ["name_normalized"], name: "index_retail_chains_on_name_normalized", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|

@@ -3,7 +3,9 @@ class User < ApplicationRecord
 
   has_secure_password
   has_many :sessions, dependent: :destroy
-  has_many :products, foreign_key: :created_by_id, inverse_of: :created_by, dependent: :restrict_with_error
+  # Der Katalog gehört der Gemeinschaft: beim Löschen des Kontos bleiben die
+  # erfassten Produkte bestehen und verlieren nur den Verweis auf den Ersteller (4.4).
+  has_many :products, foreign_key: :created_by_id, inverse_of: :created_by, dependent: :nullify
   has_many :ratings, dependent: :destroy
   has_many :reports, foreign_key: :reporter_id, inverse_of: :reporter, dependent: :destroy
   has_many :moderated_reports, class_name: "Report", foreign_key: :moderator_id,
@@ -13,7 +15,9 @@ class User < ApplicationRecord
   enum :role, { benutzer: 0, moderator: 1, administrator: 2 }, default: :benutzer, validate: true
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
-  normalizes :unconfirmed_email, with: ->(e) { e.strip.downcase }
+  # presence: ein leeres Feld im Formular bedeutet «keine Adresse vorgemerkt»,
+  # nicht eine ungültige Adresse
+  normalizes :unconfirmed_email, with: ->(e) { e.strip.downcase.presence }
   normalizes :name, with: ->(n) { n.squish }
 
   validates :name, presence: true, length: { maximum: 100 }

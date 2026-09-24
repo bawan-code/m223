@@ -155,7 +155,7 @@ Eingriffe erlauben.
 | Produktdaten bearbeiten (Moderator)  | Optimistisches Locking über eine Versionsspalte.                                                                                                                                                    | Das Bearbeitungsformular ist unter Umständen lange offen, Konflikte sind aber selten. Eine dauerhafte Sperre wäre unverhältnismässig; stattdessen wird beim Speichern erkannt, ob jemand zwischenzeitlich geändert hat.                                                      |
 | Meldung bearbeiten (Moderation)      | Pessimistisches Locking beim Übernehmen der Meldung; eine übernommene Meldung ist für andere Moderatoren gesperrt.                                                                                  | Eine Meldung darf nicht von zwei Moderatoren gleichzeitig und womöglich widersprüchlich entschieden werden.                                                                                                                                                                  |
 | Produkt sperren                      | Transaktion über Produkt und dessen Bewertungen.                                                                                                                                                    | Sperrung und Ausblenden der abhängigen Bewertungen müssen gemeinsam wirksam werden.                                                                                                                                                                                          |
-| Benutzerkonto löschen                | Transaktion über Konto und dessen Bewertungen.                                                                                                                                                      | Konto und die anonymisierten oder gelöschten Bewertungen dürfen nicht in einem halb verarbeiteten Zustand zurückbleiben.                                                                                                                                                     |
+| Benutzerkonto löschen                | Transaktion über Konto und dessen Bewertungen; die erfassten Produkte bleiben im Katalog und verlieren nur den Verweis auf den Ersteller.                                                            | Konto und die anonymisierten oder gelöschten Bewertungen dürfen nicht in einem halb verarbeiteten Zustand zurückbleiben. Der Katalog gehört der Gemeinschaft: Produkte mit ihren Bewertungen anderer Benutzer dürfen nicht mit einem Konto verschwinden.                     |
 
 ### 4.5 ERM (Entity-Relationship-Model)
 
@@ -187,19 +187,21 @@ erDiagram
 
     CATEGORY {
         int id PK
-        string name UK
+        string name
+        string name_normalized UK "klein, Leerzeichen bereinigt"
     }
 
     RETAIL_CHAIN {
         int id PK
-        string name UK "Migros, Coop, Aldi, Lidl ..."
+        string name "Migros, Coop, Aldi, Lidl ..."
+        string name_normalized UK "klein, Leerzeichen bereinigt"
     }
 
     PRODUCT {
         int id PK
         int category_id FK
         int retail_chain_id FK
-        int created_by_id FK "User, der das Produkt erfasst hat"
+        int created_by_id FK "User, der das Produkt erfasst hat; null nach Kontolöschung"
         string name
         string brand
         string name_normalized "UK zusammen mit brand_normalized + retail_chain_id"
@@ -229,7 +231,7 @@ erDiagram
         int rating_id FK "UK zusammen mit reporter_id"
         int reporter_id FK "meldender User"
         int moderator_id FK "übernehmender Moderator, null bis zur Übernahme"
-        string reason
+        string reason "enum: beleidigend | spam | kein_bezug | anderes, Pflichtangabe"
         string status "enum: offen | in_bearbeitung | freigegeben | gesperrt"
         datetime claimed_at "pessimistische Sperre"
         datetime decided_at
@@ -265,9 +267,9 @@ erDiagram
 | --- | --- | --- |
 | User | Registrierte Person mit Rolle (Benutzer, Moderator, Administrator). `unconfirmed_email` hält die neue Adresse bis zur Bestätigung; der Bestätigungslink enthält einen signierten, ablaufenden Token (`generates_token_for`), daher braucht es keine Token-Spalte. `locked_at` für die Kontosperrung durch Administratoren. | hat 0..n Sessions, erfasst 0..n Produkte, gibt 0..n Bewertungen ab, meldet 0..n Bewertungen, übernimmt als Moderator 0..n Meldungen |
 | Session | Datenbank-Sitzung pro Anmeldung (Rails-Authentifizierungsgenerator). Das Cookie enthält nur die Session-ID; Abmelden oder Kontosperrung löscht die Sitzung serverseitig. | gehört zu genau einem User |
-| Category | Stammdaten: Produktkategorie (z.B. Aufstriche, Saucen). | hat 0..n Produkte |
-| RetailChain | Stammdaten: Handelskette (Migros, Coop, Aldi, Lidl …). | hat 0..n Produkte |
-| Product | Katalogeintrag, von der Gemeinschaft erfasst. Eindeutig über (`name_normalized`, `brand_normalized`, `retail_chain_id`). Führt die Aggregate `ratings_count` und `ratings_sum`; `lock_version` für optimistisches Locking beim Bearbeiten, `locked_at` für die Sperrung durch Moderatoren. | gehört zu genau einer Kategorie und einer Handelskette, wurde von genau einem User erfasst, hat 0..n Bewertungen |
+| Category | Stammdaten: Produktkategorie (z.B. Aufstriche, Saucen). Eindeutig über `name_normalized`, damit «Aufstriche» und «AUFSTRICHE» nicht nebeneinander entstehen. | hat 0..n Produkte |
+| RetailChain | Stammdaten: Handelskette (Migros, Coop, Aldi, Lidl …). Eindeutig über `name_normalized` wie bei Category. | hat 0..n Produkte |
+| Product | Katalogeintrag, von der Gemeinschaft erfasst. Eindeutig über (`name_normalized`, `brand_normalized`, `retail_chain_id`). Führt die Aggregate `ratings_count` und `ratings_sum`; `lock_version` für optimistisches Locking beim Bearbeiten, `locked_at` für die Sperrung durch Moderatoren. | gehört zu genau einer Kategorie und einer Handelskette, wurde von genau einem User erfasst (nach dessen Kontolöschung ohne Ersteller), hat 0..n Bewertungen |
 | Rating | Bewertung mit 1–5 Sternen und optionalem Kommentar. Eindeutig über (`user_id`, `product_id`) – setzt die Fachregel «eine Bewertung pro Benutzer und Produkt» durch. `status` = gesperrt, wenn ein Moderator sie nach einer Meldung ausblendet. | gehört zu genau einem User und einem Produkt, kann 0..n mal gemeldet werden |
 | Report | Meldung einer Bewertung. Ein User kann dieselbe Bewertung nur einmal melden (UK `rating_id`, `reporter_id`). `moderator_id` und `claimed_at` werden beim Übernehmen unter pessimistischer Sperre gesetzt; danach ist die Meldung für andere Moderatoren gesperrt. | gehört zu genau einer Bewertung und einem meldenden User, optional zu einem Moderator |
 | Version | Aktivitätsprotokoll (PaperTrail): jede Änderung an Produkt, Bewertung und Meldung mit Verursacher (`whodunnit`). Grundlage für den Aktivitäten-Feed. | referenziert polymorph das geänderte Objekt und den auslösenden User |

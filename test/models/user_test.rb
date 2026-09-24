@@ -30,6 +30,33 @@ class UserTest < ActiveSupport::TestCase
     assert user.errors.added?(:password, :too_short, count: 12)
   end
 
+  test "ein leeres Feld für die neue E-Mail bedeutet keine vorgemerkte Adresse" do
+    user = users(:anna)
+
+    assert user.update(unconfirmed_email: "   ")
+    assert_nil user.unconfirmed_email
+  end
+
+  test "eine vorgemerkte E-Mail muss gültig sein" do
+    user = users(:anna)
+
+    assert_not user.update(unconfirmed_email: "keine-adresse")
+    assert user.errors.added?(:unconfirmed_email, :invalid, value: "keine-adresse")
+  end
+
+  test "Löschen des Kontos entfernt die Bewertungen, lässt die Produkte aber im Katalog" do
+    anna = users(:anna)
+    product = products(:hummus)
+
+    assert_difference "Rating.count", -anna.ratings.count do
+      assert_no_difference "Product.count" do
+        assert anna.destroy, anna.errors.full_messages.to_sentence
+      end
+    end
+
+    assert_nil product.reload.created_by_id
+  end
+
   test "neue Benutzer haben die Rolle benutzer" do
     assert_predicate User.new, :benutzer?
   end

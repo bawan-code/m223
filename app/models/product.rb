@@ -1,7 +1,11 @@
 class Product < ApplicationRecord
+  include Normalization
+
   belongs_to :category
   belongs_to :retail_chain
-  belongs_to :created_by, class_name: "User", inverse_of: :products
+  # optional, weil ein gelöschtes Konto seine Produkte im Katalog zurücklässt (4.4);
+  # beim Erfassen ist der Ersteller weiterhin Pflicht.
+  belongs_to :created_by, class_name: "User", inverse_of: :products, optional: true
   has_many :ratings, dependent: :destroy
 
   normalizes :name, :brand, with: ->(v) { v.squish }
@@ -10,6 +14,7 @@ class Product < ApplicationRecord
 
   validates :name, :brand, presence: true, length: { maximum: 120 }
   validates :description, length: { maximum: 1000 }
+  validates :created_by, presence: true, on: :create
   # Freundliche Meldung im Normalfall; bei gleichzeitigen Requests greift der Unique-Index
   validates :name_normalized, uniqueness: {
     scope: [ :brand_normalized, :retail_chain_id ],
@@ -25,11 +30,6 @@ class Product < ApplicationRecord
     pattern = "%#{sanitize_sql_like(term)}%"
     where("products.name_normalized LIKE :p OR products.brand_normalized LIKE :p", p: pattern)
   }
-
-  # Einheitliche Normalisierung für Duplikatprüfung und Suche
-  def self.normalize(value)
-    value.to_s.unicode_normalize(:nfkc).downcase.squish
-  end
 
   # Das bereits vorhandene Produkt mit derselben Identität (für den Duplikat-Hinweis)
   def existing_duplicate

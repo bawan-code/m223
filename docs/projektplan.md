@@ -138,6 +138,27 @@ wirft `ActiveRecord::RecordNotUnique` bei `insert_all`, Validierung greift bei
 `create`. Erste Model-Tests (`test/models/product_test.rb`,
 `rating_test.rb`) für Validierungen und Unique-Regeln. Commit.
 
+### Nachträge (24.09.2026, nach der Überprüfung von Aufgabe 0–2)
+
+Drei Stellen des Datenmodells hielten der Prüfung nicht stand und wurden mit
+eigenen Migrationen korrigiert:
+
+- `reports.reason` hatte `default: 0`: eine Meldung ohne gewählten Grund wurde
+  still zu «beleidigend» und war gültig. Der Default ist entfernt, `reason`
+  bleibt nil und die Enum-Validierung weist das Formular ab
+  (`RemoveDefaultFromReportsReason`).
+- `products.created_by_id` war `null: false` und `User has_many :products`
+  stand auf `restrict_with_error` – damit liess sich kein Konto löschen (4.4).
+  Die Spalte ist jetzt nullable, die Assoziation `dependent: :nullify`, und
+  `Product` verlangt den Ersteller nur noch `on: :create`
+  (`AllowProductsWithoutCreator`).
+- `categories.name` / `retail_chains.name` hatten einen schreibweise-abhängigen
+  Unique-Index, die Modellvalidierung war `case_sensitive: false`. «Migros» und
+  «MIGROS» konnten deshalb nebeneinander entstehen. Beide Tabellen haben nun –
+  wie `products` – eine Spalte `name_normalized` mit Unique-Index; die
+  gemeinsame Normalisierung liegt in `app/models/concerns/normalization.rb`
+  (`AddNameNormalizedToStammdaten`).
+
 ---
 
 ## Aufgabe 2: Benutzerauthentifizierung (Tag 3) ✅ erledigt
@@ -217,9 +238,12 @@ Ziel: Admin-Bereich mit Benutzerübersicht, Rollen, Kontosperrung; erste Policy.
   Transaktion.
 - Konto löschen (4.4): `User.transaction do` Bewertungen löschen und für jedes
   betroffene Produkt Aggregate neu berechnen (`Product#recalculate_aggregates!`
-  aus Aufgabe 6, vorerst als Model-Methode hier anlegen), dann `user.destroy!`.
+  ist bereits in Aufgabe 1 entstanden), dann `user.destroy!`.
   Meldungen des Users: `reporter` bleibt via `dependent: :destroy` weg,
-  `moderator_id` → `nullify`.
+  `moderator_id` → `nullify`. Die vom Konto erfassten **Produkte bleiben im
+  Katalog** und verlieren nur den Ersteller (`dependent: :nullify`, siehe
+  Nachträge zu Aufgabe 1); die Aggregate der Produkte müssen daher auch hier
+  stimmen.
 - Views gemäss Wegleitung: Tabelle Name, E-Mail, Rolle, Status, Aktionen.
 
 **Verifikation:** `admin/users_controller_test.rb`: Benutzer und Moderator →

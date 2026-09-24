@@ -1,5 +1,7 @@
 aufstriche:
   name: Aufstriche
+  name_normalized: aufstriche
 
 saucen:
   name: Saucen
+  name_normalized: saucen
