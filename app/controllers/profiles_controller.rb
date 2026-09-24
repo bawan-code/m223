@@ -1,6 +1,7 @@
 # Das eigene Profil. Alle Actions arbeiten auf Current.user – es gibt keine
 # Route mit Benutzer-ID, also auch keinen Weg zu einem fremden Profil.
 class ProfilesController < ApplicationController
+  include SkipAuthorization
   before_action :set_user
 
   def show

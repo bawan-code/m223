@@ -1,4 +1,5 @@
 class RegistrationsController < ApplicationController
+  include SkipAuthorization
   allow_unauthenticated_access
 
   def new

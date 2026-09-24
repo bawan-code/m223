@@ -2,6 +2,7 @@
 # Konto, deshalb ist keine Anmeldung nötig – die neue Adresse wird erst hier
 # übernommen.
 class EmailConfirmationsController < ApplicationController
+  include SkipAuthorization
   allow_unauthenticated_access
 
   def show

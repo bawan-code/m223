@@ -10,6 +10,13 @@ class ApplicationController < ActionController::Base
 
   # Q2: fehlende Berechtigung ist ein serverseitiger 403 – keine Umleitung und
   # kein bloss ausgeblendeter Button.
+  # Jede Action muss autorisieren, jede Liste durch den Policy-Scope laufen –
+  # eine vergessene Prüfung fällt damit sofort als Fehler auf, statt still eine
+  # offene Tür zu hinterlassen. Controller ohne fremden Datensatz nehmen das
+  # über SkipAuthorization begründet heraus.
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
+
   rescue_from Pundit::NotAuthorizedError, with: :forbidden
   # Gelöschte oder nicht sichtbare Datensätze (auch geratene IDs) enden in einer
   # verständlichen Seite statt in einer technischen Fehlermeldung.

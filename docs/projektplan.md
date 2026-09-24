@@ -331,7 +331,7 @@ Umgesetzt wie geplant, mit drei Präzisierungen:
 
 ---
 
-## Aufgabe 5: Benutzerrollen und Berechtigungen (Tag 4)
+## Aufgabe 5: Benutzerrollen und Berechtigungen (Tag 4) ✅ erledigt
 
 Ziel: Alle Zugriffe der App über Policies; Berechtigungsmatrix aus 4.3.
 
@@ -354,6 +354,21 @@ Policies in `app/policies/` (jede behandelt `user.nil?` = Gast):
 **Verifikation:** `test/policies/*_policy_test.rb` – pro Rolle (Gast, Benutzer,
 Moderator, Administrator) mindestens ein erlaubter und ein verweigerter Zugriff
 (Q2). Commit.
+
+Umgesetzt wie geplant, mit zwei Ergänzungen:
+
+- `verify_authorized` / `verify_policy_scoped` stehen wie geplant im
+  `ApplicationController`. Die Controller ohne fremden Datensatz – Startseite,
+  Anmeldung, Registrierung, Passwort-Reset sowie die Selbstbedienung auf dem
+  eigenen Konto (Profil, Passwort, E-Mail-Wechsel) – nehmen sich über das
+  Concern `SkipAuthorization` begründet heraus. Die Begründung steht im Concern,
+  nicht verstreut in acht Controllern: dort gibt es keinen Datensatz, über den
+  eine Policy entscheiden könnte, der Schutz kommt aus `require_authentication`.
+- `RatingPolicy::Scope` und `ReportPolicy::Scope` sind dazugekommen (gesperrte
+  Bewertungen nur für Verfasser und Moderation, Meldungen nur für die
+  Moderation). Die Berechtigungsmatrix in `docs/projektantrag.md` 4.3 listet
+  jetzt jede Aktion mit zuständiger Policy – damit ist das Bewertungskriterium
+  «Benutzerrollen und Berechtigungen» Zeile für Zeile belegbar.
 
 ---
 

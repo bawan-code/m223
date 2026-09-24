@@ -1,6 +1,7 @@
 # E-Mail-Adresse ändern: die neue Adresse wird vorgemerkt und erst nach dem
 # Klick auf den Bestätigungslink übernommen (EmailConfirmationsController).
 class EmailChangesController < ApplicationController
+  include SkipAuthorization
   before_action :set_user
 
   def new

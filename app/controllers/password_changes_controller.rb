@@ -1,6 +1,7 @@
 # Passwort ändern im angemeldeten Zustand. Das aktuelle Passwort ist Pflicht,
 # damit ein offen gelassener Browser nicht zur Kontoübernahme reicht.
 class PasswordChangesController < ApplicationController
+  include SkipAuthorization
   before_action :set_user
 
   def edit
