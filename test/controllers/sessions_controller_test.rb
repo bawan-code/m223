@@ -44,6 +44,14 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to profile_url
   end
 
+  test "HEAD auf geschützte Seite merkt sich die Seite wie GET" do
+    head profile_path
+    assert_redirected_to new_session_path
+
+    post session_path, params: { email_address: "anna@example.test", password: PASSWORD }
+    assert_redirected_to profile_url
+  end
+
   test "Abmelden beendet die Sitzung" do
     sign_in_as users(:anna)
 

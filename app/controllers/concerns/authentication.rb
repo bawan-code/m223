@@ -38,10 +38,12 @@ module Authentication
       session if session && !session.user.locked?
     end
 
-    # Merkt sich, wohin der Benutzer nach der Anmeldung zurück soll: bei GET die
-    # Seite selbst, bei schreibenden Aktionen die Seite, von der er kam.
+    # Merkt sich, wohin der Benutzer nach der Anmeldung zurück soll: bei GET (und
+    # HEAD, das Rails wie GET routet) die Seite selbst, bei schreibenden Aktionen
+    # die Seite, von der er kam.
     def request_authentication
-      session[:return_to_after_authenticating] = request.get? ? request.url : request.referer
+      reading = request.get? || request.head?
+      session[:return_to_after_authenticating] = reading ? request.url : request.referer
       redirect_to new_session_path, alert: t("auth.required")
     end
 

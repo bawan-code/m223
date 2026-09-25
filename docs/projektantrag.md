@@ -1,9 +1,9 @@
 # Projektantrag: Probiert
 
-**Modul:** [223 – Multiuser-Applikationen objektorientiert realisieren]
-**Datum:** [18.09.2026]
-**Autor:** [Bawan Mahmud]
-**Schulklasse:** [Ina24b]
+**Modul:** 223 – Multiuser-Applikationen objektorientiert realisieren\
+**Datum:** 25.09.2026\
+**Autor:** Bawan Mahmud\
+**Schulklasse:** Ina24b
 
 ---
 
@@ -107,6 +107,8 @@ ohne dass seine Eingaben verloren gehen.
 
 Priorität 1 = zwingend für die 1. MVP Iteration.
 
+*Tabelle 1: Funktionale Anforderungen, priorisiert*
+
 | Nr. | Prio | Anforderung                                                                                                                               | Iteration |
 | --- | ---- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------- |
 | F1  | 1    | Benutzer können sich registrieren, anmelden und abmelden.                                                                                 | 1         |
@@ -124,6 +126,8 @@ Priorität 1 = zwingend für die 1. MVP Iteration.
 
 ### 4.2 Qualitätsattribute (nicht-funktional, priorisiert und überprüfbar)
 
+*Tabelle 2: Qualitätsattribute, priorisiert und überprüfbar*
+
 | Nr. | Prio | Qualitätsattribut                | Überprüfbare Anforderung                                                                                                                                                                                                                                                           |
 | --- | ---- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Q1  | 1    | Datenkonsistenz                  | Werden 50 Bewertungen gleichzeitig für dasselbe Produkt gespeichert, entsprechen Anzahl und Durchschnitt danach exakt den tatsächlich gespeicherten Bewertungen. Schickt derselbe Benutzer zwei Bewertungen für dasselbe Produkt gleichzeitig ab, existiert danach genau eine.     |
@@ -133,6 +137,8 @@ Priorität 1 = zwingend für die 1. MVP Iteration.
 | Q5  | 2    | Testbarkeit und Wartbarkeit      | Die Testsuite deckt alle Modelle und Autorisierungsregeln der 1. Iteration ab, läuft vollständig grün und in weniger als 60 Sekunden durch.                                                                                                                                        |
 
 ### 4.3 Benutzerrollen
+
+*Tabelle 3: Benutzerrollen und ihre Berechtigungen*
 
 | Rolle         | Beschreibung                                                    | Berechtigungen                                                                                                                                                                                                                                                                                                                                             |
 | ------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -144,6 +150,8 @@ Priorität 1 = zwingend für die 1. MVP Iteration.
 durchgesetzt (`app/policies/`) und von `test/policies/*_policy_test.rb`
 geprüft. Ausgeblendete Schaltflächen sind Komfort, kein Schutz: ein direkter
 Request ohne Berechtigung endet mit HTTP 403 (Q2).
+
+*Tabelle 4: Berechtigungsmatrix je Rolle mit durchsetzender Policy*
 
 | Aktion                             | Gast  | Benutzer | Moderator  |        Admin         | Policy                           |
 | ---------------------------------- | :---: | :------: | :--------: | :------------------: | -------------------------------- |
@@ -177,6 +185,8 @@ Eingriffe erlauben.
 
 ### 4.4 Locking und Transaktionen
 
+*Tabelle 5: Funktionen mit Transaktionen und Locking*
+
 | Funktion                             | Mechanismus                                                                                                                                                                                         | Begründung                                                                                                                                                                                                                                                                   |
 | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Bewertung erstellen, ändern, löschen | Datenbanktransaktion über Bewertung und Produkt-Aggregate, zusätzlich eindeutiger Index über (Benutzer, Produkt); das Produkt wird während der Aktualisierung von Anzahl und Durchschnitt gesperrt. | Bewertung und Aggregate müssen gemeinsam gültig sein. Ohne Sperre gehen bei gleichzeitigen Bewertungen Zähleraktualisierungen verloren (Lost Update); der eindeutige Index setzt die Fachregel «eine Bewertung pro Benutzer und Produkt» auch bei parallelen Anfragen durch. |
@@ -188,9 +198,15 @@ Eingriffe erlauben.
 
 ### 4.5 ERM (Entity-Relationship-Model)
 
-Das ERM umfasst alle Entitäten der 1. Iteration. Aggregate (`ratings_count`,
-`ratings_sum`) und Locking-Spalten (`lock_version`, `claimed_at`) sind bewusst
-im Modell sichtbar, da sie die Mechanismen aus Kapitel 4.4 umsetzen.
+Das ERM umfasst alle Entitäten der 1. Iteration und entspricht dem
+Datenbankschema (`db/schema.rb`). Aggregate (`ratings_count`, `ratings_sum`)
+und Locking-Spalten (`lock_version`, `claimed_at`) sind bewusst im Modell
+sichtbar, da sie die Mechanismen aus Kapitel 4.4 umsetzen. Rollen, Status und
+Meldegründe sind Rails-Enums: Die Datenbank speichert sie als Ganzzahl, die
+Anwendung arbeitet mit den im Diagramm genannten Namen. `VERSION` verweist
+polymorph über `item_type` und `item_id` auf Produkt, Bewertung oder Meldung;
+ohne Fremdschlüssel sind diese Verweise im Diagramm nicht als Beziehung
+eingezeichnet.
 
 ```mermaid
 erDiagram
@@ -199,7 +215,7 @@ erDiagram
         string name
         string email_address UK "normalisiert, eindeutig"
         string password_digest
-        string role "enum: benutzer | moderator | administrator"
+        int role "enum: benutzer | moderator | administrator"
         string unconfirmed_email "neue E-Mail bis zur Bestätigung"
         datetime locked_at "Konto gesperrt durch Admin"
         datetime created_at
@@ -212,18 +228,23 @@ erDiagram
         string ip_address
         string user_agent
         datetime created_at
+        datetime updated_at
     }
 
     CATEGORY {
         int id PK
         string name
         string name_normalized UK "klein, Leerzeichen bereinigt"
+        datetime created_at
+        datetime updated_at
     }
 
     RETAIL_CHAIN {
         int id PK
         string name "Migros, Coop, Aldi, Lidl ..."
         string name_normalized UK "klein, Leerzeichen bereinigt"
+        datetime created_at
+        datetime updated_at
     }
 
     PRODUCT {
@@ -250,7 +271,7 @@ erDiagram
         int product_id FK
         int stars "1..5"
         text comment "optional"
-        string status "enum: aktiv | gesperrt"
+        int status "enum: aktiv | gesperrt"
         datetime created_at
         datetime updated_at
     }
@@ -260,26 +281,27 @@ erDiagram
         int rating_id FK "UK zusammen mit reporter_id"
         int reporter_id FK "meldender User"
         int moderator_id FK "übernehmender Moderator, null bis zur Übernahme"
-        string reason "enum: beleidigend | spam | kein_bezug | anderes, Pflichtangabe"
-        string status "enum: offen | in_bearbeitung | freigegeben | gesperrt"
+        int reason "enum: beleidigend | spam | kein_bezug | anderes, Pflichtangabe"
+        int status "enum: offen | in_bearbeitung | freigegeben | gesperrt"
         datetime claimed_at "pessimistische Sperre"
         datetime decided_at
         datetime created_at
+        datetime updated_at
     }
 
     VERSION {
         int id PK
         string item_type "Product | Rating | Report"
-        int item_id
+        bigint item_id
         string event "create | update | destroy"
-        string whodunnit "User-ID"
+        string whodunnit "User-ID als Text, leer bei Änderungen ohne Anmeldung"
         text object "Zustand vor der Änderung"
         text object_changes "geänderte Felder"
         datetime created_at
     }
 
     USER ||--o{ SESSION : "meldet sich an"
-    USER ||--o{ PRODUCT : "erfasst"
+    USER |o--o{ PRODUCT : "erfasst"
     USER ||--o{ RATING : "bewertet"
     PRODUCT ||--o{ RATING : "erhält"
     CATEGORY ||--o{ PRODUCT : "ordnet ein"
@@ -287,10 +309,12 @@ erDiagram
     RATING ||--o{ REPORT : "wird gemeldet"
     USER ||--o{ REPORT : "meldet"
     USER |o--o{ REPORT : "moderiert"
-    USER ||--o{ VERSION : "verursacht"
+    USER |o--o{ VERSION : "verursacht"
 ```
 
-**Entitäten und Beziehungen**
+*Abbildung 1: Entity-Relationship-Model der 1. Iteration*
+
+*Tabelle 6: Entitäten und Beziehungen*
 
 | Entität     | Zweck                                                                                                                                                                                                                                                                                                                      | Beziehungen                                                                                                                                                 |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -319,15 +343,6 @@ werden aus den anderen Breadboards referenziert.
 #### Breadboard 1: Registrieren, Anmelden, Abmelden (F1)
 
 ```text
-@Startseite (pages#home)
-  - Anzeige: Kurzbeschreibung, Suchfeld
-  - Suchen
-    -> @Produktsuche
-  - Registrieren
-    -> @Registrieren
-  - Anmelden
-    -> @Anmelden
-
 @Registrieren (registrations#new)
   - Eingabe: Name, E-Mail, Passwort (min. 12 Zeichen), Passwortbestätigung
   - Konto erstellen (POST registrations#create)
@@ -345,10 +360,16 @@ werden aus den anderen Breadboards referenziert.
     -> @Registrieren
 
 @Navigation (Layout, auf jeder Seite)
+  - Registrieren (nur Gäste)
+    -> @Registrieren
+  - Anmelden (nur Gäste)
+    -> @Anmelden
   - Anzeige: angemeldeter Name und Rolle
   - Abmelden (DELETE sessions#destroy)
-    -> @Startseite
+    -> @Produktsuche
 ```
+
+*Abbildung 2: Breadboard 1 – Registrieren, Anmelden, Abmelden (F1)*
 
 - Die Anmeldung meldet bei falscher E-Mail und bei falschem Passwort dieselbe
   Fehlermeldung in gleicher Zeit (`authenticate_by`), damit keine Rückschlüsse
@@ -388,6 +409,8 @@ werden aus den anderen Breadboards referenziert.
     -> @Produktsuche
 ```
 
+*Abbildung 3: Breadboard 2 – Produkt suchen und filtern (F2, F5)*
+
 - Gesperrte Produkte erscheinen nicht in der Trefferliste, sind aber über den
   direkten Link für Moderatoren sichtbar.
 - Gesperrte Bewertungen werden auf der Produktseite nicht angezeigt und fliessen
@@ -405,6 +428,8 @@ werden aus den anderen Breadboards referenziert.
   - Abbrechen
     -> @Produktsuche
 ```
+
+*Abbildung 4: Breadboard 3 – Produkt erfassen (F6)*
 
 - Bezeichnung und Marke werden normalisiert (Kleinschreibung, Leerzeichen
   bereinigt) und zusammen mit der Handelskette eindeutig indexiert.
@@ -426,6 +451,8 @@ werden aus den anderen Breadboards referenziert.
     Produkt gesperrt -> @Produkt
     Nicht angemeldet -> @Anmelden
 ```
+
+*Abbildung 5: Breadboard 4 – Bewertung abgeben, Kernfunktion (F3)*
 
 - Die Benutzer-ID der Bewertung kommt aus der Sitzung, nie aus dem Formular.
 - «Bereits bewertet» wird serverseitig über den Unique-Index
@@ -455,6 +482,8 @@ werden aus den anderen Breadboards referenziert.
     -> @Produkt
 ```
 
+*Abbildung 6: Breadboard 5 – Eigene Bewertung ändern oder löschen (F4)*
+
 - Nur der Ersteller darf seine Bewertung ändern oder löschen; Moderatoren
   sperren fremde Bewertungen, bearbeiten sie aber nicht.
 - Ändern und Löschen führen die Aggregate in derselben Transaktion nach wie das
@@ -474,6 +503,8 @@ werden aus den anderen Breadboards referenziert.
   - Abbrechen
     -> @Produkt
 ```
+
+*Abbildung 7: Breadboard 6 – Bewertung melden (F7, Benutzerseite)*
 
 - Ein Benutzer kann dieselbe Bewertung nur einmal melden (Unique-Index
   `rating_id`, `reporter_id`).
@@ -504,6 +535,8 @@ werden aus den anderen Breadboards referenziert.
     -> @Meldungen
 ```
 
+*Abbildung 8: Breadboard 7 – Meldung übernehmen und entscheiden (F7, Moderatorseite)*
+
 - Das Übernehmen liest die Meldung mit pessimistischer Sperre (`SELECT … FOR
   UPDATE` bzw. `lock!`) und setzt `moderator_id` und `claimed_at` nur, wenn beide
   noch leer sind. Übernehmen zwei Moderatoren gleichzeitig, gewinnt genau einer;
@@ -533,6 +566,8 @@ werden aus den anderen Breadboards referenziert.
     -> @Produkt
 ```
 
+*Abbildung 9: Breadboard 8 – Produkt korrigieren und sperren (F8, Moderator)*
+
 - Beim Speichern prüft Rails die mitgesendete `lock_version`. Hat ein anderer
   Moderator das Produkt inzwischen geändert, wird nichts überschrieben: Das
   Formular zeigt die eigenen Eingaben, die aktuellen Werte und eine Meldung in
@@ -554,7 +589,9 @@ Eingabefeld, `( )`/`(x)` eine Auswahl, `★☆` die Sternebewertung.
 
 #### Screen 1: Produktsuche (`@Produktsuche`, gleichzeitig Startseite)
 
-![produktsuche](images/produktsuche.svg)
+![Fat-Marker-Sketch Produktsuche](images/produktsuche.svg)
+
+*Abbildung 10: Screen 1 – Produktsuche*
 
 Jede Karte ist als Ganzes klickbar und führt zur Produktdetailseite. Bei null
 Treffern erscheint statt der Liste «Kein Produkt gefunden» mit derselben
@@ -573,7 +610,9 @@ nicht aufheben lässt, sodass die Leiste auf grossen Bildschirmen leer bliebe.)
 
 #### Screen 2: Registrieren und Anmelden (`@Registrieren`, `@Anmelden`)
 
-![registrieren/abmelden](images/register_siginin.svg)
+![Fat-Marker-Sketch Registrieren und Anmelden](images/register_signin.svg)
+
+*Abbildung 11: Screen 2 – Registrieren und Anmelden*
 
 Beide Formulare sind eigene Seiten; hier nebeneinander skizziert, weil sie
 denselben Aufbau haben. Fehlermeldungen (`!`) erscheinen oberhalb der
@@ -585,7 +624,9 @@ E-Mail und falschem Passwort dieselbe Meldung.
 Der wichtigste Screen: Zusammenfassung links, eigene Bewertung rechts, die
 Bewertungen anderer darunter.
 
-![produktdetails](images/produktdetail.svg)
+![Fat-Marker-Sketch Produktdetailseite](images/produktdetail.svg)
+
+*Abbildung 12: Screen 3 – Produktdetailseite mit Bewertungsformular*
 
 Varianten des rechten Kastens «Deine Bewertung»:
 
@@ -602,7 +643,9 @@ Varianten des rechten Kastens «Deine Bewertung»:
 
 #### Screen 4: Eigene Bewertung bearbeiten (`@Eigene Bewertung bearbeiten`)
 
-![bewertung_bearbeiten](images/bearbeiten.svg)
+![Fat-Marker-Sketch eigene Bewertung bearbeiten](images/bearbeiten.svg)
+
+*Abbildung 13: Screen 4 – Eigene Bewertung bearbeiten*
 
 Der gelbe Hinweis oben erscheint nur, wenn der Benutzer über den Konflikt
 «Bereits bewertet» hierher geleitet wurde; die neuen Eingaben aus dem
@@ -610,18 +653,24 @@ abgelehnten Formular sind dann bereits eingetragen.
 
 #### Screen 5: Produkt erfassen (`@Produkt erfassen`)
 
-![erfassen](images/erfassen.svg)
+![Fat-Marker-Sketch Produkt erfassen](images/erfassen.svg)
+
+*Abbildung 14: Screen 5 – Produkt erfassen*
 
 Die Duplikat-Meldung verlinkt auf das bestehende Produkt; die Eingaben bleiben
 im Formular, falls es sich doch um ein anderes Produkt handelt.
 
 #### Screen 6: Bewertung melden (`@Bewertung melden`)
 
-![melden](images/melden.svg)
+![Fat-Marker-Sketch Bewertung melden](images/melden.svg)
+
+*Abbildung 15: Screen 6 – Bewertung melden*
 
 #### Screen 7: Meldungen – Moderation (`@Meldungen`)
 
-![moderation](images/moderation.svg)
+![Fat-Marker-Sketch Meldungen](images/moderation.svg)
+
+*Abbildung 16: Screen 7 – Meldungen (Moderation)*
 
 Von anderen übernommene Meldungen sind ausgegraut und haben keine Schaltfläche.
 Wer «Übernehmen» drückt, nachdem ein anderer Moderator schneller war, bleibt auf
@@ -629,11 +678,15 @@ dieser Liste und sieht oben «Diese Meldung wurde inzwischen von Max übernommen
 
 #### Screen 8: Meldung bearbeiten (`@Meldung bearbeiten`)
 
-![meldung_bearbeiten](images/meldung_bearbeiten.svg)
+![Fat-Marker-Sketch Meldung bearbeiten](images/meldung_bearbeiten.svg)
+
+*Abbildung 17: Screen 8 – Meldung bearbeiten*
 
 #### Screen 9: Produkt bearbeiten – Moderator (`@Produkt bearbeiten`)
 
-![produkt_bearbeiten](images/produkt_bearbeiten.svg)
+![Fat-Marker-Sketch Produkt bearbeiten](images/produkt_bearbeiten.svg)
+
+*Abbildung 18: Screen 9 – Produkt bearbeiten (Moderator)*
 
 Der Konflikthinweis erscheint nur bei einer Versionskollision
 (`lock_version`); die eigenen Eingaben bleiben im Formular, die aktuellen Werte
@@ -641,13 +694,26 @@ werden daneben genannt.
 
 ## 5. Technologie
 
-| Bereich            | Technologie           |
-| ------------------ | --------------------- |
-| Sprache            | Ruby 4.0.6            |
-| Framework          | Ruby on Rails 8.1.3.1 |
-| Datenbank          | SQLite3               |
-| Versionsverwaltung | Git                   |
-| Editor             | VSCode                |
+*Tabelle 7: Technologie-Stack mit Versionen*
+
+| Bereich             | Technologie                                                         | Version              |
+| ------------------- | ------------------------------------------------------------------- | -------------------- |
+| Sprache             | Ruby (verwaltet mit mise)                                           | 4.0.6                |
+| Framework           | Ruby on Rails                                                       | 8.1.3.1              |
+| Datenbank           | SQLite3 (Gem `sqlite3`)                                             | 2.9.6                |
+| Authentifizierung   | Rails-Authentifizierungsgenerator, `has_secure_password` mit bcrypt | 3.1.22               |
+| Autorisierung       | Pundit                                                              | 2.5.2                |
+| Aktivitätsprotokoll | PaperTrail                                                          | 17.0.0               |
+| Frontend            | Propshaft, Importmap, Turbo                                         | 1.3.2, 2.2.3, 2.0.23 |
+| Tests               | Minitest (Rails-Standard)                                           | 6.0.6                |
+| Code-Stil           | RuboCop mit rubocop-rails-omakase                                   | 1.91.0, 1.1.0        |
+| Sicherheitsprüfung  | Brakeman, bundler-audit                                             | 8.0.6, 0.9.3         |
+| Dokumentation       | Markdown, Mermaid (ERM), Excalidraw (Fat-Marker-Sketches)           | –                    |
+| Versionsverwaltung  | Git, GitHub                                                         | –                    |
+| Editor              | VSCode                                                              | –                    |
+
+Die Versionen der Gems stammen aus `Gemfile.lock`; Tests, RuboCop, Brakeman
+und bundler-audit laufen zusätzlich in der CI (`.github/workflows/ci.yml`).
 
 ## 6. Umsetzung und Prüfung
 
@@ -655,7 +721,7 @@ werden daneben genannt.
 
 Die 1. MVP-Iteration ist vollständig umgesetzt: **F1–F8** funktionieren, die
 Qualitätsattribute **Q1–Q5** sind durch automatisierte Tests beziehungsweise
-eine Messung nachgewiesen. Die Testsuite umfasst 239 Tests, läuft grün und in
+eine Messung nachgewiesen. Die Testsuite umfasst 240 Tests, läuft grün und in
 4,0 Sekunden; Einzelnachweise in [`testing.md`](testing.md), die Behandlung
 aller Fehler- und Konfliktfälle in [`fehlerbehandlung.md`](fehlerbehandlung.md),
 die Sicherheitsaspekte der Authentifizierung in
@@ -667,6 +733,8 @@ Kategorien und Handelsketten durch die Administration).
 
 ### Begründete Abweichungen vom Antrag
 
+*Tabelle 8: Begründete Abweichungen vom Antrag*
+
 | Abweichung | Begründung |
 | --- | --- |
 | `users.email` heisst `email_address`, zusätzliche Entität `SESSION` | Konvention des Rails-8-Authentifizierungsgenerators, der laut Kursvorgabe zu verwenden ist |
@@ -677,6 +745,7 @@ Kategorien und Handelsketten durch die Administration).
 | Die Trefferliste wird seitenweise ausgegeben (12 pro Seite) | Ohne Begrenzung verfehlte die Suche Q4 deutlich (95. Perzentil 2271 ms). Messung und Begründung in `testing.md` |
 | Drei Ablehnungen erscheinen als Klartext statt als 403-Seite | Gesperrtes Produkt, bereits gemeldete Bewertung, bereits übernommene Meldung sind Zustände, keine fehlenden Rechte. Screen 7 verlangt die Meldung ausdrücklich. Abgewiesen wird der Versuch trotzdem serverseitig |
 | Keine Browser-Dialoge für gefährliche Aktionen | Ein `window.confirm` ist nicht gestaltbar, nicht übersetzbar und fällt ohne JavaScript ersatzlos aus. Konto- und Bewertungslöschung haben stattdessen eine eigene Bestätigungsseite, die serverseitig wirkt |
+| Keine eigene Startseite (`pages#home`); die Produktsuche ist die Startseite | Eine zusätzliche Seite mit Kurzbeschreibung und Suchfeld hätte nur auf die Suche weitergeleitet. Wer die Applikation öffnet, sieht sofort Produkte (Screen 1); Registrieren und Anmelden stehen in der Navigation |
 | Die Filterspalte klappt unterhalb von 1200 px zu | Sie belegte auf Tablets rund ein Viertel der Fläche; umgesetzt ohne JavaScript (Screen 1) |
 | Die Trefferliste lässt sich nach Bewertung sortieren, beste oder schlechteste zuerst | Ergänzung zu F2: Wer vergleicht, will die besten Produkte zuerst sehen – oder die, von denen andere abraten. Unbewertete Produkte stehen dabei am Schluss, bei gleichem Durchschnitt zuerst das Produkt mit mehr Bewertungen |
 
@@ -688,6 +757,8 @@ Generatoren, Assoziationen und Pundit aufbauen. Deutsch bleiben dagegen die
 Enum-Werte für Rollen, Status und Meldegründe, weil sie fachliche Zustände
 benennen. Die Tabelle ordnet jedem Fachbegriff seine Stelle im Code zu; in
 Oberfläche und Dokumentation steht jeweils nur der Fachbegriff.
+
+*Tabelle 9: Glossar der Fachbegriffe und ihrer Stelle im Code*
 
 | Fachbegriff | Code | Bedeutung |
 | --- | --- | --- |

@@ -2,34 +2,48 @@ erDiagram
     USER {
         int id PK
         string name
-        string email UK "normalisiert, eindeutig"
+        string email_address UK "normalisiert, eindeutig"
         string password_digest
-        string role "enum: benutzer | moderator | administrator"
-        string unconfirmed_email "neue E-Mail bis zur Bestaetigung"
-        string email_confirmation_token
+        int role "enum: benutzer | moderator | administrator"
+        string unconfirmed_email "neue E-Mail bis zur Bestätigung"
         datetime locked_at "Konto gesperrt durch Admin"
+        datetime created_at
+        datetime updated_at
+    }
+
+    SESSION {
+        int id PK
+        int user_id FK
+        string ip_address
+        string user_agent
         datetime created_at
         datetime updated_at
     }
 
     CATEGORY {
         int id PK
-        string name UK
+        string name
+        string name_normalized UK "klein, Leerzeichen bereinigt"
+        datetime created_at
+        datetime updated_at
     }
 
     RETAIL_CHAIN {
         int id PK
-        string name UK "Migros, Coop, Aldi, Lidl ..."
+        string name "Migros, Coop, Aldi, Lidl ..."
+        string name_normalized UK "klein, Leerzeichen bereinigt"
+        datetime created_at
+        datetime updated_at
     }
 
     PRODUCT {
         int id PK
         int category_id FK
         int retail_chain_id FK
-        int created_by_id FK "User, der erfasst hat"
+        int created_by_id FK "User, der das Produkt erfasst hat; null nach Kontolöschung"
         string name
         string brand
-        string name_normalized "UK mit brand_normalized + retail_chain_id"
+        string name_normalized "UK zusammen mit brand_normalized + retail_chain_id"
         string brand_normalized
         text description
         int ratings_count "Aggregat"
@@ -42,43 +56,46 @@ erDiagram
 
     RATING {
         int id PK
-        int user_id FK "UK mit product_id"
+        int user_id FK "UK zusammen mit product_id"
         int product_id FK
         int stars "1..5"
         text comment "optional"
-        string status "enum: aktiv | gesperrt"
+        int status "enum: aktiv | gesperrt"
         datetime created_at
         datetime updated_at
     }
 
     REPORT {
         int id PK
-        int rating_id FK "UK mit reporter_id"
+        int rating_id FK "UK zusammen mit reporter_id"
         int reporter_id FK "meldender User"
-        int moderator_id FK "uebernehmender Moderator, null bis Uebernahme"
-        string reason
-        string status "enum: offen | in_bearbeitung | freigegeben | gesperrt"
+        int moderator_id FK "übernehmender Moderator, null bis zur Übernahme"
+        int reason "enum: beleidigend | spam | kein_bezug | anderes, Pflichtangabe"
+        int status "enum: offen | in_bearbeitung | freigegeben | gesperrt"
         datetime claimed_at "pessimistische Sperre"
         datetime decided_at
         datetime created_at
+        datetime updated_at
     }
 
     VERSION {
         int id PK
         string item_type "Product | Rating | Report"
-        int item_id
+        bigint item_id
         string event "create | update | destroy"
-        string whodunnit "User-ID"
-        text object "Zustand vor der Aenderung"
+        string whodunnit "User-ID als Text, leer bei Änderungen ohne Anmeldung"
+        text object "Zustand vor der Änderung"
+        text object_changes "geänderte Felder"
         datetime created_at
     }
 
-    USER ||--o{ PRODUCT : "erfasst"
+    USER ||--o{ SESSION : "meldet sich an"
+    USER |o--o{ PRODUCT : "erfasst"
     USER ||--o{ RATING : "bewertet"
-    PRODUCT ||--o{ RATING : "erhaelt"
+    PRODUCT ||--o{ RATING : "erhält"
     CATEGORY ||--o{ PRODUCT : "ordnet ein"
     RETAIL_CHAIN ||--o{ PRODUCT : "verkauft"
     RATING ||--o{ REPORT : "wird gemeldet"
     USER ||--o{ REPORT : "meldet"
     USER |o--o{ REPORT : "moderiert"
-    USER ||--o{ VERSION : "verursacht"
+    USER |o--o{ VERSION : "verursacht"

@@ -5,10 +5,12 @@ Nachweis zu Projektaufgabe 8 und zu den Qualitätsattributen Q1–Q5 aus
 
 ```sh
 bin/rails test        # gesamte Suite
-bin/rubocop           # Code-Style
+bin/rubocop           # Code-Stil
 ```
 
-**Stand:** 239 Tests, 980 Assertions, 0 Fehler, 0 `skip`, Laufzeit **4,0 s**
+*Listing 1: Tests und Code-Stil prüfen*
+
+**Stand:** 240 Tests, 984 Assertions, 0 Fehler, 0 `skip`, Laufzeit **4,0 s**
 (Q5 verlangt unter 60 s). 29 Testdateien: 7 Modelle, 5 Policies,
 13 Controller, 1 Helper, 2 Mailer, 1 Projektregel.
 
@@ -19,6 +21,8 @@ kurzzeitig eine Klassenmethode, um Gleichzeitigkeitsfälle auszulösen, die sich
 in einem einzelnen Prozess sonst nicht herstellen lassen.
 
 ## Funktionale Anforderungen
+
+*Tabelle 1: Funktionale Anforderungen und ihre Tests*
 
 | Nr. | Anforderung | Geprüft durch | Ergebnis |
 | --- | --- | --- | --- |
@@ -38,11 +42,13 @@ in einem einzelnen Prozess sonst nicht herstellen lassen.
 
 ### Q1 – Datenkonsistenz
 
+*Tabelle 2: Nachweis Q1 – Datenkonsistenz*
+
 | Anforderung | Test | Ergebnis |
 | --- | --- | --- |
 | 50 Bewertungen → Anzahl und Durchschnitt stimmen exakt | `RatingTest` «auch nach 50 Bewertungen stimmen Anzahl und Summe» | `ratings_count == 50`, `ratings_sum` gleich der Summe der gespeicherten Sterne |
 | Zwei gleichzeitige Bewertungen desselben Benutzers → genau eine | `RatingTest` «der Unique-Index verhindert eine zweite Bewertung», `RatingsControllerTest` «vom Unique-Index abgefangen» | `RecordNotUnique`, danach genau eine Bewertung |
-| Aggregate nach Ändern, Löschen und Sperren | `RatingTest` «ändern, zurückziehen und sperren halten die Aggregate korrekt`, `ReportTest` «Sperren … nimmt die Bewertung aus dem Durchschnitt» | Aggregate entsprechen immer `ratings.active` |
+| Aggregate nach Ändern, Löschen und Sperren | `RatingTest` «ändern, zurückziehen und sperren halten die Aggregate korrekt», `ReportTest` «Sperren … nimmt die Bewertung aus dem Durchschnitt» | Aggregate entsprechen immer `ratings.active` |
 
 Durchgesetzt wird das an einer einzigen Stelle: `Rating.with_aggregates` lädt
 das Produkt innerhalb der Transaktion, führt die Änderung aus und berechnet die
@@ -53,6 +59,8 @@ Aggregate neu. Alle fünf Wege (`submit!`, `change!`, `withdraw!`, `block!`,
 
 Für jede Rolle mindestens ein erlaubter und ein verweigerter Zugriff, geprüft
 in `test/policies/` und zusätzlich über echte Requests in den Controller-Tests.
+
+*Tabelle 3: Erlaubte und verweigerte Zugriffe je Rolle (Q2)*
 
 | Rolle | erlaubt (Beispiel) | verweigert (Beispiel) |
 | --- | --- | --- |
@@ -75,6 +83,8 @@ Alle Fälle mit Meldung, erhaltenen Eingaben und nächster Handlung sind in
 [`fehlerbehandlung.md`](fehlerbehandlung.md) einzeln aufgeführt. Die drei vom
 Qualitätsattribut geforderten:
 
+*Tabelle 4: Nachweis der drei Konfliktfälle aus Q3*
+
 | Konflikt | Test | Ergebnis |
 | --- | --- | --- |
 | Doppelbewertung | `RatingsControllerTest` «führt zur bestehenden statt eine neue anzulegen» | Weiterleitung auf die eigene Bewertung, die neuen Eingaben stehen im Formular, gespeichert bleibt zunächst die alte |
@@ -94,6 +104,10 @@ SEED_PRODUCTS=5000 bin/rails db:seed
 RAILS_MAX_THREADS=10 bin/rails runner script/search_benchmark.rb
 rm storage/benchmark.sqlite3*
 ```
+
+*Listing 2: Messung Q4 auf einer eigenen Datenbank*
+
+*Tabelle 5: Antwortzeiten der Produktsuche bei 5'000 Produkten und zehn gleichzeitigen Anfragen (Q4)*
 
 | Messung | Median | 95. Perzentil | Maximum |
 | --- | --- | --- | --- |
@@ -118,7 +132,7 @@ gerendert werden, unabhängig von der Anzahl Produkte.
 
 Alle Modelle und alle Autorisierungsregeln der 1. Iteration sind abgedeckt, die
 Suite läuft grün in 4,0 s (Grenzwert 60 s) und enthält kein `skip`. Zusätzlich
-laufen `bin/rubocop` ohne Beanstandung und `bin/brakeman` ohne neue Befunde;
+laufen `bin/rubocop` ohne Beanstandung und `bin/brakeman` ohne Befund;
 beides ist in der CI (`.github/workflows/ci.yml`) hinterlegt.
 
 ## Aussagekraft der Tests
@@ -140,8 +154,7 @@ Bewertungen, schreiben sie aber nicht um». Beide prüfen `destroy?` als Teil
 ihrer Rollenzusicherung mit; die Regel ist also breiter abgesichert als
 angenommen. Nach dem Zurückbauen: 230 Tests grün.
 
-Dieselbe Gegenprobe wurde bei jeder Aufgabe angewandt und ist jeweils im
-Projektplan vermerkt – unter anderem: `recalculate_aggregates!` aus der
+Dieselbe Gegenprobe wurde bei jeder Aufgabe angewandt, unter anderem: `recalculate_aggregates!` aus der
 Transaktion entfernt (8 Tests rot), die Prüfung in `Report#claim!` entfernt
 (1 Test rot), `set_paper_trail_whodunnit` entfernt (3 Tests rot),
 `permitted_attributes` ohne Selbstschutz (2 Tests rot).

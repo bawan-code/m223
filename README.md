@@ -8,22 +8,21 @@ Die Projektdokumentation (Problemstellung, Anforderungen, ERM, Breadboards,
 Screens, Locking-Konzept) liegt unter [`docs/`](docs/):
 
 - [`docs/projektantrag.md`](docs/projektantrag.md) – Projektantrag und Dokumentation
-- [`docs/projektplan.md`](docs/projektplan.md) – Umsetzungsplan nach Aufgaben 1–8
 - [`docs/sicherheit.md`](docs/sicherheit.md) – Sicherheitsaspekte der Authentifizierung
 - [`docs/fehlerbehandlung.md`](docs/fehlerbehandlung.md) – Fehlerfälle, Meldungen und User Feedback
 - [`docs/testing.md`](docs/testing.md) – welche Anforderung welcher Test prüft, mit Ergebnissen
 
 ## Technologie-Stack
 
-| Bereich | Version |
-| --- | --- |
-| Ruby | 4.0.6 (verwaltet mit [mise](https://mise.jdx.dev)) |
-| Ruby on Rails | 8.1.3.1 |
-| Datenbank | SQLite3 |
-| Assets | Propshaft, Importmap, Turbo |
-| Autorisierung | Pundit |
-| Aktivitätsprotokoll | PaperTrail |
-| Tests | Minitest (Rails-Standard) |
+| Bereich | Technologie | Version |
+| --- | --- | --- |
+| Sprache | Ruby (verwaltet mit [mise](https://mise.jdx.dev)) | 4.0.6 |
+| Framework | Ruby on Rails | 8.1.3.1 |
+| Datenbank | SQLite3 (Gem `sqlite3`) | 2.9.6 |
+| Frontend | Propshaft, Importmap, Turbo | 1.3.2, 2.2.3, 2.0.23 |
+| Autorisierung | Pundit | 2.5.2 |
+| Aktivitätsprotokoll | PaperTrail | 17.0.0 |
+| Tests | Minitest (Rails-Standard) | 6.0.6 |
 
 ## Voraussetzungen
 
@@ -62,7 +61,7 @@ Die Applikation läuft unter [http://localhost:3000](http://localhost:3000).
 bin/rails test                                   # gesamte Suite
 bin/rails test test/models/rating_test.rb        # einzelne Datei
 bin/rails test test/models/rating_test.rb:12     # einzelner Test (Zeile)
-bin/rubocop                                      # Code-Style
+bin/rubocop                                      # Code-Stil
 ```
 
 ## Demo-Konten

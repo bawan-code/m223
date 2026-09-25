@@ -3,6 +3,8 @@
 Überprüfung gemäss Projektarbeit Aufgabe 2 («Sicherheitsüberprüfung»). Jede
 Massnahme ist durch einen Test in `test/controllers/` abgesichert.
 
+*Tabelle 1: Sicherheitsaspekte der Authentifizierung und ihr Nachweis*
+
 | Aspekt                      | Umsetzung                                                                                                                                                                                                                                                                                                                          | Nachweis                                                                                    |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Passwort-Hashing            | `has_secure_password` speichert nur einen bcrypt-Hash (`password_digest`), nie den Klartext.                                                                                                                                                                                                                                       | `SessionsControllerTest` «Passwörter werden gehasht gespeichert»                            |
@@ -29,6 +31,8 @@ Link über `ApplicationMailer#log_link` als eigene Zeile ins Log:
 ```sh
 grep "^--> " log/development.log | tail -2
 ```
+
+*Listing 1: Bestätigungs- und Reset-Links aus dem Log lesen*
 
 Der Mail-Text selbst wird bewusst **nicht** mehr geloggt
 (`config.action_mailer.logger = nil`): er ist quoted-printable codiert und

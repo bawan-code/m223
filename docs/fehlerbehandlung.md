@@ -11,6 +11,8 @@ Alle Meldungen stehen in `config/locales/de.yml`, keine im Code.
 
 ## Grundsätze
 
+*Tabelle 1: Grundsätze der Fehlerbehandlung*
+
 | Grundsatz | Umsetzung |
 | --- | --- |
 | Gefährliche Aktionen über eine Bestätigungsseite | Ein Klick auf «Löschen» – bei einem Konto wie bei einer Bewertung – öffnet nur eine Bestätigungsseite (GET); ein verklickter Link löscht nichts. Sie benennt die Folgen, erst das Formular dort schickt `DELETE`. **Keine Browser-Dialoge** (`window.confirm` über `data-turbo-confirm`): die lassen sich nicht gestalten, sind nicht übersetzbar und fallen ohne JavaScript ersatzlos aus – die Aktion wäre dann ungeschützt. Abgesichert durch `NoBrowserDialogsTest`. |
@@ -22,9 +24,11 @@ Alle Meldungen stehen in `config/locales/de.yml`, keine im Code.
 
 ## Fälle
 
+*Tabelle 2: Fehlerfälle mit Status, Meldung und nächster Handlung*
+
 | Auslöser | Status | Meldung | Eingaben erhalten | Nächste Handlung | Test |
 | --- | --- | --- | --- | --- | --- |
-| Gast ruft geschützte Seite auf | 302 | «Bitte melde dich an, um fortzufahren.» | – | Anmeldeformular, danach zurück zur gewünschten Seite (`return_to`) | `SessionsControllerTest` «Gast wird … zurückgebracht» |
+| Gast ruft geschützte Seite auf | 302 | «Bitte melde dich an, um fortzufahren.» | – | Anmeldeformular, danach zurück zur gewünschten Seite (`session[:return_to_after_authenticating]`; bei schreibenden Aktionen die Seite, von der der Request kam) | `SessionsControllerTest` «Gast wird … zurückgebracht» |
 | Angemeldeter ohne Berechtigung (z. B. Benutzer im Admin-Bereich) | **403** | «Kein Zugriff» – «Für diese Seite fehlt deinem Konto die Berechtigung.» | – | Link zur Startseite | `Admin::UsersControllerTest` «403 auf allen Admin-Actions», «die 403-Seite erklärt den Grund» |
 | Unbekannte oder gelöschte ID | **404** | «Nicht gefunden» – «Diese Seite oder dieser Eintrag existiert nicht (mehr).» | – | Link zur Startseite | `Admin::UsersControllerTest` «unbekannte Benutzer-ID» |
 | Falsche Anmeldedaten | 302 | «E-Mail oder Passwort ist falsch.» (identisch für unbekannte E-Mail und falsches Passwort) | E-Mail bleibt im Formular | Erneut versuchen, Link «Passwort vergessen?» | `SessionsControllerTest` «dieselbe Meldung» |
@@ -48,6 +52,8 @@ Alle Meldungen stehen in `config/locales/de.yml`, keine im Code.
 Vier Fälle, in denen zwei Personen gleichzeitig arbeiten. Jeder endet mit einer
 Meldung in Alltagssprache, erhaltenen Eingaben und einem erkennbaren nächsten
 Schritt.
+
+*Tabelle 3: Konflikte der Kernfunktion (Q3)*
 
 | Auslöser | Status | Meldung | Eingaben erhalten | Nächste Handlung | Test |
 | --- | --- | --- | --- | --- | --- |

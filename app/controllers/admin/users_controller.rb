@@ -15,8 +15,9 @@ module Admin
       authorize @user
 
       @user.assign_attributes(permitted_attributes(@user))
-      # Eine vom Administrator gesetzte Adresse gilt sofort; eine noch offene
-      # Bestätigung des Benutzers wäre danach gegenstandslos (siehe Projektplan).
+      # Eine vom Administrator gesetzte Adresse gilt sofort: Er handelt bewusst,
+      # und die Änderung steht im Aktivitätsprotokoll. Eine noch offene
+      # Bestätigung des Benutzers wäre danach gegenstandslos.
       @user.unconfirmed_email = nil if @user.email_address_changed?
 
       if @user.save
